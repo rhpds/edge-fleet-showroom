@@ -1,7 +1,11 @@
-* xref:module-01.adoc[1. RPM Native Container]
-** xref:module-01.adoc#repositories[Repositories]
-** xref:module-01.adoc#software[Software]
+* xref:module-01.adoc[]
+** xref:module-01.adoc#currentstorefootprint[Current Store Footprint]
+** xref:module-01.adoc#edgemanageroverview[Edge Manager Overview]
 
-* xref:module-02.adoc[2. GitHub Sourced Container]
-** xref:module-02.adoc#prerequisites[Install Prerequisites]
-** xref:module-02.adoc#container[Enable Container]
+* xref:module-02.adoc[]
+** xref:module-02.adoc#onboarding[Device Onboarding]
+** xref:module-02.adoc#fleetmanagement[Fleet Management]
+
+* xref:module-03.adoc[]
+** xref:module-03.adoc#prerequisites[TBD]
+** xref:module-03.adoc#container[TBD]

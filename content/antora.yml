@@ -1,12 +1,12 @@
 name: modules
-title: Default Title
+title: "LB2517: Device Edge Fleet Management with Red Hat Edge Manager (Tech Preview)"
 version: master
 nav:
   - modules/ROOT/nav.adoc
 
 asciidoc:
   attributes:
-    lab_name: "I'm the lab_name var"
+    lab_name: "Device Edge Fleet Management with Red Hat Edge Manager (Tech Preview)"
     release-version: master
     page-pagination: true
     my_var: "foo"
@@ -15,5 +15,13 @@ asciidoc:
     ssh_password: devops
     ssh_command: ssh someone@example.com
     page-links:
-    - url: https://redhat.com
-      text: Red Hat
+    - url: https://console-openshift-console.apps.cluster-bblth.dynamic.redhatworkshops.io/multicloud/home/overview
+      text: Lab Login
+    - url: https://qrcoderaptor.com/
+      text: QR Code Scanner
+    - url: https://github.com/flightctl/flightctl
+      text: Flight Control (Upstream Project)
+
+
+
+      

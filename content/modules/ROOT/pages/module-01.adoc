@@ -1,149 +1,120 @@
-= Building an Application with rpms
+= 1. Edge Manager Introduction
 
-== Downloading the UBI
+== Welcome to Edge MegaStore, Inc. (Fictional Company)
 
-In this lab, you will be installing software into the container 
-image running as an interactive application. To do this you will
-need `yum`, but do not need `systemd` for managing services within the
-container environment.  For that reason, you will be using the *Standard*
-UBI image (as opposed to the Minimal or Multi-service images).
+Congratulations on your new job at Edge MegaStore, Inc. (EMI)! The pay isn't great
+but if you love to learn about new edge management technology you are in the
+right place. EMI is proud to provide our Customers with the
+finest Edge Equipment available including a snack bar area with refreshments
+(the Red-Sprinkled Donuts are a speciality).
 
-Using the "buildah from" command will download and meld the container image. This particular image we are using is the Red Hat Universal Base Image or UBI. From the ourput of the command, you will notice that we are pulling down the latest one, which is for RHEL 9. 
+image::EdgeMegastore-storefront.png[link=self, width=75%, window=blank]
 
-. Execute the  download the Standard UBI
-image from Red Hat's registry.
+It looks like our Marketing Department has some work to do with improving AI 
+generated images ('Dionuts' and Flying Strawberries?!) but thankfully you don't
+have to worry about that.  
 
+Let's dive into your new role.
+
+[#currentstorefootprint]
+=== Current Retail Store Footprint
+
+We have four existing EMI stores spread between the East and West Coasts of the United States.
+
+image::RetailExpansion.png[link=self, window=blank]
+
+In each location we have a back of store edge device running a RHEL 9 bootc image
+container (which also includes the mandatory Edge Manager Agent). These store devices run a 
+Point-of-Sale (POS) application on top of https://www.redhat.com/en/topics/edge-computing/microshift[MicroShift ,window=_blank] 
+that is accessed via the front of store POS kiosks.  MicroShift brings the power
+and scalability of Kubernetes to the edge, as a natural extension of an OpenShift environment,
+allowing applications to be written once and run right where they are needed. 
+
+image::StoreComposition.png[link=self, window=blank]
+
+[#edgemanageroverview]
+== Getting to know Red Hat Edge Manager
+
+In a moment, we are going to need your help bringing a new store online in your 
+home town but first let's get you logged into your new work environment for an 
+initial look around.
+
+=== Lab Login
+. Click https://console-openshift-console.apps.cluster-bblth.dynamic.redhatworkshops.io/multicloud/home/overview[here] to access your Lab Environment
 +
-[source,sh,role=execute]
+[source,bash]
 ----
-buildah from registry.access.redhat.com/ubi9/ubi
+username:  user1# (replace '#' with *your* user number)
 ----
-
-[#repositories]
-== Installing Repositories
-In this lab, you are going to containerize a software package that is already
-packaged in RPM format and stored in the Extra Packages for Enterprise Linux
-(EPEL) repository.
-
-Software often has requirements for prerequisite software that must be installed
-on the machine for it to work properly.  `yum` will resolve those
-dependencies for you, as long as it can locate the required packages in
-repositories defined on the machine.  The Red Hat Universal Base Image (UBI)
-downloaded in the previous step has access to some Red Hat Enterprise Linux
-repositories.  However, the target package for the lab is from EPEL.  
-
-. In the command below, `buildah` is going to run a command on the
-`ubi-working-container` image.  The `--` indicates that the command should be
-executed from within the container, which means the results will be applied into
-the container image.  Lastly, you are providing the `yum` command to install a
-package that defines all of the repositories from EPEL, `epel-release-latest-9`.
 
 +
 [source,bash]
 ----
-buildah run ubi-working-container -- yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+password:  {provide password}  (Ken: Are they already given this password when they first login to the RHDP interface?)
 ----
 
+NOTE: The Lab hyperlink is also available by mousing over 'Links' (in the upper-right hand corner of this lab manual) and selecting, "Lab Login"
 
-. You can verify that the above command did not install the RPM on the host system.
+=== Exploring Edge Manager
 
-+
-[source,bash]
-----
-rpm -q epel-release
-----
+You are now logged into an OpenShift Container Platform environment which also has an Advanced Cluster Management operator installed.  
+If you have never used these capabilities before, don't worry.  We are here to examine the Edge Manager portions only.  Edge Manager is running 
+on OpenShift as a set of containerized microservices (one of which displays the UI elements that we are going to explore now)
 
-NOTE: If your repository configurations are not distributed as an RPM, but instead as
-individual `.repo` files, you could use the `buildah copy` command to copy
-files from the host operating system into the container image.  You will see
-an example of using `buildah copy` later in this lab.
+. Expand the *Home* menu
+. Select *Overview*
+. Click *Edge*
 
-[#software]
-== Installing Software
+image::m1-edgeoverview.png[link=self, window=blank]
 
+Note that we see top level monitoring information about devices currently under management.  We also observe the current quantity of devices under
+management (4 devices).  Speaking of devices, let's examine them next.
 
-. Now that the yum repositories are defined within the container, execute 
-another `yum install`, within the container, to install the target
-software: `moon-buggy`.
+. Expand the *Edge Management* menu
+. Click *Devices*
 
-+
-[source,bash]
-----
-buildah run ubi-working-container -- yum -y install moon-buggy
-----
+image::m1-devices.png[link=self, window=blank]
 
+Here we observe the 4 _existing_ EMI East/West coast store devices that we discussed earlier.  They are reporting a green '*Online*' status.  
+In addition, they are all showing that they are members of an Edge Manager fleet named, '*point-of-sale-prod*'.  Let's explore this fleet next.
 
-== Committing the Container Image
+. Click *point-of-sale-prod*
 
-. At this point, the container is configured.  It is time to transition from a
-working container into a committed image.  In the command below, you will use
-the `buildah` command to commit the working container to an image called:
-`moon-buggy`.
+image::m1-point-of-sale-prod.png[link=self, window=blank]
 
-+
-[source,bash]
-----
-buildah commit ubi-working-container moon-buggy
-----
+Note that we observe top level information for this specific fleet.  Let's edit the fleet to examine what has been configured.
 
-+
-. The output of `podman image list` should confirm the image was created.
+. Expand the *Actions* menu
+. Click *Edit Fleet*
 
-+
-[source,bash]
-----
-podman image list
-----
+image::m1-editfleet.png[link=self, window=blank]
 
+. We see the friendly name that has been chosen for this fleet: *point-of-sale-prod*
+. A *device selector* label has been configured: '*pos=prod*' This is a user generated key-pair value of their choosing. Any devices that matches this label 
+will automatically be made a member of this fleet
+. Note that we have *4 devices matching* this label (these are our existing store edge devices)
+. Click *Next*
 
-== Deploy the Container
+image::m1-editfleet-2.png[link=self, window=blank]
 
-Now the software has been installed and a new container image created.  It is
-time to spawn a runtime of the container image and validate the software.  The
-software we are using is a command line command.  
+We are now looking at what we refer to as the fleet *device template*.  The device template contains the configuration items that we want to specify declaratively
+(with Edge Manager responsible for enforcing these specifications, including healing a given device back to desired state, if any of these items drift).
 
-. When you `run` the container,
-it will be in interactive (`-it`) mode, based on the `moon-buggy` container
-image and the command run interactively will be `/usr/bin/moon-buggy`.
+. Here we see the bootc image that *must be running on a device* in this fleet, ending in '...*pos-prod:v1*'
+. Click *+ Add configuration*
 
-+
-[source,bash]
-----
-podman run -it moon-buggy /usr/bin/moon-buggy
-----
+image::m1-editfleet-3.png[link=self, window=blank]
 
-+
-[source,textinfo]
-----
+As part of the device template, We can specify additional host configuration items (like custom systemd service config, network config, etc.)
 
-<<< OUTPUT ABRIDGED >>>
-               MM     MM   OOOOO    OOOOO   NN     N
-               M M   M M  O     O  O     O  N N    N
-               M  M M  M  O     O  O     O  N  N   N
-               M   M   M  O     O  O     O  N   N  N
-               M       M  O     O  O     O  N    N N
-               M       M   OOOOO    OOOOO   N     NN
+. Expand *Select a source type* (Edge manager can load pre-staged (inline) configuration files on the device, configuration files stored in Git or configuration files
+stored on an internal web (http) repository of their choice)
+. Click the '*-*' symbol to close the configuration item
 
-                     BBBBBB   U     U   GGGGG    GGGGG   Y     Y
-                     B     B  U     U  G     G  G     G   Y   Y
-                     BBBBBB   U     U  G        G          Y Y
-                     B     B  U     U  G   GGG  G   GGG     Y
-                     B     B  U     U  G     G  G     G    Y
-                     BBBBBB    UUUUU    GGGGG    GGGGG   YY
+image::m1-editfleet-4.png[link=self, window=blank]
 
-<<< OUTPUT ABRIDGED >>>
-----
+Let's examine another element of the device template
 
-. You can now play the Moon Buggy game, which is a text-based version of the
-popular Moon Patrol.  When you are finished, use the `q` command to quit the
-game, which will terminate the container.
+. 
 
-+
-Alternatively, you can use `podman` to kill the running container from
-*Terminal 2*.
-
-+
-[source,bash]
-----
-podman kill $(podman ps | grep -v CONTAINER | cut -f1 -d" " )
-----
+Ken: Finish module (this is currently 99% complete)
