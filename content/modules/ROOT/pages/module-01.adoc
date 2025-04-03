@@ -61,13 +61,14 @@ You are now logged into an OpenShift Container Platform environment which also h
 If you have never used these capabilities before, don't worry.  We are here to examine the Edge Manager portions only.  Edge Manager is running 
 on OpenShift as a set of containerized microservices (one of which displays the UI elements that we are going to explore now)
 
+. Expand and set to *All Clusters*
 . Expand the *Home* menu
 . Select *Overview*
 . Click *Edge*
 
 image::m1-edgeoverview.png[link=self, window=blank]
 
-Note that we see top level monitoring information about devices currently under management.  We also observe the current quantity of devices under
+Note that we see top level monitoring information for devices currently under management.  We also observe the current quantity of devices under
 management (4 devices).  Speaking of devices, let's examine them next.
 
 . Expand the *Edge Management* menu
@@ -75,7 +76,7 @@ management (4 devices).  Speaking of devices, let's examine them next.
 
 image::m1-devices.png[link=self, window=blank]
 
-Here we observe the 4 _existing_ EMI East/West coast store devices that we discussed earlier.  They are reporting a green '*Online*' status.  
+Here we observe the 4 _existing_ EMI East/West coast store devices that we discussed earlier.  They are reporting a green '*Online*' device status.  
 In addition, they are all showing that they are members of an Edge Manager fleet named, '*point-of-sale-prod*'.  Let's explore this fleet next.
 
 . Click *point-of-sale-prod*
@@ -115,6 +116,35 @@ image::m1-editfleet-4.png[link=self, window=blank]
 
 Let's examine another element of the device template
 
-. 
+. Click *+ Add Application*
 
-Ken: Finish module (this is currently 99% complete)
+As shown, we can also tie in one or more containerized applications which must be running on devices in the fleet.
+
+image::m1-editfleet-5.png[link=self, window=blank]
+
+Continuing our exploration, let's move on to one final item
+
+. Select the '*-*' symbol to close *Application 1*
+. Click *Next*
+
+image::m1-editfleet-6.png[link=self, window=blank]
+
+When applying updates to Devices, we have the ability to specify *Advanced configuration* options
+
+. Uncheck the box next to *Use basic configurations*
+. Click the *(?)* tooltip to learn about setting *rollout policies*
+. Click the *(?)* tooltip to learn about utilizing a *disruption budget*
+. Click *Cancel* to exit out of the Fleet edit
+
+image::m1-editfleet-7.png[link=self, window=blank]
+
+=== Module 1 Summary
+*Thank you* for completing our Module 1 Lesson.  
+
+In this Lesson, you learned how Edge Manager surfaces top level edge device monitoring information.  In addition, you learned how Edge Manager
+Fleet specifications can be set for all devices that are members of a fleet.  This functionality allows users to declaritively specify their desired state for Edge Devices and subsequently rely
+on Edge Manager to enforce these specifications in order to help eliminate configuration drift.
+
+=== Up Next
+
+In the next Module we will ask you to onboard your own (new store) edge device and further examine Edge Manager's capabilities.

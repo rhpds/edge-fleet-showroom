@@ -25,10 +25,3 @@ have already been preinstalled for you
 
 image::LabLayout.png[link=self, window=blank, width=100%]
 
-=== Lab Access
-
-(Ken: I left this default section here because I wasn't sure what will initially be viewable to students 'on the right' - will it be ACM/OCP Login window?)
-
-The terminal window to your right is *already* logged into the lab environment as the `{ssh_user}` user via `ssh`. 
-All steps of this lab are to be completed as the `{ssh_user}` user.
-
