@@ -24,4 +24,3 @@ have already been preinstalled for you
 - (Your Lab Laptop Browser will function as the retail Point of Sale Terminal)
 
 image::LabLayout.png[link=self, window=blank, width=100%]
-
