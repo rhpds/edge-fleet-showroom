@@ -39,12 +39,14 @@ In a moment, we are going to need your help bringing a new store online in your
 home town but first let's get you logged into your new work environment for an 
 initial look around.
 
+username: {user}
+
 === Lab Login
 . Click https://console-openshift-console.apps.cluster-bblth.dynamic.redhatworkshops.io/multicloud/home/overview[here] to access your Lab Environment
 +
 [source,bash]
 ----
-username:  user1# (replace '#' with *your* user number)
+username:  {user}
 ----
 
 +
