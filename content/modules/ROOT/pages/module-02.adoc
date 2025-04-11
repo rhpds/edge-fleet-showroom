@@ -6,4 +6,8 @@ Ken:  Need to write Module 2/3. This will go quickly once/now that we have a wor
 
 Storyboard Screenshot with Module 2 Blue Arrow:
 
+Testing flightctl cli api:
+
+URL=https://api.apps.cluster-{guid}.dynamic.redhatworksop.io
+
 image::storyboard.png[link=self, window=blank]
