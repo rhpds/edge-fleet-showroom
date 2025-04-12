@@ -25,10 +25,7 @@ image::RetailExpansion.png[link=self, window=blank]
 
 In each location we have a back of store edge device running a RHEL 9 bootc image
 container (which also includes the mandatory Edge Manager Agent). These store devices run a 
-Point-of-Sale (POS) application on top of https://www.redhat.com/en/topics/edge-computing/microshift[MicroShift ,window=_blank] 
-that is accessed via the front of store POS kiosks.  MicroShift brings the power
-and scalability of Kubernetes to the edge, as a natural extension of an OpenShift environment,
-allowing applications to be written once and run right where they are needed. 
+Point-of-Sale (POS) application which is accessible via the front of store point of sale kiosks.
 
 image::StoreComposition.png[link=self, window=blank]
 
@@ -44,15 +41,14 @@ username: {user}
 === Lab Login
 . Click https://console-openshift-console.apps.cluster-bblth.dynamic.redhatworkshops.io/multicloud/home/overview[here] to access your Lab Environment
 +
-[source,bash]
+[source,sh,role=execute]
 ----
-username:  {user}
+{user}
 ----
-
 +
-[source,bash]
+[source,sh,role=execute]
 ----
-password:  {provide password}  (Ken: Are they already given this password when they first login to the RHDP interface?)
+openshift-edge
 ----
 
 NOTE: The Lab hyperlink is also available by mousing over 'Links' (in the upper-right hand corner of this lab manual) and selecting, "Lab Login"
@@ -149,4 +145,4 @@ on Edge Manager to enforce these specifications in order to help eliminate confi
 
 === Up Next
 
-In the next Module we will ask you to onboard your own (new store) edge device and further examine Edge Manager's capabilities.
+In the next Module we will review the Edge Manager Architecture at a high level and then ask you to onboard your own (new store) edge device.
