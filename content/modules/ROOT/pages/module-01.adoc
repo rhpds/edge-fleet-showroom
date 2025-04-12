@@ -37,14 +37,26 @@ home town but first let's get you logged into your new work environment for an
 initial look around.
 
 === Lab Login
-Click link:{console_url}[here,window=_blank] to access your Lab Environment<br>
+Click link:{console_url}[here,window=_blank] to access your Lab Environment
+
+[cols="1,1", options="header"]
+|===
+| Username | Password
+| {user} | +
+[source,sh,role=execute]
+----
+openshift-edge
+----
+|===
+
+=== Lab Login
+Click link:{console_url}[here,window=_blank] to access your Lab Environment
 
 [cols="1,1", options="header"]
 |===
 | Username | Password
 | {user} | pass:[<span style="background-color: #f0f0f0;">openshift-edge</span>]
 |===
-
 
 
 === Lab Login
