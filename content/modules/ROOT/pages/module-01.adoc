@@ -43,7 +43,7 @@ Click link:{console_url}[here,window=_blank] to access your Lab Environment
 .Username
 [source,sh,role=execute]
 ----
-{user}
+{component.user}
 ----
 
 [.no-copy-label]

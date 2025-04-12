@@ -15,7 +15,7 @@ asciidoc:
     ssh_password: devops
     ssh_command: ssh someone@example.com
     page-links:
-    - url: https://console-openshift-console.apps.cluster-bblth.dynamic.redhatworkshops.io/multicloud/home/overview
+    - url: {console_url}
       text: Lab Login
     - url: https://qrcoderaptor.com/
       text: QR Code Scanner
