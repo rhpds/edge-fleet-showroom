@@ -41,17 +41,18 @@ Click link:{console_url}[here,window=_blank] to access your Lab Environment
 
 [.no-copy-label]
 .Username
-[source,sh,subs=attributes+]
+[source,sh,role=execute,subs=attributes+]
 ----
 {user}
 ----
 
 [.no-copy-label]
 .Password
-[source,sh]
+[source,sh,role=execute]
 ----
 openshift-edge
 ----
+
 
 NOTE: The Lab hyperlink is also available by mousing over 'Links' (in the upper-right hand corner of this lab manual) and selecting, "Lab Login"
 
