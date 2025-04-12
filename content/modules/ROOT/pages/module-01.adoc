@@ -41,39 +41,14 @@ Click link:{console_url}[here,window=_blank] to access your Lab Environment
 
 [.no-copy-label]
 .Username
-[source,sh,role=execute]
+[source,sh,subs=attributes+]
 ----
-{component.user}
+{user}
 ----
 
 [.no-copy-label]
 .Password
-[source,sh,role=execute]
-----
-openshift-edge
-----
-
-
-
-=== Lab Login
-Click link:{console_url}[here,window=_blank] to access your Lab Environment
-
-[cols="1,1", options="header"]
-|===
-| Username | Password
-| {user} | pass:[<span style="background-color: #f0f0f0;">openshift-edge</span>]
-|===
-
-
-=== Lab Login
-. Click {console_url}[here,window=_blank] to access your Lab Environment
-+
-[source,sh,role=execute]
-----
-{user}
-----
-+
-[source,sh,role=execute]
+[source,sh]
 ----
 openshift-edge
 ----
@@ -86,7 +61,7 @@ You are now logged into an OpenShift Container Platform environment which also h
 If you have never used these capabilities before, don't worry.  We are here to examine the Edge Manager portions only.  Edge Manager is running 
 on OpenShift as a set of containerized microservices (one of which displays the UI elements that we are going to explore now)
 
-. Expand and set to *All Clusters*
+. Expand and set to *All Cluster*
 . Expand the *Home* menu
 . Select *Overview*
 . Click *Edge*
