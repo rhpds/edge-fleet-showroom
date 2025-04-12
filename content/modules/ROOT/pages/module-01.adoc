@@ -42,12 +42,14 @@ Click link:{console_url}[here,window=_blank] to access your Lab Environment
 [cols="1,1", options="header"]
 |===
 | Username | Password
-| {user} | +
+| {user} | 
+a|
 [source,sh,role=execute]
 ----
 openshift-edge
 ----
 |===
+
 
 === Lab Login
 Click link:{console_url}[here,window=_blank] to access your Lab Environment
