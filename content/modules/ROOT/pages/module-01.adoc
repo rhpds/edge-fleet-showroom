@@ -36,14 +36,18 @@ In a moment, we are going to need your help bringing a new store online in your
 home town but first let's get you logged into your new work environment for an 
 initial look around.
 
-username: {user}
-
-{console_url}
-
-Click {console_url}[here,window=_blank] to access your Lab Environment
+=== Lab Login
+. Click {console_url}[here,window=_blank] to access your Lab Environment
+Username: {user}
+Password:
++
+[source,sh,role=execute]
+----
+openshift-edge
+----
 
 === Lab Login
-. Click https://console-openshift-console.apps.cluster-bblth.dynamic.redhatworkshops.io/multicloud/home/overview[here] to access your Lab Environment
+. Click {console_url}[here,window=_blank] to access your Lab Environment
 +
 [source,sh,role=execute]
 ----
