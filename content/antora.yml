@@ -15,8 +15,6 @@ asciidoc:
     ssh_password: devops
     ssh_command: ssh someone@example.com
     page-links:
-    - url: https://showroom-showroom-zmdtn-{user}.apps.cluster-zmdtn.dynamic.redhatworkshops.io/content/modules/lab-access.html
-      text: Lab Access Details
     - url: https://qrcoderaptor.com/
       text: QR Code Scanner
     - url: https://github.com/flightctl/flightctl

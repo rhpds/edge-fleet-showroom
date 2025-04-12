@@ -9,3 +9,5 @@
 * xref:module-03.adoc[]
 ** xref:module-03.adoc#prerequisites[TBD]
 ** xref:module-03.adoc#container[TBD]
+
+* xref:lab-access.adoc[Lab Access]
