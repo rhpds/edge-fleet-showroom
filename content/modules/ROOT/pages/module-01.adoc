@@ -39,11 +39,12 @@ initial look around.
 === Lab Login
 Click link:{console_url}[here,window=_blank] to access your Lab Environment
 
-[cols="1,1", options="header"]
-|===
-| Username | Password
-| {user} | openshift-edge
-|===
+[.no-copy-label]
+.Username
+[source,sh,role=execute]
+----
+{user}
+----
 
 [.no-copy-label]
 .Password
