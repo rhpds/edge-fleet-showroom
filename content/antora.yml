@@ -16,7 +16,7 @@ asciidoc:
     ssh_command: ssh someone@example.com
     page-links:
     - url: {console_url}
-      text: Lab Login
+      text: Lab Access Details
     - url: https://qrcoderaptor.com/
       text: QR Code Scanner
     - url: https://github.com/flightctl/flightctl
