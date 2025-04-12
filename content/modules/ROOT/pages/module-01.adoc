@@ -37,14 +37,14 @@ home town but first let's get you logged into your new work environment for an
 initial look around.
 
 === Lab Login
-. Click link:{console_url}[here,window=_blank] to access your Lab Environment<br>
+Click link:{console_url}[here,window=_blank] to access your Lab Environment<br>
 
 [cols="1,1", options="header"]
 |===
 | Username | Password
-| {z_gitea_web_ui_username} | {z_gitea_web_ui_password}
-| {z_ansible_controller_admin_username} | {z_ansible_controller_admin_password}
+| {user} | pass:[<span style="background-color: #f0f0f0;">openshift-edge</span>]
 |===
+
 
 
 === Lab Login
