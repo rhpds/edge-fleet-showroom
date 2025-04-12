@@ -37,7 +37,7 @@ home town but first let's get you logged into your new work environment for an
 initial look around.
 
 === Lab Login
-Click link:{console_url}[here,window=_blank] to access your Lab Environment
+Click link:{console_url}[here,window=_blank] to access your Lab Environment (this link will open a new browser tab)
 
 [.no-copy-label]
 .Username
@@ -54,7 +54,7 @@ openshift-edge
 ----
 
 
-NOTE: The Lab hyperlink is also available by mousing over 'Links' (in the upper-right hand corner of this lab manual) and selecting, "Lab Login"
+NOTE: All Lab Login information is available via the left-hand nav item, "Lab Access"
 
 === Exploring Edge Manager
 
