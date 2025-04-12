@@ -40,7 +40,7 @@ username: {user}
 
 {console_url}
 
-Click {console_url}[here] to access your Lab Environment
+Click {console_url}[here,window=_blank] to access your Lab Environment
 
 === Lab Login
 . Click https://console-openshift-console.apps.cluster-bblth.dynamic.redhatworkshops.io/multicloud/home/overview[here] to access your Lab Environment
