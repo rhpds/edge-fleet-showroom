@@ -11,16 +11,67 @@ utilized for storing inventory and runtime information such as current device ta
 we will explore in a later module)
 . *Edge Device access* utilizes an Agent that is running on each managed device. The agent always 'calls home' to the Edge Manager service, 
 so the device can be on a private network or have a dynamic IP address  
-. *Git repository* integration (optional) enables storing of device and device fleet configuration. When utilized the Edge Manager service 
-can periodically poll for updates
+. *Git repository* integration (optional) enables storing of device and device fleet configuration. When utilized, the Edge Manager service 
+periodically poll for updates
 . *External systems* can be utilized by the Edge Manager service to authenticate and authorized users, get mTLS certificates signed, or query
 configuration for managed devices
 
 == New Store Edge Device Onboarding
-Now that you have seen an overview of Edge Manager and examined its Architecture, let's bring our new store edge device online.
+Now that you have seen an overview of Edge Manager and examined its Architecture, it's time to bring our new store online 
 
-NOTE: Unless you are 'User1' in this Lab, your user ID will be different than in the examples shown. Please make sure that are utilizing 
-your assigned user ID: {user} 
+NOTE: Unless you are assigned as 'user1' in this Lab, the user ID shown in the following screenshots will be different than your own user ID.
 
 === Device Enrollment
+Return to your lab environment and perform the following steps
 
+. Expand and select *local-cluster*
+. Expand *Virtualization* menu
+. Select *VirtualMachines*
+. Click *wksp-user1-edge-device*
+
+image::m2-virtualization.png[link=self, window=blank, width=100%]
+
+Your Edge Device virtual machine has been pre-configured with a RHEL 9.5 bootc image containing an Edge Manager agent, let's power on the device
+
+. Click the VM *start (play)* icon
+. Click *Open web console*
+
+image::m2-startvm.png[link=self, window=blank, width=100%]
+
+Note that a QR code is presented to enable further enrollment.  If you have a Mobile Device, continue with the steps indicated.  If you do not have
+a Mobile Device, click here to follow steps to use a web based QR reader.  
+
+=== QR Enrollment via Mobile Phone
+Scan the QR code and open the site in your device browser. As a reminder, here are the credentials you can utilize to login:
+
+[.no-copy-label]
+.Username
+[source,sh,role=execute,subs=attributes+]
+----
+{user}
+----
+
+[.no-copy-label]
+.Password
+[source,sh,role=execute]
+----
+openshift-edge
+----
+
+. Enter *Username*: {user}
+. Enter Password: openshift-edge
+. Select *Login*
+
+image::m2-mobile-1.png[link=self, window=blank, width=50%]
+
+. Expand *Actions*
+. Select *Approve*
+
+image::m2-mobile-2.png[link=self, window=blank, width=50%]
+
+IMPORTANT: For the device name (alias) please make sure that you replace 'YourHomeTown' with *your own home town* and append the alias with your user number ({user})
+
+. Enter your *device name (alias)*: [YourHomeTown]-store-{user}
+. Select *Approve*
+
+image::m2-mobile-3.png[link=self, window=blank, width=50%]
