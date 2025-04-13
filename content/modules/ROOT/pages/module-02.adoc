@@ -19,7 +19,7 @@ configuration for managed devices
 == New Store Edge Device Onboarding
 Now that you have seen an overview of Edge Manager and examined its Architecture, it's time to bring our new store online 
 
-NOTE: Unless you are assigned as 'user1' in this Lab, the user ID shown in the following screenshots will contain a different user ID than your own.
+NOTE: Unless you are assigned as 'user1' in this Lab, the user ID shown in the following screenshots will contain a different user ID other than your own.
 
 === Device Enrollment
 Return to your lab environment and perform the following steps
