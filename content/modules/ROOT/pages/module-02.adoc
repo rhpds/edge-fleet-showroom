@@ -12,14 +12,14 @@ we will explore in a later module)
 . *Edge Device access* utilizes an Agent that is running on each managed device. The agent always 'calls home' to the Edge Manager service, 
 so the device can be on a private network or have a dynamic IP address  
 . *Git repository* integration (optional) enables storing of device and device fleet configuration. When utilized, the Edge Manager service 
-periodically poll for updates
+periodically polls Git for updates
 . *External systems* can be utilized by the Edge Manager service to authenticate and authorized users, get mTLS certificates signed, or query
 configuration for managed devices
 
 == New Store Edge Device Onboarding
 Now that you have seen an overview of Edge Manager and examined its Architecture, it's time to bring our new store online 
 
-NOTE: Unless you are assigned as 'user1' in this Lab, the user ID shown in the following screenshots will be different than your own user ID.
+NOTE: Unless you are assigned as 'user1' in this Lab, the user ID shown in the following screenshots will contain a different user ID than your own.
 
 === Device Enrollment
 Return to your lab environment and perform the following steps
@@ -27,39 +27,29 @@ Return to your lab environment and perform the following steps
 . Expand and select *local-cluster*
 . Expand *Virtualization* menu
 . Select *VirtualMachines*
-. Click *wksp-user1-edge-device*
+. Click *wksp-{user}-edge-device*
 
 image::m2-virtualization.png[link=self, window=blank, width=100%]
 
 Your Edge Device virtual machine has been pre-configured with a RHEL 9.5 bootc image containing an Edge Manager agent, let's power on the device
 
 . Click the VM *start (play)* icon
-. Click *Open web console*
+. Click *Open web console* (to open the console in a new Browser tab)
 
 image::m2-startvm.png[link=self, window=blank, width=100%]
 
-Note that a QR code is presented to enable further enrollment.  If you have a Mobile Device, continue with the steps indicated.  If you do not have
-a Mobile Device, click here to follow steps to use a web based QR reader.  
+Note that a QR code is available to enable further enrollment.   
 
 === QR Enrollment via Mobile Phone
-Scan the QR code and open the site in your device browser. As a reminder, here are the credentials you can utilize to login:
+If you have a Mobile Device, continue with the steps indicated below.  If you do not have
+a Mobile Device, click here to follow steps to use a web based QR reader. 
 
-[.no-copy-label]
-.Username
-[source,sh,role=execute,subs=attributes+]
-----
-{user}
-----
+Scan the QR code and open the site in your mobile device browser. 
 
-[.no-copy-label]
-.Password
-[source,sh,role=execute]
-----
-openshift-edge
-----
+IMPORTANT: Unless you have been assigned 'user1' do not use 'user1' as your Username (as shown in the screenshot below). Please utilize the name that you have been assigned: {user}
 
 . Enter *Username*: {user}
-. Enter Password: openshift-edge
+. Enter *Password*: {password}
 . Select *Login*
 
 image::m2-mobile-1.png[link=self, window=blank, width=50%]
@@ -69,9 +59,203 @@ image::m2-mobile-1.png[link=self, window=blank, width=50%]
 
 image::m2-mobile-2.png[link=self, window=blank, width=50%]
 
-IMPORTANT: For the device name (alias) please make sure that you replace 'YourHomeTown' with *your own home town* and append the alias with your user number ({user})
+IMPORTANT: For the device name (alias) please make sure that you replace 'YourHomeTown' with *your own home town* and append the alias with your user number: ({user})
 
 . Enter your *device name (alias)*: [YourHomeTown]-store-{user}
 . Select *Approve*
 
 image::m2-mobile-3.png[link=self, window=blank, width=50%]
+
+Since you have enrolled via a Mobile Device, you can skip the next section.
+
+. Click *Device Details* in the right-hand Lab Manual Contents directory
+
+image::m2-devicedetails.png[link=self, window=blank, width=50%]
+
+KEN: UPDATE THE ABOVE SCREENSHOT ONCE NAV IS COMPLETE 
+
+=== QR Code Enrollment via Web Browser
+
+Ken: Enter Steps (verify with Patrick that Lab Terminals can use PRINTSCR Key)
+
+=== Device Details
+Now that the device approval is complete, let's jump back into the Edge Manager Lab UI and further examine your new store device.
+
+. Expand and select *All Clusters*
+. Expand *Edge Management*
+. Select *Devices*
+. Change search filter from *Labels and fleets* to *Name and alias*
+. Enter the *hometown name you chose* for your device to filter the device list
+. Click *YourHomeTown-store-{user}* device
+
+NOTE: The search filter in step 5 above *is* case-sensitive
+
+image::m2-userdevice-1.png[link=self, window=blank, width=100%]
+
+In the Device details tab we observe a few important details
+
+. *System image (running)*: the device is running a bootc OS image that ends in *'...base:1.0.0'* (as its name implies, this is a 'base' image containing no custom applications)
+. *Device status: Online* - the device is in an *Online* status (by default, the Edge Manager agent reports in to the Edge Manager service every 60 seconds which populates information like this)
+. *Fleet name: None* - when we enrolled the device, we did not join it to a Fleet (we will do so in a moment)
+. Click *Terminal*
+
+image::m2-userdevice-2.png[link=self, window=blank, width=100%]
+
+NOTE: It can take a few moments for your Terminal session to establish (thank you for your patience)
+
+Let's check a few items on our Edge Device via the Terminal
+
+. Examine the Red Hat Enterprise Linux version that is running on this device
++
+[source,sh,role=execute]
+----
+cat /etc/redhat-release
+----
++
+.Sample Output
+[source,texinfo,subs="attributes"]
+----
+Red Hat Enterprise Linux release 9.5 (Plow)
+----
+. Observe the current booted 'base' image (with no rollback image present) by issuing this command:
++
+[source,sh,role=execute]
+----
+bootc status
+----
++
+.Sample Output
+[source,texinfo,subs="attributes"]
+----
+No staged image present
+Current booted image: image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-base:1.0.0
+    Image version: 9.20250326.0 (2025-04-10 20:57:38.715070587 UTC)
+    Image digest: sha256:e37967518e6f9679f761524ca74b02298b81baa6f82b40112e2c20b1aab2f1f8
+No rollback image present
+----
+. Validate that there are currently no application Containers running:
++
+[source,sh,role=execute]
+----
+podman ps -a
+----
++
+.Sample Output
+[source,texinfo,subs="attributes"]
+----
+CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
+----
+
+In order for this 'back of store' device to function properly, it needs to have a point-of-sale application present.  Our front
+of store point of sale Kiosk's access this application via an OpenShift route.  Let's examine that route next.
+
+. Expand and select *local-cluster*
+. Expand *Networking*
+. Select *Routes*
+. Click the 'pos' route *Location hyperlink* to open this route-to-app in a new browser tab
+
+image::m2-routes-1.png[link=self, window=blank, width=100%]
+
+. Note that we receive an, *"Application is not available"* error message (this is expected at this time because our 'base' device image does not contain
+the custom point of sale application).  
+
+image::m2-appnotavailable-1.png[link=self, window=blank, width=100%]
+
+== Fleet Management
+
+Keep the Application Brower Tab open and return to the Routes Tab in the OpenShift UI
+
+. Expand and select *All Clusters*
+. Expand *Edge Management*
+. Select *Devices*
+. Change search filter from *Labels and fleets* to *Name and alias*
+. Enter the *hometown name you chose* for your device to filter the device list
+. Click *YourHomeTown-store-{user}*
+
+image::m2-userdevice-1.png[link=self, window=blank, width=100%]
+
+We are now going to join our new store device to the existing *'point-of-sale-prod'* fleet we examined earlier. 
+
+Pop Quiz: Do you remember the mechanism that we utilize to set fleet membership?
+
+If you answered, "Fleet Device selector label", congratulations!  (This will be noted on your end of year, Edge Megastore, Inc., performance review)
+
+The *'point-of-sale-prod'* fleet is configured with a *device selector* label set to: *pos=prod*.  Let's add that label to our new store device now.
+
+. Click *Add label* and replace 'key=value' with *pos=prod* followed by pressing your *enter* key 
+. Select the (!) icon at the end of the *'...base:1.0.0'* image
+
+image::m2-userdevice-3.png[link=self, window=blank, width=100%]
+
+Note that we have a *System image mismatch*.  Edge Manager is informing us that the desired state image for any device that is a member of this fleet
+*must be* a bootc image ending in *'...pos-prod:1.0.0'*.  Since our new device is running a different (base) image, Edge Manager is automatically self-healing
+the device to desired state.  
+
+During this self-healing process, you will observe (via the *System status* pane):
+
+. *'Update status'* change to '*Updating*', followed by
+. *'Device status'* change to '*Rebooting*'
+
+image::m2-userdevice-4.png[link=self, window=blank, width=100%]
+
+NOTE: It takes a few minutes for the device to apply the new '...pos-prod:1.0.0' image and reboot. Now would be a good time to relax a little while you wait.  
+Thank you for your patience!
+
+Once the device is reporting, *'Online'* and *'Up-to-date'*:
+
+. Click *Terminal*
+
+Now that the image has been brought to the fleet desired state OS configuration, let's examine a few items within the Terminal
+
+. Observe that the current booted image has been set to *'...pos-prod:1.0.0'* and our previous *'...base:1.0.0'* image is indicated as a rollback option 
++
+[source,sh,role=execute]
+----
+bootc status
+----
++
+.Sample Output
+[source,texinfo,subs="attributes"]
+----
+No staged image present
+Current booted image: containers-storage:image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-pos-prod:1.0.0
+    Image version: 9.20250326.0 (2025-04-10 21:00:03.968743927 UTC)
+    Image digest: sha256:2c30b56e03862b92bbca2a50b3786642c8dd5af5309b8b2fa4f2de08d9a746ec
+Current rollback image: image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-base:1.0.0
+    Image version: 9.20250326.0 (2025-04-10 20:57:38.715070587 UTC)
+    Image digest: sha256:e37967518e6f9679f761524ca74b02298b81baa6f82b40112e2c20b1aab2f1f8
+----
+. Check the containers that are now running on the device:
++
+[source,sh,role=execute]
+----
+podman ps -a
+----
++
+.Sample Output
+[source,texinfo,subs="attributes"]
+----
+CONTAINER ID  IMAGE                                    COMMAND               CREATED         STATUS         PORTS                                        NAMES
+53347f7ca8f7  localhost/podman-pause:5.2.2-1737721907                        10 minutes ago  Up 10 minutes                                               47a0b459f7c9-service
+8df58eb27786  localhost/podman-pause:5.2.2-1737721907                        10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp                      a5aa9d20b8d3-infra
+268f5b977564  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod
+----
+
+The '*pos-v1-prod:1.0.0*' container listed is our point of sale application which is accessed via the front of store pos kiosk's.
+
+Return to your Application browser tab (if you inadvertently closed this tab, you can get back to this view by selecting *local-cluster* in the top menu, followed by
+selecting *Networking\Routes* via the left-hand nav)
+
+. Refresh your browser and note that the point of sale application is now available!
+
+image::m2-pos-app.png[link=self, window=blank, width=100%]
+
+
+== Module 2 Summary
+*Thank you* for completing our Module 2 Lesson.  
+
+In this Lesson, you learned how to onboard a new store edge device into Edge Manager.  
+
+=== Up Next
+
+In the next Module we will review the Edge Manager Architecture at a high level and then ask you to onboard your own (new store) edge device.

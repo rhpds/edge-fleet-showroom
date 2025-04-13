@@ -139,7 +139,7 @@ When applying updates to Devices, we have the ability to specify *Advanced confi
 
 image::m1-editfleet-7.png[link=self, window=blank]
 
-=== Module 1 Summary
+== Module 1 Summary
 *Thank you* for completing our Module 1 Lesson.  
 
 In this Lesson, you learned how Edge Manager surfaces top level edge device monitoring information.  In addition, you learned how Edge Manager

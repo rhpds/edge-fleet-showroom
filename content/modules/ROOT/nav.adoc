@@ -5,6 +5,7 @@
 * xref:module-02.adoc[]
 ** xref:module-02.adoc#highlevelarchitecture[High Level Architecture]
 ** xref:module-02.adoc#onboarding[Device Onboarding]
+** xref:module-02.adoc#devicedetails[Device Details]
 ** xref:module-02.adoc#fleetmanagement[Fleet Management]
 
 * xref:module-03.adoc[]
