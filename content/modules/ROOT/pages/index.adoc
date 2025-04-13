@@ -16,8 +16,7 @@ NOTE: https://github.com/flightctl/flightctl["Flight Control",window=_blank] is 
 
 == Lab Layout
 
-In this lab you will be utilizing the following Red Hat software components which
-have already been preinstalled for you
+In this lab you will be utilizing the following Red Hat software components which have already been preinstalled for you
 
 - Red Hat Edge Manager + Advanced Cluster Management with OpenShift 
 - OpenShift-Virtualization Virtual Machines (acting as Student Store Edge Devices)

@@ -37,7 +37,7 @@ home town but first let's get you logged into your new work environment for an
 initial look around.
 
 === Lab Login
-Click link:{console_url}[here,window=_blank] to access your Lab Environment (this link will open a new browser tab)
+Click link:{console_url}[here,window=_blank] to access your Lab Environment (this link will open in a new browser tab)
 
 [.no-copy-label]
 .Username
@@ -70,9 +70,9 @@ on OpenShift as a set of containerized microservices (one of which displays the 
 image::m1-edgeoverview.png[link=self, window=blank]
 
 Note that we see top level monitoring information for devices currently under management.  We also observe the current quantity of devices under
-management (4 devices).  Speaking of devices, let's examine them next.
+management.  Speaking of devices, let's examine them next.
 
-. Expand the *Edge Management* menu
+. Expand the *Edge Management* left-hand navigation menu
 . Click *Devices*
 
 image::m1-devices.png[link=self, window=blank]
@@ -110,7 +110,7 @@ image::m1-editfleet-3.png[link=self, window=blank]
 As part of the device template, We can specify additional host configuration items (like custom systemd service config, network config, etc.)
 
 . Expand *Select a source type* (Edge manager can load pre-staged (inline) configuration files on the device, configuration files stored in Git or configuration files
-stored on an internal web (http) repository of their choice)
+stored on an internal web (http) repository)
 . Click the '*-*' symbol to close the configuration item
 
 image::m1-editfleet-4.png[link=self, window=blank]

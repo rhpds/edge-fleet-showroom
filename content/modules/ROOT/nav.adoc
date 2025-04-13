@@ -3,6 +3,7 @@
 ** xref:module-01.adoc#edgemanageroverview[Edge Manager Overview]
 
 * xref:module-02.adoc[]
+** xref:module-02.adoc#highlevelarchitecture[High Level Architecture]
 ** xref:module-02.adoc#onboarding[Device Onboarding]
 ** xref:module-02.adoc#fleetmanagement[Fleet Management]
 

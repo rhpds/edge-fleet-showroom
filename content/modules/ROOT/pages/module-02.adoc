@@ -1,13 +1,26 @@
 = 2. Edge Manager Operations
 
-Now that you have seen an overview of Edge Manager, let's bring our new store edge device online.
+== Edge Manager Architecture
+Edge Manager consists of the highlighted components as shown in the following high-level architecture diagram:
 
-Ken:  Need to write Module 2/3. This will go quickly once/now that we have a working catalog item, etc.
+image::m2-architecture.png[link=self, window=blank, width=100%]
 
-Storyboard Screenshot with Module 2 Blue Arrow:
+. *Edge Manager Service* which consists of an API Server, worker processes (not shown), and a PostgreSQL database
+utilized for storing inventory and runtime information such as current device target configuration and the reported actual configuration
+. *User access* is achieved via two primary interfaces: Edge Manager Web UI (which we briefly examined earlier) and Edge Manager CLI (which
+we will explore in a later module)
+. *Edge Device access* utilizes an Agent that is running on each managed device. The agent always 'calls home' to the Edge Manager service, 
+so the device can be on a private network or have a dynamic IP address  
+. *Git repository* integration (optional) enables storing of device and device fleet configuration. When utilized the Edge Manager service 
+can periodically poll for updates
+. *External systems* can be utilized by the Edge Manager service to authenticate and authorized users, get mTLS certificates signed, or query
+configuration for managed devices
 
-Testing flightctl cli api:
+== New Store Edge Device Onboarding
+Now that you have seen an overview of Edge Manager and examined its Architecture, let's bring our new store edge device online.
 
-URL=https://api.apps.cluster-{guid}.dynamic.redhatworksop.io
+NOTE: Unless you are 'User1' in this Lab, your user ID will be different than in the examples shown. Please make sure that are utilizing 
+your assigned user ID: {user} 
 
-image::storyboard.png[link=self, window=blank]
+=== Device Enrollment
+
