@@ -3,8 +3,182 @@
 [#newfleetcreation]
 == New Fleet Creation
 
-We're in the home stretch and our new store is almost ready to open (thanks to you). Let's create a new Fleet and deploy
-a _working_ point of sale application next.
+We're in the home stretch and our new store is almost ready to open (thanks to you). 
+
+In a moment we will have you create a new Fleet and wire in a new (and _functional_) point of sale application into the fleet device template. Before 
+doing so, let's examine our networking route that will be utilized to access this *new POS app*.
+
+. Expand and select *local-cluster*
+. Expand *Networking*
+. Select *Routes*
+. Click the 'new-pos' route *Location hyperlink* to open this route-to-app in a new browser tab
+
+NOTE: The 'application is not available' error message is expected at this time since we have not added the new POS app to our device yet
+
+image::m3-routes-1.png[link=self, window=blank, width=100%]
+
+Keep the Application Browser Tab open and return to the *Routes* Browser Tab 
+
+. Expand and select *All Clusters*
+. Expand *Edge Management*
+. Select *Fleets*
+. Click *Create fleet*
+
+image::m3-createfleet.png[link=self, window=blank, width=100%]
+
+Populate the *Create fleet* wizard with the following *General info* values +
+
+. *Name:*
++ 
+[source,sh,role=execute]
+----
+{user}-new-store-fleet
+----
+. *Device selector:*
++
+[source,sh,role=execute]
+----
+fleet={user}
+----
+. Click *Next*
+
+IMPORTANT: The following screenshots are shown for example purposes only and may not match your User ID. 
+Unless you have been assigned, 'user1', do not use 'user1' vs. your assigned User ID: {user}. 
+
+image::m3-fleetgeneralinfo.png[link=self, window=blank, width=100%]
+
+Populate the following *Device template* values +
+
+. *System image:* (Note: this is the same '...pos-prod:1.0.0' image that we used previously)
++ 
+[source,sh,role=execute]
+----
+image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-pos-prod:1.0.0
+----
+. Click *+ Add application*
+. *Image:*
++
+[source,sh,role=execute]
+----
+quay.io/kenosborn/podman-compose:v2
+----
+. *Application name:*
++
+[source,sh,role=execute]
+----
+new-pos-app
+----
+. Click *Next*
+
+image::m3-fleetdevicetemplate.png[link=self, window=blank, width=100%]
+
+Leave the *Updates* parameters at their default settings
+
+. Click *Next*
+
+image::m3-fleetupdates.png[link=self, window=blank, width=100%]
+
+*Review and create*
+
+. Review settings and click *Create fleet*
+
+image::m3-fleetreviewcreate.png[link=self, window=blank, width=100%]
+
+Now that the we have created our new fleet, let's go to your recently onboarded device (from Module 2) and change its fleet membership
+
+. Expand and select *All Clusters*
+. Expand *Edge Management*
+. Select *Devices*
+. Change the *Devices* section search filter from *Labels and fleets* to *Name and alias* (You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
+. Enter the *hometown name you chose* for your device to filter the device list
+. Click *YourHomeTown-store-{user}* device
+
+image::m3-userdevice-1.png[link=self, window=blank, width=100%]
+
+. Click the *X* next to *pos=prod* to remove the current label
+
+image::m3-userdevice-2.png[link=self, window=blank, width=100%]
+
+. Click *Add label*
+. Replace *key=value* with *fleet={user}* and press *enter*
+. Observe that we are still _running the same_ *System image* ('...pos-prod:1.0.0') (a device reboot will not be required since an image swap is not needed)
+. Observe that your device *Applications* pane is now populated with our containerized application
+
+image::m3-userdevice-3.png[link=self, window=blank, width=100%]
+
+NOTE: It can take a few moments for your newly added Application to report a green *Running* status. Thank you for your patience.
+
+After your *new-pos-app* is returning a green *Running* status
+
+. Click *Terminal*
+. Check the containers that are now running on the device:
++
+[source,sh,role=execute]
+----
+podman ps -a
+----
++
+.Sample Output
+[source,texinfo,subs="attributes"]
+----
+CONTAINER ID  IMAGE                                    COMMAND               CREATED         STATUS         PORTS                                        NAMES
+111b1391a311  localhost/podman-pause:5.2.2-1737721907                        38 minutes ago  Up 37 minutes                                               47a0b459f7c9-service
+fd0157f0e2e1  localhost/podman-pause:5.2.2-1737721907                        38 minutes ago  Up 37 minutes  0.0.0.0:30000->8080/tcp                      9ba794295fe8-infra
+c0f559b1dad4  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  37 minutes ago  Up 37 minutes  0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod
+6ca9d626e4bb  quay.io/kenosborn/edge-megastore-pos:v1  nginx -g daemon o...  6 minutes ago   Up 6 minutes   0.0.0.0:8080->8080/tcp, 80/tcp, 8080/tcp     new-pos-app-173783_edge-megastore-pos_1
+----
+
+NOTE: The '*edge-megastore-pos:v1*' container listed at the bottom is our new point of sale application.
+
+Return to your Application browser tab (if you inadvertently closed this tab, you can get back to this view by selecting *local-cluster* in the top menu, followed by
+selecting *Networking\Routes* via the left-hand nav)
+
+. Refresh your browser and note that the new point of sale application is now available!
+. Click *Start*
+
+image::m3-new-pos-app.png[link=self, window=blank, width=100%]
+
+Let's order some (pretend) donuts via the new POS App (because...why not)?
+
+. Select *Red Glazed Donut*
+. Increase *quantity* to *75*
+. Tender a _crisp_ 100 dollar bill by clicking *+100.00*
+. Click *Submit*
+
+image::m3-new-pos-app-1.png[link=self, window=blank, width=100%]
+
+. Click *Proceed*
+
+image::m3-new-pos-app-2.png[link=self, window=blank, width=100%]
+
+. Click *Cancel*
+
+image::m3-new-pos-app-3.png[link=self, window=blank, width=100%]
+
+Your new home town Edge Megastore, Inc. location is now open for business
+
+++++
+<b style="font-size: 2em;">
+  <span style="color:red;">C</span>
+  <span style="color:orange;">o</span>
+  <span style="color:gold;">n</span>
+  <span style="color:green;">g</span>
+  <span style="color:blue;">r</span>
+  <span style="color:indigo;">a</span>
+  <span style="color:violet;">t</span>
+  <span style="color:red;">u</span>
+  <span style="color:orange;">l</span>
+  <span style="color:gold;">a</span>
+  <span style="color:green;">t</span>
+  <span style="color:blue;">i</span>
+  <span style="color:indigo;">o</span>
+  <span style="color:violet;">n</span>
+  <span style="color:red;">s</span>
+  <span style="color:orange;">!</span>
+</b>
+++++
+
+
 
 [#cli]
 == Edge Manager Command Line Interface

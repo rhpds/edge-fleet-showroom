@@ -50,7 +50,7 @@ Click link:{console_url}[here,window=_blank] to access your Lab Environment (thi
 .Password
 [source,sh,role=execute]
 ----
-openshift-edge
+{password}
 ----
 
 

@@ -23,3 +23,15 @@ In this lab you will be utilizing the following Red Hat software components whic
 - (Your Lab Laptop Browser will function as the retail Point of Sale Terminal)
 
 image::LabLayout.png[link=self, window=blank, width=100%]
+
+== Edge Device Images 
+
+We have included a few 'Image Mode' (bootc) Red Hat Enterprise Linux (RHEL) 9 images for you to utilize during the Lab
+
+Like any Container image, these images can be stored in a container registry (in our lab, they are stored in the internal OpenShift
+Registry)
+
+. image-registry.openshift-image-registry.svc:5000/student-services/*rhel9-bootc-edgemanager-base:1.0.0*
+. image-registry.openshift-image-registry.svc:5000/student-services/*rhel9-bootc-edgemanager-pos-prod:1.0.0*
+
+NOTE: These images were pre-built for you so that you can focus on learning about Edge Manager vs. building images
