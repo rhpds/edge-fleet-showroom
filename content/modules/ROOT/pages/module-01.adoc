@@ -140,13 +140,13 @@ When applying updates to Devices, we have the ability to specify *Advanced confi
 image::m1-editfleet-7.png[link=self, window=blank]
 
 [#module1summary]
-= Module 1 Summary
+== Module 1 Summary
 *Thank you* for completing our Module 1 Lesson.  
 
 In this Lesson, you learned how Edge Manager surfaces top level edge device monitoring information.  In addition, you learned how Edge Manager
 Fleet specifications can be set for all devices that are members of a given fleet.  This functionality allows users to declaritively specify their desired state for Edge Devices and subsequently rely
 on Edge Manager to enforce these specifications in order to help eliminate configuration drift.
 
-== Up Next
+=== Up Next
 
 In the next Module we will review the Edge Manager Architecture at a high level and then ask you to onboard your own (new store) edge device.

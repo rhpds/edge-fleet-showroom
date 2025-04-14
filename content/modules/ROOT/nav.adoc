@@ -7,7 +7,7 @@
 ** xref:module-02.adoc#highlevelarchitecture[High Level Architecture]
 ** xref:module-02.adoc#onboarding[New Store Edge Device Onboarding]
 ** xref:module-02.adoc#fleetmanagement[Fleet Management]
-** xref:module-01.adoc#module2summary[Module Summary]
+** xref:module-02.adoc#module2summary[Module Summary]
 
 * xref:module-03.adoc[]
 ** xref:module-03.adoc#newfleetcreation[New Fleet Creation]

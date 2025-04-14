@@ -259,13 +259,17 @@ image::m2-pos-app.png[link=self, window=blank, width=100%]
 In this Lesson, you learned how to onboard a new store edge device into Edge Manager. You started your device with a simple base image (containing no applications) and then witnessed
 how Edge Manager automatically swapped this image to one containing the POS App (after joining a Fleet that has this desired state configuration). You may be wondering:  "Why not just 
 join the Fleet as part of onboarding?" and the answer is that you certainly could have done that but then you may not have learned as much about how Edge Manager functions.  Additionally, you 
-may have wondered, "Why not just bake the app(s) into the 'base' image?" and that is also certainly an option. The great thing about Edge Manager is that it gives users the optionality to configure
-things as they see fit, in alignment with any of their current build standards that might exist. 
+may have wondered, "Why not just bake the app(s) into the 'base' image?" and that is also certainly an option. 
+
+The great thing about Edge Manager is that it gives users the optionality to configure
+things as they see fit, in alignment with any of their current build standards.
 
 Regardless of the approach taken, it should hopefully be more evident to you that Edge Manager can play a significant role in preventing configuration drift for edge devices.  
 
 === Up Next
 
 You are well on your way to opening your new store for business; however, there is one small challenge. You may have noticed that our POS app is not the most useful (it doesn't actually do anything
-other than present a static user interface with no interoperability).  In our final module, you will learn how to create a new fleet from scratch and specify a new point of sale application as part
-of the fleet device template.  You will also explore how to monitor devices along with how to utilize the Edge Manager command line interface.
+other than present a static user interface with no user interoperability).  
+
+In our final module, you will learn how to create a new fleet from scratch and specify a new point of sale application as part
+of the fleet device template.  You will also explore the Edge Manager command line interface along with how to monitor and decommision devices.

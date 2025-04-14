@@ -3,7 +3,7 @@
 [#newfleetcreation]
 == New Fleet Creation
 
-We're in the home stretch and our new store is almost ready to open thanks to you. Let's create a new Fleet and deploy
+We're in the home stretch and our new store is almost ready to open (thanks to you). Let's create a new Fleet and deploy
 a _working_ point of sale application next.
 
 [#cli]
