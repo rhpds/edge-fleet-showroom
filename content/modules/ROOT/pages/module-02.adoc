@@ -85,11 +85,9 @@ Now that the device approval is complete, let's jump back into the Edge Manager 
 . Expand and select *All Clusters*
 . Expand *Edge Management*
 . Select *Devices*
-. Change search filter from *Labels and fleets* to *Name and alias*
+. Change the *Devices* section search filter from *Labels and fleets* to *Name and alias* (You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
 . Enter the *hometown name you chose* for your device (case sensitive) to filter the device list
 . Click *YourHomeTown-store-{user}* device
-
-NOTE: You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window
 
 image::m2-userdevice-1.png[link=self, window=blank, width=100%]
 
@@ -248,7 +246,7 @@ CONTAINER ID  IMAGE                                    COMMAND               CRE
 268f5b977564  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod
 ----
 
-The '*pos-v1-prod:1.0.0*' container listed is our point of sale application which is accessed via the front of store pos kiosk's.
+NOTE: The '*pos-v1-prod:1.0.0*' container listed is our point of sale application (which is accessed via the front of store pos kiosk's).
 
 Return to your Application browser tab (if you inadvertently closed this tab, you can get back to this view by selecting *local-cluster* in the top menu, followed by
 selecting *Networking\Routes* via the left-hand nav)

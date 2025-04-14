@@ -178,10 +178,61 @@ Your new home town Edge Megastore, Inc. location is now open for business
 </b>
 ++++
 
-
+Before calling it a day, let's finish our lab by examining a few more Edge Manager topics
 
 [#cli]
 == Edge Manager Command Line Interface
+
+The Edge Manager CLI contains a robust set of commands. In fact, most (if not all) of what we have explored in this lab via the Edge Manager UI can 
+be done via CLI.
+
+NOTE: The Edge Manager CLI is currently still named after the upstream project: *flightctl* and has been pre-loaded for you in our lab environment 
+
+. Click the OpenShift *>_* (Terminal) icon in the upper-right hand corner
+. Ensure that Project is set to: wksp-{user}
+. Click *Start*
+
+image::m3-cli-1.png[link=self, window=blank, width=100%]
+
+. Give yourself some more screen real estate by clicking the *Open terminal in new tab* icon
+
+image::m3-cli-2.png[link=self, window=blank, width=100%]
+
+We are now going to authenticate against the Edge Manager service and issue several CLI commands
+
+. Authenticate
++
+[source,sh,role=execute]
+----
+flightctl login https://api.apps.cluster-{guid}.dynamic.redhatworkshops.io --username {user} --password {password} --insecure-skip-tls-verify
+----
++
+.Sample Output
+[source,texinfo,subs="attributes"]
+----
+No staged image present
+Current booted image: containers-storage:image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-pos-prod:1.0.0
+    Image version: 9.20250326.0 (2025-04-10 21:00:03.968743927 UTC)
+    Image digest: sha256:2c30b56e03862b92bbca2a50b3786642c8dd5af5309b8b2fa4f2de08d9a746ec
+Current rollback image: image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-base:1.0.0
+    Image version: 9.20250326.0 (2025-04-10 20:57:38.715070587 UTC)
+    Image digest: sha256:e37967518e6f9679f761524ca74b02298b81baa6f82b40112e2c20b1aab2f1f8
+----
+. Check the containers that are now running on the device:
++
+[source,sh,role=execute]
+----
+podman ps -a
+----
++
+.Sample Output
+[source,texinfo,subs="attributes"]
+----
+CONTAINER ID  IMAGE                                    COMMAND               CREATED         STATUS         PORTS                                        NAMES
+53347f7ca8f7  localhost/podman-pause:5.2.2-1737721907                        10 minutes ago  Up 10 minutes                                               47a0b459f7c9-service
+8df58eb27786  localhost/podman-pause:5.2.2-1737721907                        10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp                      a5aa9d20b8d3-infra
+268f5b977564  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod
+----
 
 [#monitoring]
 == Edge Manager Monitoring and Decommission
