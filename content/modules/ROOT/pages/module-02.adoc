@@ -1,5 +1,6 @@
 = 2. Edge Manager Operations
 
+[#highlevelarchitecture]
 == Edge Manager Architecture
 Edge Manager consists of the highlighted components as shown in the following high-level architecture diagram:
 
@@ -16,6 +17,7 @@ periodically polls Git for updates
 . *External systems* can be utilized by the Edge Manager service to authenticate and authorized users, get mTLS certificates signed, or query
 configuration for managed devices
 
+[#onboarding]
 == New Store Edge Device Onboarding
 Now that you have seen an overview of Edge Manager and examined its Architecture, it's time to bring our new store online 
 
@@ -71,8 +73,6 @@ Since you have enrolled via a Mobile Device, you can skip the next section.
 . Click *Device Details* in the right-hand Lab Manual Contents directory
 
 image::m2-devicedetails.png[link=self, window=blank, width=50%]
-
-KEN: UPDATE THE ABOVE SCREENSHOT ONCE NAV IS COMPLETE 
 
 === QR Code Enrollment via Web Browser
 
@@ -161,9 +161,13 @@ the custom point of sale application).
 
 image::m2-appnotavailable-1.png[link=self, window=blank, width=100%]
 
+[#fleetmanagement]
 == Fleet Management
 
-Keep the Application Brower Tab open and return to the Routes Tab in the OpenShift UI
+In this section we are going to join our new store device to the existing fleet that you examined earlier, "point-of-sale-prod".  During this process, you will experience
+how Edge Manager maintains desired state configuration for any devices that are a member of this fleet.
+
+Keep the Application Browser Tab open and return to the Routes Tab in the OpenShift UI
 
 . Expand and select *All Clusters*
 . Expand *Edge Management*
@@ -174,9 +178,7 @@ Keep the Application Brower Tab open and return to the Routes Tab in the OpenShi
 
 image::m2-userdevice-1.png[link=self, window=blank, width=100%]
 
-We are now going to join our new store device to the existing *'point-of-sale-prod'* fleet we examined earlier. 
-
-Pop Quiz: Do you remember the mechanism that we utilize to set fleet membership?
+*Pop Quiz:* Do you remember the mechanism that we utilize to set fleet membership?
 
 If you answered, "Fleet Device selector label", congratulations!  (This will be noted on your end of year, Edge Megastore, Inc., performance review)
 
@@ -250,12 +252,20 @@ selecting *Networking\Routes* via the left-hand nav)
 
 image::m2-pos-app.png[link=self, window=blank, width=100%]
 
-
+[#module2summary]
 == Module 2 Summary
 *Thank you* for completing our Module 2 Lesson.  
 
-In this Lesson, you learned how to onboard a new store edge device into Edge Manager.  
+In this Lesson, you learned how to onboard a new store edge device into Edge Manager. You started your device with a simple base image (containing no applications) and then witnessed
+how Edge Manager automatically swapped this image to one containing the POS App (after joining a Fleet that has this desired state configuration). You may be wondering:  "Why not just 
+join the Fleet as part of onboarding?" and the answer is that you certainly could have done that but then you may not have learned as much about how Edge Manager functions.  Additionally, you 
+may have wondered, "Why not just bake the app(s) into the 'base' image?" and that is also certainly an option. The great thing about Edge Manager is that it gives users the optionality to configure
+things as they see fit, in alignment with any of their current build standards that might exist. 
+
+Regardless of the approach taken, it should hopefully be more evident to you that Edge Manager can play a significant role in preventing configuration drift for edge devices.  
 
 === Up Next
 
-In the next Module we will review the Edge Manager Architecture at a high level and then ask you to onboard your own (new store) edge device.
+You are well on your way to opening your new store for business; however, there is one small challenge. You may have noticed that our POS app is not the most useful (it doesn't actually do anything
+other than present a static user interface with no interoperability).  In our final module, you will learn how to create a new fleet from scratch and specify a new point of sale application as part
+of the fleet device template.  You will also explore how to monitor devices along with how to utilize the Edge Manager command line interface.

@@ -16,5 +16,5 @@ Click link:{console_url}[here,window=_blank] to access your Lab Environment
 .Password
 [source,sh,role=execute]
 ----
-openshift-edge
+{password}
 ----

@@ -1,15 +1,18 @@
 * xref:module-01.adoc[]
 ** xref:module-01.adoc#currentstorefootprint[Current Store Footprint]
 ** xref:module-01.adoc#edgemanageroverview[Edge Manager Overview]
+** xref:module-01.adoc#module1summary[Module Summary]
 
 * xref:module-02.adoc[]
 ** xref:module-02.adoc#highlevelarchitecture[High Level Architecture]
-** xref:module-02.adoc#onboarding[Device Onboarding]
-** xref:module-02.adoc#devicedetails[Device Details]
+** xref:module-02.adoc#onboarding[New Store Edge Device Onboarding]
 ** xref:module-02.adoc#fleetmanagement[Fleet Management]
+** xref:module-01.adoc#module2summary[Module Summary]
 
 * xref:module-03.adoc[]
-** xref:module-03.adoc#prerequisites[TBD]
-** xref:module-03.adoc#container[TBD]
+** xref:module-03.adoc#newfleetcreation[New Fleet Creation]
+** xref:module-03.adoc#cli[Command Line Interface]
+** xref:module-03.adoc#monitoring[Monitoring & Decommission]
+** xref:module-01.adoc#module3summary[Module Summary]
 
-* xref:lab-access.adoc[Lab Access]
+* xref:lab-access.adoc[]
