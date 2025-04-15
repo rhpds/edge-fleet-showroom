@@ -178,7 +178,10 @@ Your new home town Edge Megastore, Inc. location is now open for business
 </b>
 ++++
 
-Before calling it a day, let's finish our lab by examining a few more Edge Manager topics
+You've done a great job at Edge Megastore, Inc.!
+
+If you'd like to call it a day, you are welcome to end the lab here (*thank you!)*; however, if you would like to earn some Overtime (mythical) pay and explore a few more *advanced* topics 
+you are welcome to continue.
 
 [#cli]
 == Edge Manager Command Line Interface
