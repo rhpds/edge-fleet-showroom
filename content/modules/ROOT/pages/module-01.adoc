@@ -53,8 +53,6 @@ Click link:{console_url}[here,window=_blank] to access your Lab Environment (thi
 {password}
 ----
 
-Test Message Delete 
-
 NOTE: All Lab Login information is available via the left-hand nav item, "Lab Access"
 
 === Exploring Edge Manager
