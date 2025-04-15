@@ -355,15 +355,3 @@ By default, Edge Manager surfaces some basic monitoring information
 [#module3summary]
 == Module 3 Summary
 
-. Authenticate to the Edge Manager service via CLI
-+
-[source,sh,role=execute]
-----
-flightctl login https://api.apps.cluster-{guid}.dynamic.redhatworkshops.io --username {user} --password {password} --insecure-skip-tls-verify
-----
-+
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-Login successful.
-----
