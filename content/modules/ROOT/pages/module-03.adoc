@@ -192,8 +192,10 @@ be done via CLI.
 NOTE: The Edge Manager CLI is currently still named after the upstream project: *flightctl* and has been pre-loaded for you in our lab environment 
 
 . Click the OpenShift *>_* (Terminal) icon in the upper-right hand corner
-. Ensure that Project is set to: wksp-{user}
+. Set *Project* is set to: wksp-{user} (Note: You may need to scroll down to select)
 . Click *Start*
+
+NOTE: The wksp-user in this screenshot may not match your user ID  
 
 image::m3-cli-1.png[link=self, window=blank, width=100%]
 
@@ -392,10 +394,121 @@ c0f559b1dad4  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  3 h
 Exit the remote console session by holding down your *CTRL key* and pressing the *B key* three times
 
 [#monitoring]
-== Edge Manager Monitoring and Device Decommission
+== Edge Manager Device Monitoring and Decommission
 
-By default, Edge Manager surfaces some basic monitoring information 
+Let's explore the device monitoring that is available for our new store device
 
-[#module3summary]
-== Module 3 Summary
+. Expand and select *All Clusters*
+. Expand *Edge Management*
+. Select *Devices*
+. Change the *Devices* section search filter from *Labels and fleets* to *Name and alias* (You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
+. Enter the *hometown name you chose* for your device to filter the device list
+. Click *YourHomeTown-store-{user}* device
+
+image::m3-userdevice-1.png[link=self, window=blank, width=100%]
+
+We have previously seen (in the *System status* pane) how Device status and Update status change depending on our device state (rebooting, online, updating, up-to-date, etc.)
+
+. In the *System status* pane, click the *(?)* tooltips for each of the status items and review their contents
+
+image::m3-monitoring-2.png[link=self, window=blank, width=100%]
+
+Edge Manager also surfaces Application Status in the Device *Applications* pane. 
+
+Let's non-gracefully kill our new-pos-app container app and examine status
+
+. Click *Terminal*
+. Copy/Paste this command to kill our new-pos-app container
++
+[source,sh,role=execute]
+----
+podman kill -s 9 new-pos-app-173783_edge-megastore-pos_1
+----
++
+.Sample Output 
+[source,texinfo,subs="attributes"]
+----
+new-pos-app-173783_edge-megastore-pos_1
+----
+. List out the containers and note that the *new-pos-app* is in an *'Exited'* state
++
+[source,sh,role=execute]
+----
+podman kill -s 9 new-pos-app-173783_edge-megastore-pos_1
+----
++
+.Sample Output 
+[source,texinfo,subs="attributes"]
+----
+CONTAINER ID  IMAGE                                    COMMAND               CREATED       STATUS                           PORTS                                        NAMES
+111b1391a311  localhost/podman-pause:5.2.2-1737721907                        15 hours ago  Up 15 hours                                                                   47a0b459f7c9-service
+fd0157f0e2e1  localhost/podman-pause:5.2.2-1737721907                        15 hours ago  Up 15 hours                      0.0.0.0:30000->8080/tcp                      9ba794295fe8-infra
+c0f559b1dad4  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  15 hours ago  Up 15 hours                      0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod
+6ca9d626e4bb  quay.io/kenosborn/edge-megastore-pos:v1  nginx -g daemon o...  15 hours ago  Exited (137) About a minute ago  0.0.0.0:8080->8080/tcp, 80/tcp, 8080/tcp     new-pos-app-173783_edge-megastore-pos_1
+----
+. Click *Details* and note that Edge Manager is reporting *'(!) Error'* in both the *System status* and *Applications* pane
+
+image::m3-monitoring-3.png[link=self, window=blank, width=100%]
+
+NOTE: This information is also rolled up holistically for all devices at both the Fleet level and overall Edge Manager level
+
+You'll also notice that Edge Manager is surfacing device *CPU*, *Disk* and *Memory* pressure status.  
+
+NOTE: In Edge Manager, users can customize device resource monitors and define alerts when the utilization
+crosses a defined threshold (for example, 'trigger a *warning alert* if the average disk utlization exceeds 75% for more than 30 minutes' and 'trigger a *critical alert* if disk utilization exceeds 90% for over 10 minutes with a sampling interval of 5 seconds.").  
+
+=== Device Decommission
+
+All things must come to an end. For our final lesson, we will bid farewell to our new store device by decommissioning it.
+
+Stop your Edge Device Virtual Machine
+
+. Expand and select *local-cluster*
+. Expand *Virtualization*
+. Select *VirtualMachines*
+. Select *vertical ellipses* 
+. Click *stop*
+
+image::m3-decommission-4.png[link=self, window=blank, width=100%]
+
+Return to your device within Edge Manager
+
+. Expand and select *All Clusters*
+. Expand *Edge Management*
+. Select *Devices*
+. Change the *Devices* section search filter from *Labels and fleets* to *Name and alias* (You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
+. Enter the *hometown name you chose* for your device to filter the device list
+. Click *YourHomeTown-store-{user}* device
+
+Decommission your device 
+
+. Expand *Actions*
+. Select *Decommission device*
+
+image::m3-decommission-1.png[link=self, window=blank, width=100%]
+
+. Click  *Decommission device*
+
+image::m3-decommission-2.png[link=self, window=blank, width=100%]
+
+. Set the *Show only decommisioned devices* toggle to *on* ((You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
+
+image::m3-decommission-3.png[link=self, window=blank, width=100%]
+
+Here we can observe the list of decommisioned devices (there is no need at this point in our Lab to further delete devices)
+
+[#labsummary]
+== Lab Summary
+
+image::m3-summary.png[link=self, window=blank, width=75%]
+
+On behalf of the entire Red Hat Edge Manager team, we would like to extend a hearty *THANK YOU* for taking the time to explore this lab today.
+
+We hope your time at Edge Megastore, Inc. has been an enjoyable and informative one.
+
+BTW, judging by that store front image it looks like our EMI Marketing Department has some more work to do... :)
+
+Thank you, again - have a great day!
+
+
 

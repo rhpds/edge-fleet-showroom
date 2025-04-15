@@ -10,7 +10,7 @@ finest Edge Equipment available including a snack bar area with refreshments
 
 image::EdgeMegastore-storefront.png[link=self, width=75%, window=blank]
 
-It looks like our Marketing Department has some work to do with improving AI 
+It looks like our EMI Marketing Department has some work to do with improving AI 
 generated images ('Dionuts' and Flying Strawberries?!) but thankfully you don't
 have to worry about that.  
 
@@ -23,8 +23,7 @@ We have four existing EMI stores spread between the East and West Coasts of the 
 
 image::RetailExpansion.png[link=self, window=blank]
 
-In each location we have a back of store edge device running a RHEL 9 bootc image
-container (which also includes the mandatory Edge Manager Agent). These store devices run a 
+In each location we have a back of store edge device running a RHEL 9 bootc image (which also includes the mandatory Edge Manager Agent). These store devices run a 
 Point-of-Sale (POS) application which is accessible via the front of store point of sale kiosks.
 
 image::StoreComposition.png[link=self, window=blank]
@@ -91,8 +90,8 @@ Note that we observe top level information for this specific fleet.  Let's edit 
 image::m1-editfleet.png[link=self, window=blank]
 
 . We see the friendly name that has been chosen for this fleet: *point-of-sale-prod*
-. A *device selector* label has been configured: '*pos=prod*' This is a user generated key-pair value of their choosing. Any devices that matches this label 
-will automatically be made a member of this fleet
+. A *device selector* label has been configured: '*pos=prod*' This is a user generated key-pair value of their choosing. _Any devices that matches this label 
+will automatically be made a member of this fleet_
 . Note that we have *4 devices matching* this label (these are our existing store edge devices)
 . Click *Next*
 

@@ -14,7 +14,13 @@ Click link:{console_url}[here,window=_blank] to access your Lab Environment
 
 [.no-copy-label]
 .Password
-[source,sh,role=execute]
+[source,sh,role=execute,subs=attributes+]
 ----
 {password}
+----
+
+== Edge Manager CLI Login
+[source,sh,role=execute,subs=attributes+]
+----
+flightctl login https://api.apps.cluster-{guid}.dynamic.redhatworkshops.io --username {user} --password {password} --insecure-skip-tls-verify
 ----

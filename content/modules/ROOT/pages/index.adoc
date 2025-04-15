@@ -26,7 +26,7 @@ image::LabLayout.png[link=self, window=blank, width=100%]
 
 == Edge Device Images 
 
-We have included a few 'Image Mode' (bootc) Red Hat Enterprise Linux (RHEL) 9 images for you to utilize during the Lab
+We have included a few 'Image Mode' (bootc) pre-built Red Hat Enterprise Linux (RHEL) 9 images for you to utilize during the Lab
 
 Like any Container image, these images can be stored in a container registry (in our lab, they are stored in the internal OpenShift
 Registry)
