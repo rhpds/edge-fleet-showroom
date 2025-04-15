@@ -29,14 +29,13 @@ Point-of-Sale (POS) application which is accessible via the front of store point
 
 image::StoreComposition.png[link=self, window=blank]
 
-[#edgemanageroverview]
-== Getting to know Red Hat Edge Manager
+[#lablogin]
+=== Lab Login
 
 In a moment, we are going to need your help bringing a new store online in your 
 home town but first let's get you logged into your new work environment for an 
 initial look around.
 
-=== Lab Login
 Click link:{console_url}[here,window=_blank] to access your Lab Environment (this link will open in a new browser tab)
 
 [.no-copy-label]
@@ -55,6 +54,7 @@ Click link:{console_url}[here,window=_blank] to access your Lab Environment (thi
 
 NOTE: All Lab Login information is available via the left-hand nav item, "Lab Access"
 
+[#edgemanageroverview]
 === Exploring Edge Manager
 
 You are now logged into an OpenShift Container Platform environment which also has an Advanced Cluster Management operator installed.  

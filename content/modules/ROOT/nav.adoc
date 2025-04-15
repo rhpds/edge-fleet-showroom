@@ -1,5 +1,6 @@
 * xref:module-01.adoc[]
 ** xref:module-01.adoc#currentstorefootprint[Current Store Footprint]
+** xref:module-01.adoc#lablogin[Lab Login]
 ** xref:module-01.adoc#edgemanageroverview[Edge Manager Overview]
 ** xref:module-01.adoc#module1summary[Module Summary]
 
