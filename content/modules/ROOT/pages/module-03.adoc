@@ -200,7 +200,7 @@ image::m3-cli-2.png[link=self, window=blank, width=100%]
 
 We are now going to authenticate against the Edge Manager service and issue several CLI commands
 
-. Authenticate
+. Authenticate to the Edge Manager service via CLI
 +
 [source,sh,role=execute]
 ----
@@ -210,33 +210,157 @@ flightctl login https://api.apps.cluster-{guid}.dynamic.redhatworkshops.io --use
 .Sample Output
 [source,texinfo,subs="attributes"]
 ----
-No staged image present
-Current booted image: containers-storage:image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-pos-prod:1.0.0
-    Image version: 9.20250326.0 (2025-04-10 21:00:03.968743927 UTC)
-    Image digest: sha256:2c30b56e03862b92bbca2a50b3786642c8dd5af5309b8b2fa4f2de08d9a746ec
-Current rollback image: image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-base:1.0.0
-    Image version: 9.20250326.0 (2025-04-10 20:57:38.715070587 UTC)
-    Image digest: sha256:e37967518e6f9679f761524ca74b02298b81baa6f82b40112e2c20b1aab2f1f8
+Login successful.
 ----
-. Check the containers that are now running on the device:
+. Examine the commands available
 +
 [source,sh,role=execute]
 ----
-podman ps -a
+flightctl
 ----
 +
 .Sample Output
 [source,texinfo,subs="attributes"]
 ----
-CONTAINER ID  IMAGE                                    COMMAND               CREATED         STATUS         PORTS                                        NAMES
-53347f7ca8f7  localhost/podman-pause:5.2.2-1737721907                        10 minutes ago  Up 10 minutes                                               47a0b459f7c9-service
-8df58eb27786  localhost/podman-pause:5.2.2-1737721907                        10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp                      a5aa9d20b8d3-infra
-268f5b977564  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod
+flightctl controls the Flight Control fleet management service.
+
+Usage:
+  flightctl [flags] [options]
+  flightctl [command]
+
+Available Commands:
+  apply            Apply a configuration to a resource by file name or stdin.
+  approve          Approve a certificate signing or enrollment request.
+  certificate      Request a new certificate for a device with 'certificate request'
+  completion       Generate autocompletion script
+  console          Connect a console to the remote device through the server.
+  csr-generate     Generate a CSR resource config .yaml based on a .csr file and optional additional parameters
+  decommission     Decommission a device.
+  delete           Delete resources by resources or owner.
+  deny             Deny a certificate signing or enrollment request.
+  enrollmentconfig Get enrollment config for devices
+  get              Display one or many resources.
+  help             Help about any command
+  login            Login to flight control
+  version          Print flightctl version information.
+
+Flags:
+  -h, --help   help for flightctl
+
+Use "flightctl [command] --help" for more information about a command.
+----
+. Examine versioning information
++
+[source,sh,role=execute]
+----
+flightctl version
+----
++
+.Sample Output
+[source,texinfo,subs="attributes"]
+----
+flightctl CLI version: v0.5.1
+flightctl service version: v0.5.1
+----
+. Retrieve a list of devices
++
+[source,sh,role=execute]
+----
+flightctl get devices
+----
++
+.Sample Output (your list may vary)
+[source,texinfo,subs="attributes"]
+----
+NAME                                                    ALIAS                   OWNER                           SYSTEM  UPDATED         APPLICATIONS    LAST SEEN
+93og3n5l2n5pv3muj7oh3aut8rhn3ka1cvvhl6qo8nunihr69sng    nc-raleigh-store-01     Fleet/point-of-sale-prod        Online  UpToDate        Healthy         8 seconds ago
+9sb2f8o7bko0q27tusl2c2kkegm5o90f44ej4rj0msb0pjh60m00    ca-paloalto-store-01    Fleet/point-of-sale-prod        Online  UpToDate        Healthy         9 seconds ago
+h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg    maplegrove-store-user1  Fleet/user1-new-store-fleet     Online  UpToDate        Healthy         9 seconds ago
+qgmnbi04co3lc0f3pkko281km71vv4e60vnserde63cb73jhdub0    ca-torrance-store-01    Fleet/point-of-sale-prod        Online  UpToDate        Healthy         8 seconds ago
+v4uh4tbravm7fefgiqjm1prra3sfh1dgrn8uh70fjj8i9m13jo30    nc-charlotte-store-01   Fleet/point-of-sale-prod        Online  UpToDate        Healthy         3 seconds ago
 ----
 
+We are now going to grep for your specific hometown-store-{user} device
+
+. Replace 'maplegrove' with *your* home town name utlized
++
+[source,sh,role=execute]
+----
+flightctl get device | grep maplegrove
+----
++
+.Sample Output
+[source,texinfo,subs="attributes"]
+----
+NAME                                                    ALIAS                   OWNER                           SYSTEM  UPDATED         APPLICATIONS    LAST SEEN
+h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg    maplegrove-store-user1  Fleet/user1-new-store-fleet     Online  UpToDate        Healthy         4 seconds ago
+----
+
+Double-click to select the entire ID (under the Name Column) for your device, right-click and select copy
+
+. Set a console variable equal to *your device ID* (right-click and paste *your device UID* value vs. the example ID value shown below)
++
+[source,sh,role=execute]
+----
+mydeviceid=h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg
+----
+
+For our last CLI example, let's connect to a console session within your actual hometown-store-{user} device
+
+. To initiate a console session, utilize the following command
++
+[source,sh,role=execute]
+----
+flightctl console device/$mydeviceid
+----
++
+.Sample Output
+[source,texinfo,subs="attributes"]
+----
+Connecting to device h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg
+Use CTRL+B 3 times to exit console
+----
+
+You can now interact directly with your device via its console!
+
+. Examine the containers running on this device (the output should look familiar to you)
++
+[source,sh,role=execute]
+----
+podman ps -a 
+----
++
+.Sample Output (your list may vary)
+[source,texinfo,subs="attributes"]
+----
+CONTAINER ID  IMAGE                                    COMMAND               CREATED      STATUS      PORTS                                        NAMES
+111b1391a311  localhost/podman-pause:5.2.2-1737721907                        3 hours ago  Up 3 hours                                               47a0b459f7c9-service
+fd0157f0e2e1  localhost/podman-pause:5.2.2-1737721907                        3 hours ago  Up 3 hours  0.0.0.0:30000->8080/tcp                      9ba794295fe8-infra
+c0f559b1dad4  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  3 hours ago  Up 3 hours  0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod
+6ca9d626e4bb  quay.io/kenosborn/edge-megastore-pos:v1  nginx -g daemon o...  2 hours ago  Up 2 hours  0.0.0.0:8080->8080/tcp, 80/tcp, 8080/tcp     new-pos-app-173783_edge-megastore-pos_1
+----
+
+Exit the remote console session by holding down your *CTRL key* and pressing the *B key* three times
+
+Keep your browser terminal window open (we'll return to this in our final lesson: Monitoring)
+
 [#monitoring]
-== Edge Manager Monitoring and Decommission
+== Edge Manager Monitoring and Device Decommission
+
+By default, Edge Manager surfaces some basic monitoring information 
 
 [#module3summary]
 == Module 3 Summary
 
+. Authenticate to the Edge Manager service via CLI
++
+[source,sh,role=execute]
+----
+flightctl login https://api.apps.cluster-{guid}.dynamic.redhatworkshops.io --username {user} --password {password} --insecure-skip-tls-verify
+----
++
+.Sample Output
+[source,texinfo,subs="attributes"]
+----
+Login successful.
+----
