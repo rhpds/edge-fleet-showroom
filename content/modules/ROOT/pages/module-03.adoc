@@ -30,13 +30,13 @@ Populate the *Create fleet* wizard with the following *General info* values +
 
 . *Name:*
 + 
-[source,sh,role=execute]
+[source,sh,role=execute,subs=attributes+]
 ----
 {user}-new-store-fleet
 ----
 . *Device selector:*
 +
-[source,sh,role=execute]
+[source,sh,role=execute,subs=attributes+]
 ----
 fleet={user}
 ----
@@ -180,7 +180,7 @@ Your new home town Edge Megastore, Inc. location is now open for business
 
 You've done a great job at Edge Megastore, Inc.!
 
-If you'd like to call it a day, you are welcome to end the lab here (*thank you!)*; however, if you would like to earn some Overtime (mythical) pay and explore a few more *advanced* topics 
+If you'd like to call it a day, you are welcome to end the lab here (*thank you)*; however, if you would like to earn some Overtime (mythical) pay and explore a few more *advanced* topics 
 you are welcome to continue.
 
 [#cli]
@@ -205,7 +205,7 @@ We are now going to authenticate against the Edge Manager service and issue seve
 
 . Authenticate to the Edge Manager service via CLI
 +
-[source,sh,role=execute]
+[source,sh,role=execute,subs=attributes+]
 ----
 flightctl login https://api.apps.cluster-{guid}.dynamic.redhatworkshops.io --username {user} --password {password} --insecure-skip-tls-verify
 ----
@@ -389,7 +389,7 @@ c0f559b1dad4  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  3 h
 6ca9d626e4bb  quay.io/kenosborn/edge-megastore-pos:v1  nginx -g daemon o...  2 hours ago  Up 2 hours  0.0.0.0:8080->8080/tcp, 80/tcp, 8080/tcp     new-pos-app-173783_edge-megastore-pos_1
 ----
 
-You can exit the remote console session by holding down your *CTRL key* and pressing the *B key* three times
+Exit the remote console session by holding down your *CTRL key* and pressing the *B key* three times
 
 [#monitoring]
 == Edge Manager Monitoring and Device Decommission

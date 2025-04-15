@@ -48,14 +48,10 @@ Click link:{console_url}[here,window=_blank] to access your Lab Environment (thi
 
 [.no-copy-label]
 .Password
-[source,sh,role=execute]
+[source,sh,role=execute,subs=attributes+]
 ----
 {password}
 ----
-
-Password expansion test:
-
-{password}
 
 NOTE: All Lab Login information is available via the left-hand nav item, "Lab Access"
 
