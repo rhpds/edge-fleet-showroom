@@ -53,6 +53,9 @@ Click link:{console_url}[here,window=_blank] to access your Lab Environment (thi
 {password}
 ----
 
+Password expansion test:
+
+{password}
 
 NOTE: All Lab Login information is available via the left-hand nav item, "Lab Access"
 

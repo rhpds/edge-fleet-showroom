@@ -308,6 +308,52 @@ Double-click to select the entire ID (under the Name Column) for your device, ri
 mydeviceid=h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg
 ----
 
+We can retrieve your device template specifications and status by piping output to yaml (or json)
+
+. Pipe to yaml and examine the output
++
+[source,sh,role=execute]
+----
+flightctl get device/$mydeviceid -o yaml
+----
++
+.Sample Output (Abridged)
+[source,texinfo,subs="attributes"]
+----
+apiVersion: flightctl.io/v1alpha1
+kind: Device
+metadata:
+  annotations:
+    device-controller/renderedVersion: "13"
+    fleet-controller/renderedTemplateVersion: "2025-04-14T21:52:26.688988475Z"
+    fleet-controller/templateVersion: "2025-04-14T21:52:26.688988475Z"
+  creationTimestamp: "2025-04-14T21:14:11.706159Z"
+  generation: 3
+  labels:
+    alias: maplegrove-store-user1
+    fleet: user1
+  name: h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg
+  owner: Fleet/user1-new-store-fleet
+  resourceVersion: "1320"
+spec:
+  applications:
+  - envVars: {}
+    image: quay.io/kenosborn/podman-compose:v2
+    name: new-pos-app
+  config: []
+  os:
+    image: image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-pos-prod:1.0.0
+status:
+  applications:
+  - name: new-pos-app
+    ready: 1/1
+    restarts: 0
+    status: Running
+----
+
+The Edge Manager API is similar to a Kubernetes API in that we can utilize yaml to create/update/remove Edge Manager devices and fleets by using
+'flightctl apply file.yaml' commands. 
+
 For our last CLI example, let's connect to a console session within your actual hometown-store-{user} device
 
 . To initiate a console session, utilize the following command
@@ -343,9 +389,7 @@ c0f559b1dad4  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  3 h
 6ca9d626e4bb  quay.io/kenosborn/edge-megastore-pos:v1  nginx -g daemon o...  2 hours ago  Up 2 hours  0.0.0.0:8080->8080/tcp, 80/tcp, 8080/tcp     new-pos-app-173783_edge-megastore-pos_1
 ----
 
-Exit the remote console session by holding down your *CTRL key* and pressing the *B key* three times
-
-Keep your browser terminal window open (we'll return to this in our final lesson, next)
+You can exit the remote console session by holding down your *CTRL key* and pressing the *B key* three times
 
 [#monitoring]
 == Edge Manager Monitoring and Device Decommission
