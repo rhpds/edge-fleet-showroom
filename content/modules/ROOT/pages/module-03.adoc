@@ -345,7 +345,7 @@ c0f559b1dad4  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  3 h
 
 Exit the remote console session by holding down your *CTRL key* and pressing the *B key* three times
 
-Keep your browser terminal window open (we'll return to this in our final lesson: Monitoring)
+Keep your browser terminal window open (we'll return to this in our final lesson, next)
 
 [#monitoring]
 == Edge Manager Monitoring and Device Decommission
