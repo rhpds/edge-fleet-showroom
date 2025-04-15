@@ -80,7 +80,7 @@ image::m2-devicedetails.png[link=self, window=blank, width=50%]
 
 Capture the QR Code image to your lab device clipboard 
 
-. Press Lab Device PRT SC key 
+. Press Lab Device *PRT SC* (Print Screen) key 
 
 NOTE: Your QR Code will differ from the following example screenshot
 
@@ -88,7 +88,7 @@ image::m2-qr-web-1.png[link=self, window=blank, width=100%]
 
 Next we will utilize a web based QR code reader
 
-. (In your Lab Manual) expand the upper-right hand *Links*
+. (In your Lab Manual) expand the upper-right hand *Links* menu
 . Select *QR Code Scanner*
 
 image::m2-qr-web-2.png[link=self, window=blank, width=100%]
@@ -179,7 +179,7 @@ CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
 ----
 
 In order for this 'back of store' device to function properly, it needs to have a point-of-sale application present.  Our front
-of store point of sale Kiosk's access this application via an OpenShift route.  Let's examine that route next.
+of store point-of-sale Kiosk's access this application via an OpenShift route.  Let's examine that route next.
 
 . Expand and select *local-cluster*
 . Expand *Networking*
@@ -297,7 +297,7 @@ may have wondered, "Why not just bake the app(s) into the 'base' image?" and tha
 
 NOTE: Edge Manager gives users the optionality to configure things as they see fit, in alignment with any of their current build standards.
 
-Regardless of the approach taken, it should hopefully be more evident to you that Edge Manager can play a significant role in preventing configuration drift for edge devices.  
+Regardless of the approach taken, it should hopefully be more evident to you that Edge Manager can play a significant role in helping to prevent configuration drift for edge devices.  
 
 === Up Next
 
@@ -305,4 +305,4 @@ You are well on your way to opening your new store for business; however, there 
 other than present a static user interface with no user interoperability).  
 
 In our final module, you will learn how to create a new fleet from scratch and specify a new point of sale *application* as part
-of the fleet device template.  You will also explore the Edge Manager command line interface along with how to further monitor and decommision devices.
+of the fleet device template.  You will also explore the Edge Manager command line interface along with how to further monitor and decommission devices.

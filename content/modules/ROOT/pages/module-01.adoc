@@ -6,7 +6,7 @@ Congratulations on your new job at Edge MegaStore, Inc. (EMI)! The pay isn't gre
 but if you love to learn about new edge management technology you are in the
 right place. EMI is proud to provide our Customers with the
 finest Edge Equipment available including a snack bar area with refreshments
-(the Red-Sprinkled Donuts are a speciality).
+(the Red-Sprinkled Donuts are a specialty).
 
 image::EdgeMegastore-storefront.png[link=self, width=75%, window=blank]
 
@@ -142,7 +142,7 @@ image::m1-editfleet-7.png[link=self, window=blank]
 *Thank you* for completing our Module 1 Lesson.  
 
 In this Lesson, you learned how Edge Manager surfaces top level edge device monitoring information.  In addition, you learned how Edge Manager
-Fleet specifications can be set for all devices that are members of a given fleet.  This functionality allows users to declaritively specify their desired state for Edge Devices and subsequently rely
+Fleet specifications can be set for all devices that are members of a given fleet.  This functionality allows users to declaratively specify their desired state for Edge Devices and subsequently rely
 on Edge Manager to enforce these specifications in order to help eliminate configuration drift.
 
 === Up Next

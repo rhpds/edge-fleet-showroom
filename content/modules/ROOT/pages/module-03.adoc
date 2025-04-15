@@ -5,7 +5,7 @@
 
 We're in the home stretch and our new store is almost ready to open (thanks to you). 
 
-In a moment we will have you create a new Fleet and wire in a new (and _functional_) point of sale application into the fleet device template. Before 
+In a moment we will ask you to create a new Fleet and wire in a new (and _functional_) point of sale application into the fleet device template. Before 
 doing so, let's examine our networking route that will be utilized to access this *new POS app*.
 
 . Expand and select *local-cluster*
@@ -101,7 +101,7 @@ image::m3-userdevice-2.png[link=self, window=blank, width=100%]
 
 . Click *Add label*
 . Replace *key=value* with *fleet={user}* and press *enter*
-. Observe that we are still _running the same_ *System image* ('...pos-prod:1.0.0') (a device reboot will not be required since an image swap is not needed)
+. Observe that we are still _running the same_ *System image* ('...pos-prod:1.0.0') (a device reboot will not be required since our new fleet uses the same image that our device is already running)
 . Observe that your device *Applications* pane is now populated with our containerized application
 
 image::m3-userdevice-3.png[link=self, window=blank, width=100%]
@@ -287,7 +287,7 @@ v4uh4tbravm7fefgiqjm1prra3sfh1dgrn8uh70fjj8i9m13jo30    nc-charlotte-store-01   
 
 We are now going to grep for your specific hometown-store-{user} device
 
-. Replace 'maplegrove' with *your* home town name utlized
+. Replace 'maplegrove' with *your* home town name
 +
 [source,sh,role=execute]
 ----
@@ -353,7 +353,7 @@ status:
     status: Running
 ----
 
-The Edge Manager API is similar to a Kubernetes API in that we can utilize yaml to create/update/remove Edge Manager devices and fleets by using
+NOTE: The Edge Manager API is similar to a Kubernetes API in that we can utilize yaml to create/update/remove Edge Manager devices and fleets by using
 'flightctl apply file.yaml' commands. 
 
 For our last CLI example, let's connect to a console session within your actual hometown-store-{user} device
@@ -430,11 +430,11 @@ podman kill -s 9 new-pos-app-173783_edge-megastore-pos_1
 ----
 new-pos-app-173783_edge-megastore-pos_1
 ----
-. List out the containers and note that the *new-pos-app* is in an *'Exited'* state
+. List out the containers and note that the *new-pos-app* is in an *'Exited'* state (via the *Status* column)
 +
 [source,sh,role=execute]
 ----
-podman kill -s 9 new-pos-app-173783_edge-megastore-pos_1
+podman ps -a
 ----
 +
 .Sample Output 
@@ -452,10 +452,12 @@ image::m3-monitoring-3.png[link=self, window=blank, width=100%]
 
 NOTE: This information is also rolled up holistically for all devices at both the Fleet level and overall Edge Manager level
 
-You'll also notice that Edge Manager is surfacing device *CPU*, *Disk* and *Memory* pressure status.  
+. In the device *Resource status* pane, you can observe that Edge Manager is surfacing device *CPU*, *Disk* and *Memory* pressure status.  
+
+image::m3-monitoring-4.png[link=self, window=blank, width=100%]
 
 NOTE: In Edge Manager, users can customize device resource monitors and define alerts when the utilization
-crosses a defined threshold (for example, 'trigger a *warning alert* if the average disk utlization exceeds 75% for more than 30 minutes' and 'trigger a *critical alert* if disk utilization exceeds 90% for over 10 minutes with a sampling interval of 5 seconds.").  
+crosses a defined threshold (for example, 'trigger a *warning alert* if the average disk utilization exceeds 75% for more than 30 minutes' and 'trigger a *critical alert* if disk utilization exceeds 90% for over 10 minutes with a sampling interval of 5 seconds.").  
 
 === Device Decommission
 
@@ -491,7 +493,7 @@ image::m3-decommission-1.png[link=self, window=blank, width=100%]
 
 image::m3-decommission-2.png[link=self, window=blank, width=100%]
 
-. Set the *Show only decommisioned devices* toggle to *on* ((You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
+. Set the *Show only decommissioned devices* toggle to *on* ((You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
 
 image::m3-decommission-3.png[link=self, window=blank, width=100%]
 
@@ -502,11 +504,11 @@ Here we can observe the list of decommisioned devices (there is no need at this 
 
 image::m3-summary.png[link=self, window=blank, width=75%]
 
-On behalf of the entire Red Hat Edge Manager team, we would like to extend a hearty *THANK YOU* for taking the time to explore this lab today.
+On behalf of the entire Red Hat Edge Manager team, we would like to extend a heartfelt *THANK YOU* for taking the time to explore this lab today.
 
 We hope your time at Edge Megastore, Inc. has been an enjoyable and informative one.
 
-BTW, judging by that store front image it looks like our EMI Marketing Department has some more work to do... :)
+BTW, judging by that store front image above it looks like our EMI Marketing Department has some more work to do... :)
 
 Thank you, again - have a great day!
 
