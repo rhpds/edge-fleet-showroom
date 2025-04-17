@@ -67,22 +67,38 @@ on OpenShift as a set of containerized microservices (one of which displays the 
 
 image::m1-edgeoverview.png[link=self, window=blank]
 
-Note that we see top level monitoring information for devices currently under management.  We also observe the current quantity of devices under
-management.  Speaking of devices, let's examine them next.
+Note that we see top level monitoring information.  We also observe the current quantity of devices under
+management as well as their status. This helps us understand things like, "How many devices are being managed?", 
+"Are these devices actually online (or are they in some sort of degraded state)?" 
 
-. Expand the *Edge Management* left-hand navigation menu
-. Click *Devices*
+Let's continue our exploration by examining an Edge Manager *Fleet*, next.
 
-image::m1-devices.png[link=self, window=blank]
+. Expand *Edge Management*
+. Select *Fleets*
+. Click *point-of-sale-prod*
+
+image::m1-fleet-1.png[link=self, window=blank]
+
+A *Fleet* is defined as a, "Group of Devices that share the same desired state configuraton ('device template') and common management policies"
+
+We are observing the same top level monitoring information we saw previously only now it is specific to this particular Fleet, "*point-of-sale-prod*"
+
+Let's examine the devices that are currently a member of this fleet
+
+. Under *Up-to-date/devices*, click *4* 
+
+NOTE: The Device count number might be different in your lab - simply click the right-most number
+
+image::m1-fleet-2.png[link=self, window=blank]
 
 Here we observe the 4 _existing_ EMI East/West coast store devices that we discussed earlier.  They are reporting a green '*Online*' device status.  
-In addition, they are all showing that they are members of an Edge Manager fleet named, '*point-of-sale-prod*'.  Let's explore this fleet next.
+Let's examine the Fleet configuration in more detail.
 
 . Click *point-of-sale-prod*
 
 image::m1-point-of-sale-prod.png[link=self, window=blank]
 
-Note that we observe top level information for this specific fleet.  Let's edit the fleet to examine what has been configured.
+Edit Fleet
 
 . Expand the *Actions* menu
 . Click *Edit Fleet*
@@ -90,9 +106,9 @@ Note that we observe top level information for this specific fleet.  Let's edit 
 image::m1-editfleet.png[link=self, window=blank]
 
 . We see the friendly name that has been chosen for this fleet: *point-of-sale-prod*
-. A *device selector* label has been configured: '*pos=prod*' This is a user generated key-pair value of their choosing. _Any devices that matches this label 
+. A *device selector* label has been configured: '*pos=prod*' This is a user generated key-pair value of their choosing. _Any devices that matches (contains) this label 
 will automatically be made a member of this fleet_
-. Note that we have *4 devices matching* this label (these are our existing store edge devices)
+. Note that we have *4 devices matching* this label (these are our existing store edge devices, your lab device count may vary)
 . Click *Next*
 
 image::m1-editfleet-2.png[link=self, window=blank]
@@ -100,7 +116,7 @@ image::m1-editfleet-2.png[link=self, window=blank]
 We are now looking at what we refer to as the fleet *device template*.  The device template contains the configuration items that we want to specify declaratively
 (with Edge Manager responsible for enforcing these specifications, including healing a given device back to desired state, if any of these items drift).
 
-. Here we see the bootc image that *must be running on a device* in this fleet, ending in '...*pos-prod:v1*'
+. Here we see the bootc image that *must be running on a device* in this fleet, ending in '...*pos-prod:1.0.0*'
 . Click *+ Add configuration*
 
 image::m1-editfleet-3.png[link=self, window=blank]
