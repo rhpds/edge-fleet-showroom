@@ -77,6 +77,8 @@ Let's continue our exploration by examining an Edge Manager *Fleet*, next.
 . Select *Fleets*
 . Click *point-of-sale-prod*
 
+NOTE: Your Fleet list may differ from the screenshot below. You can utilize the *Search by name* filter to find *point-of-sale-prod* if needed
+
 image::m1-fleet-1.png[link=self, window=blank]
 
 A *Fleet* is defined as a, "Group of Devices that share the same desired state configuraton ('device template') and common management policies"
@@ -95,6 +97,8 @@ Here we observe the 4 _existing_ EMI East/West coast store devices that we discu
 Let's examine the Fleet configuration in more detail.
 
 . Click *point-of-sale-prod*
+
+NOTE: If there are *Devices pending approval* you may need to scroll down to see the *Devices* list
 
 image::m1-point-of-sale-prod.png[link=self, window=blank]
 

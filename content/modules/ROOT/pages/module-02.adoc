@@ -29,6 +29,7 @@ Return to your lab environment and perform the following steps
 . Expand and select *local-cluster*
 . Expand *Virtualization* menu
 . Select *VirtualMachines*
+. Set *Project: wksp-{user}*
 . Click *wksp-{user}-edge-device*
 
 image::m2-virtualization.png[link=self, window=blank, width=100%]
