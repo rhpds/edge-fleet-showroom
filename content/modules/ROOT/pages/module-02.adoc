@@ -71,7 +71,7 @@ IMPORTANT: For the device name (alias) please make sure that you replace 'YourHo
 
 image::m2-mobile-3.png[link=self, window=blank, width=50%]
 
-Since you have enrolled via a Mobile Device, you can skip the next section.
+IMPORTANT: Since you have enrolled via a Mobile Device, you can skip the next section.
 
 . Click *Device Details* in the right-hand Lab Manual Contents directory
 
