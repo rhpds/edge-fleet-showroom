@@ -51,7 +51,15 @@ Click link:{console_url}[here,window=_blank] to access your Lab Environment (thi
 {password}
 ----
 
-NOTE: All Lab Login information is available via the left-hand nav item, "Lab Access"
+You can set your UI Theme as desired (System Default, Light, Dark)
+
+. Click *username* in upper-right hand corner
+. Select *User Preferences*
+. Set *Theme* to your desired choice 
+
+image::m1-ui-theme-1.png[link=self, window=blank]
+
+NOTE: For future reference, all Lab Login information is available via the left-hand nav item, "Lab Access"
 
 [#edgemanageroverview]
 === Exploring Edge Manager
@@ -60,7 +68,7 @@ You are now logged into an OpenShift Container Platform environment which also h
 If you have never used these capabilities before, don't worry.  We are here to examine the Edge Manager portions only.  Edge Manager is running 
 on OpenShift as a set of containerized microservices (one of which displays the UI elements that we are going to explore now)
 
-. Expand and set to *All Cluster*
+. Expand top menu and set to *All Cluster*
 . Expand the *Home* menu
 . Select *Overview*
 . Click *Edge*
