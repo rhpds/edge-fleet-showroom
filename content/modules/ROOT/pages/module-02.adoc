@@ -45,11 +45,11 @@ NOTE: Your edge device has powered on and established a secure mTLS connection w
 a QR code is conveniently made available to users   
 
 === QR Enrollment via Mobile Phone
-If you have a Mobile Device, continue with the steps indicated below.  If you do not have
+NOTE: If you have a Mobile Device, continue with the steps indicated below.  If you do not have
 a Mobile Device, skip this section by click https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#_qr_code_enrollment_via_web_browser[here] to go to the *QR Code Enrollment via Web Browser* section (you can also select this section in the *Contents*
 right-hand navigation menu)
 
-Scan the QR code and open the site in your mobile device browser. 
+. Scan the QR code and open the site in your mobile device browser. 
 
 IMPORTANT: Unless you have been assigned 'user1' do not use 'user1' as your Username (as shown in the screenshot below). Please utilize the name that you have been assigned: {user}
 
@@ -71,7 +71,7 @@ IMPORTANT: For the device name (alias) please make sure that you replace 'YourHo
 
 image::m2-mobile-3.png[link=self, window=blank, width=50%]
 
-IMPORTANT: Since you just enrolled via a Mobile Device, you do not need to follow the instructions in the next section, "QR Code Enrollment via Web Browser".  Click https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#_device_details[here] to skip to the next section.
+NOTE: Since you just enrolled via a Mobile Device, you do not need to follow the instructions in the next section, "QR Code Enrollment via Web Browser".  Click https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#_device_details[here] to skip to that section
 
 . Click *Device Details* in the right-hand Lab Manual Contents directory
 
