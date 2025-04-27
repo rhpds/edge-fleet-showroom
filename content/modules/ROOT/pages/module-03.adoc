@@ -34,7 +34,7 @@ Populate the *Create fleet* wizard with the following *General info* values +
 ----
 {user}-new-store-fleet
 ----
-. *Device selector:*
+. *Device selector: (?)* (_Please do not select *Fleet labels* by mistake_)
 +
 [source,sh,role=execute,subs=attributes+]
 ----
