@@ -10,7 +10,7 @@ back on progress and health status.
 
 image::EdgeDevice.png[link=self, window=blank, width=75%, align="center"]
 
-NOTE: Edge Manager currently supports image-based Linux operating systems running https://developers.redhat.com/products/rhel-image-mode/overview?source=sso[bootc,window=blank] 
+NOTE: Edge Manager currently supports image-based Linux operating systems running https://developers.redhat.com/products/rhel-image-mode/overview?source=sso[Image Mode (bootc),window=blank] 
 
 NOTE: https://github.com/flightctl/flightctl["Flight Control",window=_blank] is the upstream project and is accessible for you to explore outside of this Lab.  Red Hat Edge Manager (RHEM) is the downstream offering, currently in https://access.redhat.com/support/offerings/techpreview[Tech Preview,window=_blank] meaning that it may not be functionally complete and is subject to change prior to GA. 
 
