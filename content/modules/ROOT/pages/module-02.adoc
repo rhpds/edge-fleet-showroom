@@ -12,16 +12,16 @@ utilized for storing inventory and runtime information such as current device ta
 we will explore in a later module)
 . *Edge Device access* utilizes an Agent that is running on each managed device. The agent always 'calls home' to the Edge Manager service, 
 so the device can be on a private network or have a dynamic IP address  
-. *Git repository* integration (optional) enables storing of device and device fleet configuration. When utilized, the Edge Manager service 
+. *Git repository integration* (optional) enables storing of device and device fleet configuration. When utilized, the Edge Manager service 
 periodically polls Git for updates
 . *External systems* can be utilized by the Edge Manager service to authenticate and authorize users, get mTLS certificates signed, or query
 configuration for managed devices
 
 [#onboarding]
 == New Store Edge Device Onboarding
-Now that you have seen an overview of Edge Manager and examined its Architecture, it's time to bring our new store online 
+Now that you have seen an overview of Edge Manager and examined its architecture, it's time to bring our new store online 
 
-NOTE: Unless you are assigned as 'user1' in this Lab, the user ID shown in the following screenshots will contain a different user ID other than your own.
+NOTE: In the following screenshots, the user ID is set to ‘user1’. Your user ID will most likely be different from this. Please refer to the lab guide text for your correct user ID
 
 === Device Enrollment
 Return to your lab environment and perform the following steps
@@ -44,9 +44,9 @@ image::m2-startvm.png[link=self, window=blank, width=100%]
 NOTE: Your edge device has powered on and established a secure mTLS connection with the Edge Manager API Service. As part of the enrollment process,
 a QR code is conveniently made available to users   
 
-=== QR Enrollment via Mobile Phone
+=== Option 1: QR Enrollment via Mobile Phone
 NOTE: If you have a Mobile Device, continue with the steps indicated below.  If you do not have
-a Mobile Device, skip this section by click https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#_qr_code_enrollment_via_web_browser[here] to go to the *QR Code Enrollment via Web Browser* section (you can also select this section in the *Contents*
+a Mobile Device, skip this section by click https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#_qr_code_enrollment_via_web_browser[here] to go to the *Option 2: QR Code Enrollment via Web Browser* section (you can also select this section in the *Contents*
 right-hand navigation menu)
 
 . Scan the QR code and open the site in your mobile device browser. 
@@ -77,7 +77,7 @@ NOTE: Since you just enrolled via a Mobile Device, you do not need to follow the
 
 image::m2-devicedetails.png[link=self, window=blank, width=50%]
 
-=== QR Code Enrollment via Web Browser
+=== Option 2: QR Code Enrollment via Web Browser
 
 Capture the QR Code image to your lab device clipboard 
 

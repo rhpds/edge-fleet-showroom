@@ -110,7 +110,7 @@ Edit Fleet
 image::m1-editfleet.png[link=self, window=blank]
 
 . We see the friendly name that has been chosen for this fleet: *point-of-sale-prod*
-. A *device selector* label has been configured: '*pos=prod*' This is a user generated key-pair value of their choosing. _Any devices that matches (contains) this label 
+. A *device selector* label has been configured: '*pos=prod*' This is a user generated key-pair value of their choosing. _Any device that matches (contains) this label 
 will automatically be made a member of this fleet_. Although we haven't done so in our lab, it is possible to have more than one label configured as a device selector (e.g. "pos=prod" and "loc=store")
 . Note that we have *4 devices matching* this label (these are our existing store edge devices, your lab device count may vary)
 . Click *Next*
