@@ -73,10 +73,6 @@ image::m2-mobile-3.png[link=self, window=blank, width=50%]
 
 NOTE: Since you just enrolled via a Mobile Device, you do not need to follow the instructions in the next section, "QR Code Enrollment via Web Browser".  Click https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#_device_details[here] to skip to that section
 
-. Click *Device Details* in the right-hand Lab Manual Contents directory
-
-image::m2-devicedetails.png[link=self, window=blank, width=50%]
-
 === Option 2: QR Code Enrollment via Web Browser
 
 Capture the QR Code image to your lab device clipboard 
