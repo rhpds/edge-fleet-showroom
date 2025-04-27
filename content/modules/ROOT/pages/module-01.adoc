@@ -111,7 +111,7 @@ image::m1-editfleet.png[link=self, window=blank]
 
 . We see the friendly name that has been chosen for this fleet: *point-of-sale-prod*
 . A *device selector* label has been configured: '*pos=prod*' This is a user generated key-pair value of their choosing. _Any devices that matches (contains) this label 
-will automatically be made a member of this fleet_
+will automatically be made a member of this fleet_. Although we haven't done so in our lab, it is possible to have more than one label configured as a device selector (e.g. "pos=prod" and "loc=store")
 . Note that we have *4 devices matching* this label (these are our existing store edge devices, your lab device count may vary)
 . Click *Next*
 
@@ -129,7 +129,7 @@ As part of the device template, We can specify additional host configuration ite
 
 . Expand *Select a source type* (Edge manager can load pre-staged (inline) configuration files on the device, configuration files stored in Git or configuration files
 stored on an internal web (http) repository)
-. Click the '*-*' symbol to close the configuration item
+. Since we don't want to add a new configuration at the moment, click the '*-*' symbol to remove this configuration section
 
 image::m1-editfleet-4.png[link=self, window=blank]
 
@@ -143,7 +143,7 @@ image::m1-editfleet-5.png[link=self, window=blank]
 
 Continuing our exploration, let's move on to one final item
 
-. Select the '*-*' symbol to close *Application 1*
+. Since we don't want to add any Application workloads at the moment, click the '*-*' symbol to remove *Application 1*
 . Click *Next*
 
 image::m1-editfleet-6.png[link=self, window=blank]

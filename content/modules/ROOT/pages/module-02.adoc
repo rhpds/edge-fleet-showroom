@@ -14,7 +14,7 @@ we will explore in a later module)
 so the device can be on a private network or have a dynamic IP address  
 . *Git repository* integration (optional) enables storing of device and device fleet configuration. When utilized, the Edge Manager service 
 periodically polls Git for updates
-. *External systems* can be utilized by the Edge Manager service to authenticate and authorized users, get mTLS certificates signed, or query
+. *External systems* can be utilized by the Edge Manager service to authenticate and authorize users, get mTLS certificates signed, or query
 configuration for managed devices
 
 [#onboarding]

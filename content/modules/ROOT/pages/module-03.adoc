@@ -354,7 +354,7 @@ status:
 ----
 
 NOTE: The Edge Manager API is similar to a Kubernetes API in that we can utilize yaml to create/update/remove Edge Manager devices and fleets by using
-'flightctl apply file.yaml' commands. 
+'flightctl apply -f file.yaml' commands. 
 
 For our last CLI example, let's connect to a console session within your actual hometown-store-{user} device
 
@@ -371,6 +371,8 @@ flightctl console device/$mydeviceid
 Connecting to device h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg
 Use CTRL+B 3 times to exit console
 ----
+
+NOTE: It can take a few moments for your Terminal session to establish (thank you for your patience)
 
 You can now interact directly with your device via its console!
 
@@ -391,7 +393,7 @@ c0f559b1dad4  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  3 h
 6ca9d626e4bb  quay.io/kenosborn/edge-megastore-pos:v1  nginx -g daemon o...  2 hours ago  Up 2 hours  0.0.0.0:8080->8080/tcp, 80/tcp, 8080/tcp     new-pos-app-173783_edge-megastore-pos_1
 ----
 
-Exit the remote console session by holding down your *CTRL key* and pressing the *B key* three times
+Exit the device remote console session by typing *exit* or by holding down your *CTRL key* and pressing the *B key* three times
 
 [#monitoring]
 == Edge Manager Device Monitoring and Decommission
