@@ -185,11 +185,12 @@ of store point-of-sale Kiosk's access this application via an OpenShift route.  
 
 image::m2-routes-1.png[link=self, window=blank, width=100%]
 
-NOTE: Observe that we receive an, *"Application is not available"* error message (this is expected at this time because our 'base' device image does not contain
-the custom point of sale application).  
+. Note that we receive an, *"Application is not available"* error message (this is expected at this time because we are running a 'base' device image which does not contain
+any custom applications).  
 
 image::m2-appnotavailable-1.png[link=self, window=blank, width=100%]
 
+We will see in our next section 
 [#fleetmanagement]
 == Fleet Management
 
@@ -288,7 +289,9 @@ image::m2-pos-app.png[link=self, window=blank, width=100%]
 *Thank you* for completing our Module 2 Lesson.  
 
 In this Lesson, you learned how to onboard a new store edge device into Edge Manager. You started your device with a simple base image (containing no applications) and then witnessed
-how Edge Manager automatically swapped this image to one containing the POS App (after joining a Fleet that has this desired state configuration). You may be wondering:  "Why not just 
+how Edge Manager automatically swapped this image to one containing the POS App (after joining a Fleet that has this desired state configuration). </br>
+
+You may be wondering:  "Why not just 
 join the Fleet as part of onboarding?" and the answer is that you certainly could have done that but then you may not have learned as much about how Edge Manager operates.  Additionally, you 
 may have wondered, "Why not just bake the app(s) into the 'base' image?" and that is also certainly an option. 
 
