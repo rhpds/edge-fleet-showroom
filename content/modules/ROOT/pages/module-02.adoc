@@ -189,7 +189,7 @@ of store point-of-sale Kiosk's access this application via an OpenShift route.  
 
 image::m2-routes-1.png[link=self, window=blank, width=100%]
 
-. Note that we receive an, *"Application is not available"* error message (this is expected at this time because our 'base' device image does not contain
+NOTE: Observe that we receive an, *"Application is not available"* error message (this is expected at this time because our 'base' device image does not contain
 the custom point of sale application).  
 
 image::m2-appnotavailable-1.png[link=self, window=blank, width=100%]
