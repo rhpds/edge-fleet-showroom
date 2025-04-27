@@ -118,7 +118,7 @@ Now that the device approval is complete, let's jump back into the Edge Manager 
 . Expand *Edge Management*
 . Select *Devices*
 . Change the *Devices* section search filter from *Labels and fleets* to *Name and alias* (You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
-. Enter the *hometown name you chose* for your device (case sensitive) to filter the device list
+. Enter the *hometown name you chose* for your device (case sensitive) [underline]#in the search box# to filter the device list
 . Click *YourHomeTown-store-{user}* device
 
 image::m2-userdevice-1.png[link=self, window=blank, width=100%]
