@@ -11,7 +11,7 @@ utilized for storing inventory and runtime information such as current device ta
 . *User access* is achieved via two primary interfaces: Edge Manager Web UI (which we briefly examined earlier) and Edge Manager CLI (which
 we will explore in a later module)
 . *Edge Device access* utilizes an Agent that is running on each managed device. The agent always 'calls home' to the Edge Manager service, 
-so the device can be on a private network or have a dynamic IP address  
+so the device can be on a private network or have a dynamic IP address (this includes devices that are behind Network Address Translation (NAT), firewalls and cellular / WLAN uplinks) 
 . *Git repository integration* (optional) enables storing of device and device fleet configuration. When utilized, the Edge Manager service 
 periodically polls Git for updates
 . *External systems* can be utilized by the Edge Manager service to authenticate and authorize users, get mTLS certificates signed, or query
