@@ -51,7 +51,7 @@ right-hand navigation menu)
 
 . Scan the QR code and open the site in your mobile device browser. 
 
-IMPORTANT: Unless you have been assigned 'user1' do not use 'user1' as your Username (as shown in the screenshot below). Please utilize the name that you have been assigned: {user}
+IMPORTANT: Please make sure you utilize the username provided for you as shown in the following steps 
 
 . Enter *Username*: {user}
 . Enter *Password*: {password}
