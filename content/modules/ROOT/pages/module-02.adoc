@@ -190,7 +190,6 @@ any custom applications).
 
 image::m2-appnotavailable-1.png[link=self, window=blank, width=100%]
 
-We will see in our next section 
 [#fleetmanagement]
 == Fleet Management
 
