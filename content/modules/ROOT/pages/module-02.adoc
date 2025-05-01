@@ -83,6 +83,7 @@ pass:[<br>]
 pass:[<br>]
 pass:[<br>]
 pass:[<br>]
+
 === Option 2: QR Code Enrollment via Web Browser
 
 Capture the QR Code image to your lab device clipboard 
