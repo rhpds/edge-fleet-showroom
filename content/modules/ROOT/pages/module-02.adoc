@@ -44,6 +44,7 @@ image::m2-startvm.png[link=self, window=blank, width=100%]
 NOTE: Your edge device has powered on and established a secure mTLS connection with the Edge Manager API Service. As part of the enrollment process,
 a QR code is conveniently made available to users   
 
+[#mde]
 === Option 1: QR Enrollment via Mobile Phone
 NOTE: If you have a Mobile Device, continue with the steps indicated below.  If you do not have
 a Mobile Device, skip this section by clicking https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#_option_2_qr_code_enrollment_via_web_browser[here] to go to the *Option 2: QR Code Enrollment via Web Browser* section (you can also select this section in the *Contents*
@@ -73,10 +74,7 @@ image::m2-mobile-3.png[link=self, window=blank, width=50%]
 
 NOTE: Since you just enrolled via a Mobile Device, you do not need to follow the instructions in the next section, "QR Code Enrollment via Web Browser".  Click https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#_device_details[here] to skip this section and continue your lab
 
-
-
-
-
+[#wbe]
 === Option 2: QR Code Enrollment via Web Browser
 
 Capture the QR Code image to your lab device clipboard 
@@ -111,6 +109,7 @@ IMPORTANT: For the device name (alias) please make sure that you replace 'YourHo
 
 image::m2-qr-web-5.png[link=self, window=blank, width=100%]
 
+[#dd]
 === Device Details
 Now that the device approval is complete, let's jump back into the Edge Manager Lab UI and further examine your new store device.
 

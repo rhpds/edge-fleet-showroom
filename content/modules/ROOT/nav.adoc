@@ -7,6 +7,9 @@
 * xref:module-02.adoc[]
 ** xref:module-02.adoc#highlevelarchitecture[High Level Architecture]
 ** xref:module-02.adoc#onboarding[New Store Edge Device Onboarding]
+** xref:module-02.adoc#mde[Option 1: Mobile Device Enrollment]
+** xref:module-02.adoc#wbe[Option 2: Web Browser Enrollment]
+** xref:module-02.adoc#dd[Device Details]
 ** xref:module-02.adoc#fleetmanagement[Fleet Management]
 ** xref:module-02.adoc#module2summary[Module Summary]
 
