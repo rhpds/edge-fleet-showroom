@@ -81,10 +81,10 @@ NOTE: Since you just enrolled via a Mobile Device, you do not need to follow the
 [[option-2-anchor]]
 Scroll Down If Needed
 
-Line One 
-Line Two 
-Line Three 
-Line Four 
+Line One </br>
+Line Two </br>
+Line Three </br>
+Line Four </br>
 
 === Option 2: QR Code Enrollment via Web Browser
 
