@@ -49,11 +49,6 @@ NOTE: If you have a Mobile Device, continue with the steps indicated below.  If 
 a Mobile Device, skip this section by clicking https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#_option_2_qr_code_enrollment_via_web_browser[here] to go to the *Option 2: QR Code Enrollment via Web Browser* section (you can also select this section in the *Contents*
 right-hand navigation menu)
 
-=== Option 1: QR Enrollment via Mobile Phone
-NOTE: If you have a Mobile Device, continue with the steps indicated below.  If you do not have
-a Mobile Device, skip this section by clicking https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#option-2-anchor[here] to go to the *Option 2: QR Code Enrollment via Web Browser* section (you can also select this section in the *Contents*
-right-hand navigation menu)
-
 . Scan the QR code and open the site in your mobile device browser. 
 
 IMPORTANT: Please make sure you utilize the username provided for you as shown in the following steps 
@@ -76,7 +71,7 @@ IMPORTANT: For the device name (alias) please make sure that you replace 'YourHo
 
 image::m2-mobile-3.png[link=self, window=blank, width=50%]
 
-NOTE: Since you just enrolled via a Mobile Device, you do not need to follow the instructions in the next section, "QR Code Enrollment via Web Browser".  Click https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#_device_details[here] to skip this section and continue your lab
+NOTE: Since you just enrolled via a Mobile Device, you do not need to follow the instructions in the next section, "QR Code Enrollment via Web Browser".  Click https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#device-details-anchor[here] to skip this section and continue your lab
 
 [[option-2-anchor]]
 pass:[<br>]
@@ -117,6 +112,12 @@ IMPORTANT: For the device name (alias) please make sure that you replace 'YourHo
 . Select *Approve*
 
 image::m2-qr-web-5.png[link=self, window=blank, width=100%]
+
+[[device-details-anchor]]
+pass:[<br>]
+pass:[<br>]
+pass:[<br>]
+pass:[<br>]
 
 === Device Details
 Now that the device approval is complete, let's jump back into the Edge Manager Lab UI and further examine your new store device.
