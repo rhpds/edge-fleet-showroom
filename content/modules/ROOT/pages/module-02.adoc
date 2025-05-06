@@ -71,6 +71,10 @@ IMPORTANT: For the device name (alias) please make sure that you replace 'YourHo
 
 image::m2-mobile-3.png[link=self, window=blank, width=50%]
 
+. (Scroll down if needed) and observe that the device is no in an *Approved* state
+
+image::m2-mobile-4.png[link=self, window=blank, width=50%]
+
 NOTE: Since you just enrolled via a Mobile Device, you do not need to follow the instructions in the next section, "QR Code Enrollment via Web Browser".  Click https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#device-details-anchor[here] to skip this section and continue your lab
 
 [[option-2-anchor]]
@@ -83,7 +87,7 @@ pass:[<br>]
 
 Capture the QR Code image to your lab device clipboard 
 
-. Press Lab Device *PRT SC* (Print Screen) key 
+. Press the *PRT SC* (Print Screen) key on your Lab Device Keyboard 
 
 NOTE: Your QR Code will differ from the following example screenshot
 

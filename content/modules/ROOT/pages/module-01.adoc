@@ -110,7 +110,7 @@ NOTE: If there are *Devices pending approval* you may need to scroll down to see
 
 image::m1-point-of-sale-prod.png[link=self, window=blank]
 
-Edit Fleet
+Let's explore how this Fleet was built in more detail
 
 . Expand the *Actions* menu
 . Click *Edit Fleet*
