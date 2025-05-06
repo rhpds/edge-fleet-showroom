@@ -13,7 +13,7 @@ doing so, let's examine our networking route that will be utilized to access thi
 . Select *Routes*
 . Click the 'new-pos' route *Location hyperlink* to open this route-to-app in a new browser tab
 
-NOTE: The 'application is not available' error message is expected at this time since we have not added the new POS app to our device yet
+NOTE: The 'application is not available' error message is expected at this time since we have not added the new (more functional) POS app to our device yet
 
 image::m3-routes-1.png[link=self, window=blank, width=100%]
 
@@ -154,7 +154,7 @@ image::m3-new-pos-app-2.png[link=self, window=blank, width=100%]
 
 image::m3-new-pos-app-3.png[link=self, window=blank, width=100%]
 
-Your new home town Edge Megastore, Inc. location is now open for business
+Your new home town Edge Megastore, Inc. location is now ready to open for business
 
 ++++
 <b style="font-size: 2em;">
@@ -302,11 +302,11 @@ h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg    maplegrove-store-user1  
 
 Double-click to select the entire ID (under the Name Column) for your device, right-click and select copy
 
-. Set a console variable equal to *your device ID* (right-click and paste *your device UID* value vs. the example ID value shown below)
+. Set a console variable equal to *your device ID* (right-click and paste *your device UID* value)
 +
 [source,sh,role=execute]
 ----
-mydeviceid=h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg
+mydeviceid=right-click & paste your-device-id
 ----
 
 We can retrieve your device template specifications and status by piping output to yaml (or json)

@@ -46,7 +46,7 @@ a QR code is conveniently made available to users
 
 === Option 1: QR Enrollment via Mobile Phone
 NOTE: If you have a Mobile Device, continue with the steps indicated below.  If you do not have
-a Mobile Device, skip this section by clicking https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#option-2-anchor[here] to go to the *Option 2: QR Code Enrollment via Web Browser* section (you can also select this section in the *Contents*
+a Mobile Device, skip this section by clicking https://showroom-showroom-{guid}-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#option-2-anchor[here] to go to the *Option 2: QR Code Enrollment via Web Browser* section (you can also select this section in the *Contents*
 right-hand navigation menu)
 
 . Scan the QR code and open the site in your mobile device browser. 
@@ -75,7 +75,7 @@ image::m2-mobile-3.png[link=self, window=blank, width=50%]
 
 image::m2-mobile-4.png[link=self, window=blank, width=50%]
 
-NOTE: Since you just enrolled via a Mobile Device, you do not need to follow the instructions in the next section, "QR Code Enrollment via Web Browser".  Click https://showroom-showroom-rhfnr-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#device-details-anchor[here] to skip this section and continue your lab
+NOTE: Since you just enrolled via a Mobile Device, you do not need to follow the instructions in the next section, "Option 2: QR Code Enrollment via Web Browser".  Click https://showroom-showroom-{guid}-{user}.apps.cluster-rhfnr.dynamic.redhatworkshops.io/content/modules/module-02.html#device-details-anchor[here] to skip this section and continue your lab
 
 [[option-2-anchor]]
 pass:[<br>]
@@ -130,7 +130,7 @@ Now that the device approval is complete, let's jump back into the Edge Manager 
 . Expand *Edge Management*
 . Select *Devices*
 . Change the *Devices* section search filter from *Labels and fleets* to *Name and alias* (You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
-. Enter the *hometown name you chose* for your device (case sensitive) [underline]#in the search box# to filter the device list
+. Enter the *hometown name you chose* for your device [underline]#in the search box# to filter the device list (please note that this search filter is *case sensitive*)
 . Click *YourHomeTown-store-{user}* device
 
 image::m2-userdevice-1.png[link=self, window=blank, width=100%]
@@ -191,8 +191,8 @@ podman ps -a
 CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
 ----
 
-In order for this 'back of store' device to function properly, it needs to have a point-of-sale application present.  Our front
-of store point-of-sale Kiosk's access this application via an OpenShift route.  Let's examine that route next.
+In order for this 'back of store' device to function properly, it needs to have a point-of-sale containerized application present.  Our front
+of store point-of-sale Kiosk's access this application via an OpenShift route.  Let's examine this route next.
 
 . Expand and select *local-cluster*
 . Expand *Networking*
@@ -202,7 +202,7 @@ of store point-of-sale Kiosk's access this application via an OpenShift route.  
 image::m2-routes-1.png[link=self, window=blank, width=100%]
 
 . Note that we receive an, *"Application is not available"* error message (this is expected at this time because we are running a 'base' device image which does not contain
-any custom applications).  
+any containerized applications).  
 
 image::m2-appnotavailable-1.png[link=self, window=blank, width=100%]
 
@@ -304,7 +304,7 @@ image::m2-pos-app.png[link=self, window=blank, width=100%]
 *Thank you* for completing our Module 2 Lesson.  
 
 In this Lesson, you learned how to onboard a new store edge device into Edge Manager. You started your device with a simple base image (containing no applications) and then witnessed
-how Edge Manager automatically swapped this image to one containing the POS App (after joining a Fleet that has this desired state configuration). </br>
+how Edge Manager automatically swapped this image to one containing the POS App (after joining a Fleet that has this desired state configuration). 
 
 You may be wondering:  "Why not just 
 join the Fleet as part of onboarding?" and the answer is that you certainly could have done that but then you may not have learned as much about how Edge Manager operates.  Additionally, you 
@@ -312,7 +312,7 @@ may have wondered, "Why not just bake the app(s) into the 'base' image?" and tha
 
 NOTE: Edge Manager gives users the optionality to configure things as they see fit, in alignment with any of their current build standards.
 
-Regardless of the approach taken, it should hopefully be more evident to you that Edge Manager can play a significant role in helping to prevent configuration drift for edge devices.  
+Regardless of the approach taken, it should hopefully be more evident to you that Edge Manager can play a significant role in helping to maintain desired state configuration for devices.  
 
 === Up Next
 
