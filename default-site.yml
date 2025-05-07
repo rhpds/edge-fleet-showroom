@@ -1,6 +1,6 @@
 ---
 site:
-  title: "Device Edge Fleet Management with Red Hat Edge Manager (Tech Preview)"
+  title: "Device Edge Fleet Management with Red Hat Edge Manager (Tech Preview) Test"
   url: https://redhat-scholars.github.io/course-template
   start_page: modules::index.adoc
 
