@@ -85,25 +85,17 @@ pass:[<br>]
 
 === Option 2: QR Code Enrollment via Web Browser
 
-Capture the QR Code image to your lab device clipboard 
+We are going to utilize the chrome browser *Search with Google Lens* feature to scan the device QR code
 
-. Press the *PRT SC* (Print Screen) key on your Lab Device Keyboard 
+. Select the chrome browser menu in the upper-right hand corner
+. Click *Search with Google Lens*
 
-NOTE: Your QR Code will differ from the following example screenshot
+image::m2-lens1.png[link=self, window=blank, width=100%]
 
-image::m2-qr-web-1.png[link=self, window=blank, width=100%]
+. Drag and select the *QR Code* image
+. Click *Website*
 
-Next we will utilize a web based QR code reader
-
-. (In your Lab Manual) expand the upper-right hand *Links* menu
-. Select *QR Code Scanner*
-
-image::m2-qr-web-2.png[link=self, window=blank, width=100%]
-
-. Click *Paste Image*
-. Click *Open Link*
-
-image::m2-qr-web-3.png[link=self, window=blank, width=100%]
+image::m2-lens2.png[link=self, window=blank, width=100%]
 
 . Expand *Actions*
 . Select *Approve*
