@@ -1,7 +1,7 @@
 ---
 site:
   title: "Device Edge Fleet Management with Red Hat Edge Manager (Tech Preview)"
-  url: https://www.redhat.com/en/blog/device-management-edge
+  url: https://www.redhat.com/en/about/press-releases/red-hat-introduces-red-hat-edge-manager-overseeing-fleets-devices
   start_page: modules::index.adoc
 
 content:
