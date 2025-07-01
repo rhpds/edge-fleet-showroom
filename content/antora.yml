@@ -1,5 +1,5 @@
 name: modules
-title: "LB2517: Device Edge Fleet Management with Red Hat Edge Manager (Tech Preview)"
+title: "Device Edge Fleet Management with Red Hat Edge Manager (Tech Preview)"
 version: master
 nav:
   - modules/ROOT/nav.adoc
@@ -19,7 +19,3 @@ asciidoc:
       text: QR Code Scanner
     - url: https://github.com/flightctl/flightctl
       text: Flight Control (Upstream Project)
-
-
-
-      
