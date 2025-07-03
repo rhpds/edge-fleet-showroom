@@ -1,4 +1,5 @@
 = 1. Edge Manager Introduction
+include::./icons.adoc[]
 
 == Welcome to Edge MegaStore, Inc. (Fictional Company)
 
@@ -10,9 +11,9 @@ finest Edge Equipment available including a snack bar area with refreshments
 
 image::EdgeMegastore-storefront.png[link=self, width=75%, window=blank]
 
-It looks like our EMI Marketing Department has some work to do with improving AI 
+It looks like our EMI Marketing Department has some work to do with improving AI
 generated images ('Dionuts' and Flying Strawberries?!) but thankfully you don't
-have to worry about that.  
+have to worry about that.
 
 Let's dive into your new role.
 
@@ -23,7 +24,7 @@ We have four existing EMI stores spread between the East and West Coasts of the 
 
 image::RetailExpansion.png[link=self, window=blank]
 
-In each location we have a back of store edge device running a RHEL 9 bootc image (which also includes the mandatory Edge Manager Agent). These store devices run a 
+In each location we have a back of store edge device running a RHEL 9 bootc image (which also includes the mandatory Edge Manager Agent). These store devices run a
 Point-of-Sale (POS) application which is accessible via the front of store point of sale kiosks.
 
 image::StoreComposition.png[link=self, window=blank]
@@ -31,8 +32,8 @@ image::StoreComposition.png[link=self, window=blank]
 [#lablogin]
 === Lab Login
 
-In a moment, we are going to need your help bringing a new store online in your 
-home town but first let's get you logged into your new work environment for an 
+In a moment, we are going to need your help bringing a new store online in your
+home town but first let's get you logged into your new work environment for an
 initial look around.
 
 Click link:{console_url}[here,window=_blank] to access your Lab Environment (this link will open in a new browser tab)
@@ -55,7 +56,7 @@ You can set your UI Theme as desired (System Default, Light, Dark)
 
 . Click *username* in upper-right hand corner
 . Select *User Preferences*
-. Set *Theme* to your desired choice 
+. Set *Theme* to your desired choice
 
 image::m1-ui-theme-1.png[link=self, window=blank]
 
@@ -64,8 +65,8 @@ NOTE: For future reference, all Lab Login information is available via the left-
 [#edgemanageroverview]
 === Exploring Edge Manager
 
-You are now logged into an OpenShift Container Platform environment which also has an Advanced Cluster Management operator installed.  
-If you have never used these capabilities before, don't worry.  We are here to examine the Edge Manager portions only.  Edge Manager is running 
+You are now logged into an OpenShift Container Platform environment which also has an Advanced Cluster Management operator installed.
+If you have never used these capabilities before, don't worry.  We are here to examine the Edge Manager portions only.  Edge Manager is running
 on OpenShift as a set of containerized microservices (one of which displays the UI elements that we are going to explore now)
 
 . Expand top menu and set to *All Cluster*
@@ -76,8 +77,8 @@ on OpenShift as a set of containerized microservices (one of which displays the 
 image::m1-edgeoverview.png[link=self, window=blank]
 
 Note that we see top level monitoring information.  We also observe the current quantity of devices under
-management as well as their status. This helps us understand things like, "How many devices are being managed?", 
-"Are these devices actually online (or are they in some sort of degraded state)?" 
+management as well as their status. This helps us understand things like, "How many devices are being managed?",
+"Are these devices actually online (or are they in some sort of degraded state)?"
 
 Let's continue our exploration by examining an Edge Manager *Fleet*, next.
 
@@ -95,13 +96,13 @@ We are observing the same top level monitoring information we saw previously onl
 
 Let's examine the devices that are currently a member of this fleet
 
-. Under *Up-to-date/devices*, click *4* 
+. Under *Up-to-date/devices*, click *4*
 
 NOTE: The Device count number might be different in your lab - simply click the right-most number
 
 image::m1-fleet-2.png[link=self, window=blank]
 
-Here we observe the 4 _existing_ EMI East/West coast store devices that we discussed earlier.  They are reporting a green '*Online*' device status.  
+Here we observe the 4 _existing_ EMI East/West coast store devices that we discussed earlier.  They are reporting a green '*Online*' device status.
 Let's examine the Fleet configuration in more detail.
 
 . Click *point-of-sale-prod*
@@ -118,7 +119,7 @@ Let's explore how this Fleet was built in more detail
 image::m1-editfleet.png[link=self, window=blank]
 
 . We see the friendly name that has been chosen for this fleet: *point-of-sale-prod*
-. A *device selector* label has been configured: '*pos=prod*' This is a user generated key-pair value of their choosing. _Any device that matches (contains) this label 
+. A *device selector* label has been configured: '*pos=prod*' This is a user generated key-pair value of their choosing. _Any device that matches (contains) this label
 will automatically be made a member of this fleet_. Although we haven't done so in our lab, it is possible to have more than one label configured as a device selector (e.g. "pos=prod" and "loc=store")
 . Note that we have *4 devices matching* this label (these are our existing store edge devices, your lab device count may vary)
 . Click *Next*
@@ -133,7 +134,7 @@ We are now looking at what we refer to as the fleet *device template*.  The devi
 
 image::m1-editfleet-3.png[link=self, window=blank]
 
-As part of the device template, We can specify additional host configuration items (like custom systemd service config, network config, etc.)
+As part of the device template, we can specify additional host configuration items (like custom systemd service config, network config, etc.)
 
 . Expand *Select a source type* (Edge manager can load pre-staged (inline) configuration files on the device, configuration files stored in Git or configuration files
 stored on an internal web (http) repository)
@@ -159,15 +160,15 @@ image::m1-editfleet-6.png[link=self, window=blank]
 When applying updates to Devices, we have the ability to specify *Advanced configuration* options
 
 . Uncheck the box next to *Use basic configurations*
-. Click the *(?)* tooltip to learn about setting *rollout policies*
-. Click the *(?)* tooltip to learn about utilizing a *disruption budget*
+. Click the :tooltip-icon: tooltip to learn about setting *rollout policies*
+. Click the :tooltip-icon: tooltip to learn about utilizing a *disruption budget*
 . Click *Cancel* to exit out of the Fleet edit
 
 image::m1-editfleet-7.png[link=self, window=blank]
 
 [#module1summary]
 == Module 1 Summary
-*Thank you* for completing our Module 1 Lesson.  
+*Thank you* for completing our Module 1 Lesson.
 
 In this Lesson, you learned how Edge Manager surfaces top level edge device monitoring information.  In addition, you learned how Edge Manager
 Fleet specifications can be set for all devices that are members of a given fleet.  This functionality allows users to declaratively specify their desired state for Edge Devices and subsequently rely

@@ -1,4 +1,5 @@
 = 2. Edge Manager Operations
+include::./icons.adoc[]
 
 [#highlevelarchitecture]
 == Edge Manager Architecture
@@ -10,18 +11,18 @@ image::m2-architecture.png[link=self, window=blank, width=100%]
 utilized for storing inventory and runtime information such as current device target configuration and the reported actual configuration
 . *User access* is achieved via two primary interfaces: Edge Manager Web UI (which we briefly examined earlier) and Edge Manager CLI (which
 we will explore in a later module)
-. *Edge Device access* utilizes an Agent that is running on each managed device. The agent always 'calls home' to the Edge Manager service, 
-so the device can be on a private network or have a dynamic IP address (this includes devices that are behind Network Address Translation (NAT), firewalls and cellular / WLAN uplinks) 
-. *Git repository integration* (optional) enables storing of device and device fleet configuration. When utilized, the Edge Manager service 
+. *Edge Device access* utilizes an Agent that is running on each managed device. The agent always 'calls home' to the Edge Manager service,
+so the device can be on a private network or have a dynamic IP address (this includes devices that are behind Network Address Translation (NAT), firewalls and cellular / WLAN uplinks)
+. *Git repository integration* (optional) enables storing of device and device fleet configuration. When utilized, the Edge Manager service
 periodically polls Git for updates
 . *External systems* can be utilized by the Edge Manager service to authenticate and authorize users, get mTLS certificates signed, or query
 configuration for managed devices
 
 [#onboarding]
 == New Store Edge Device Onboarding
-Now that you have seen an overview of Edge Manager and examined its architecture, it's time to bring our new store online 
+Now that you have seen an overview of Edge Manager and examined its architecture, it's time to bring our new store online
 
-NOTE: In the following screenshots, the user ID is set to ‘user1’. Your user ID will most likely be different from this. Please refer to the lab guide text for your correct user ID
+NOTE: In the following screenshots, the user ID is set to 'user1'. Your user ID will most likely be different from this. Please refer to the lab guide text for your correct user ID
 
 === Device Enrollment
 Return to your lab environment and perform the following steps
@@ -37,24 +38,24 @@ image::m2-virtualization.png[link=self, window=blank, width=100%]
 Your Edge Device virtual machine has been pre-configured with a RHEL 9.5 bootc image containing an Edge Manager agent, let's power on the device
 
 . Click the VM *start (play)* icon
-. Click *Open web console* (to open the console in a new Browser tab)
+. Click *Open web console* (to open the console in a new browser tab)
 
 image::m2-startvm.png[link=self, window=blank, width=100%]
 
 Your edge device has powered on and established a secure mTLS connection with the Edge Manager API Service. As part of the enrollment process,
-a QR code is conveniently made available to users   
+a QR code is conveniently made available to users
 
 === Option 1: QR Enrollment via Mobile Phone
 NOTE: If you have a Mobile Device, continue with the steps indicated below.  If you do not have
 a Mobile Device, skip this section by clicking https://showroom-showroom-{guid}-{user}.apps.cluster-{guid}.dynamic.redhatworkshops.io/content/modules/module-02.html#option-2-anchor[here] to go to the *Option 2: QR Code Enrollment via Web Browser* section (you can also select this section in the *Contents*
 right-hand navigation menu)
 
-. Scan the QR code and open the site in your mobile device browser. 
+. Scan the QR code and open the site in your mobile device browser.
 
-IMPORTANT: Please make sure you utilize the username provided for you as shown in the following steps 
+IMPORTANT: Please make sure you utilize the username provided for you as shown in the following steps
 
-. Enter *Username*: {user}
-. Enter *Password*: {password}
+. Enter *Username*: `{user}`
+. Enter *Password*: `{password}`
 . Select *Login*
 
 image::m2-mobile-1.png[link=self, window=blank, width=50%]
@@ -66,7 +67,7 @@ image::m2-mobile-2.png[link=self, window=blank, width=50%]
 
 IMPORTANT: For the device name (alias) please make sure that you replace 'YourHomeTown' with *your own home town* and append the alias with your user number: ({user})
 
-. Enter your *device name (alias)*: [YourHomeTown]-store-{user}
+. Enter your *device name (alias)*: `[YourHomeTown]-store-{user}`
 . Select *Approve*
 
 image::m2-mobile-3.png[link=self, window=blank, width=50%]
@@ -180,7 +181,14 @@ podman ps -a
 .Sample Output
 [source,texinfo,subs="attributes"]
 ----
-CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
+CONTAINER ID  IMAGE                                    COMMAND               CREATED         STATUS         PORTS                                        NAMES
+617ed99c0eae  localhost/podman-pause:5.2.2-1742216634                        10 minutes ago  Up 10 minutes                                               47a0b459f7c9-service
+9d3a9a8a97d3  localhost/podman-pause:5.2.2-1742216634                        10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp                  quay.io/jswanson/pos-v1-prod:1.0.0             7c3f58a2f9bc-infra
+129ccdf236c5/usr/bin/run-http...10 minutes ago    Up 10 minutes
+0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod[root@wksp-user1-edge-device /]#617ed99c0eae  localhost/podman-pause:5.2.2-1742216634                        10 minutes ago  Up 10 minutes                                               47a0b459f7c9-service
+9d3a9a8a97d3  localhost/podman-pause:5.2.2-1742216634                        10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp                  quay.io/jswanson/pos-v1-prod:1.0.0             7c3f58a2f9bc-infra
+129ccdf236c5/usr/bin/run-http...10 minutes ago    Up 10 minutes
+0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod[root@wksp-user1-edge-device /]#
 ----
 
 In order for this 'back of store' device to function properly, it needs to have a point-of-sale containerized application present.  Our front
@@ -189,12 +197,12 @@ of store point-of-sale Kiosk's access this application via an OpenShift route.  
 . Expand and select *local-cluster*
 . Expand *Networking*
 . Select *Routes*
-. Click the 'pos' route *Location hyperlink* to open this route-to-app in a new browser tab
+. Click the '*pos*' route *Location hyperlink* to open this route-to-app in a new browser tab
 
 image::m2-routes-1.png[link=self, window=blank, width=100%]
 
 . Note that we receive an, *"Application is not available"* error message (this is expected at this time because we are running a 'base' device image which does not contain
-any containerized applications).  
+any containerized applications).
 
 image::m2-appnotavailable-1.png[link=self, window=blank, width=100%]
 
@@ -204,7 +212,7 @@ image::m2-appnotavailable-1.png[link=self, window=blank, width=100%]
 In this section we are going to join our new store device to the existing fleet that you examined earlier, "*point-of-sale-prod*".  During this process, you will experience
 how Edge Manager maintains desired state configuration for any devices that are a member of this fleet.
 
-Keep the Application Browser Tab open and return to the *Routes* Browser Tab 
+Keep the Application Browser Tab open and return to the *Routes* Browser Tab
 
 . Expand and select *All Clusters*
 . Expand *Edge Management*
@@ -221,14 +229,14 @@ If you answered, "Fleet Device selector label", congratulations!  (This will be 
 
 The *'point-of-sale-prod'* fleet is configured with a *device selector* label set to: *pos=prod*.  Let's add that label to our new store device now.
 
-. Click *Add label* and replace 'key=value' with *pos=prod* followed by pressing your *enter* key 
-. Select the *(!)* icon at the end of the *'...base:1.0.0'* image
+. Click *Add label* and replace 'key=value' with `pos=prod` followed by pressing your *enter* key
+. Select the *(!)* {warning-icon} icon at the end of the *'...base:1.0.0'* image
 
 image::m2-userdevice-3.png[link=self, window=blank, width=100%]
 
 Note that we have a *System image mismatch*.  Edge Manager is informing us that the desired state image for any device that is a member of this fleet
 *must be* a bootc image ending in *'...pos-prod:1.0.0'*.  Since our new device is running a different (base) image, Edge Manager is automatically self-healing
-the device to desired state.  
+the device to desired state.
 
 During this self-healing process, you will observe (via the *System status* pane):
 
@@ -237,7 +245,7 @@ During this self-healing process, you will observe (via the *System status* pane
 
 image::m2-userdevice-4.png[link=self, window=blank, width=100%]
 
-NOTE: It takes a few minutes for the device to apply the new '...pos-prod:1.0.0' image and reboot. Now would be a good time to relax a little while you wait.  
+NOTE: It takes a few minutes for the device to apply the new '...pos-prod:1.0.0' image and reboot. Now would be a good time to relax a little while you wait.
 Thank you for your patience!
 
 . Wait for the device to report *'Online'* and *'Up-to-date'* in the *System status* panel
@@ -248,7 +256,7 @@ image::m2-userdevice-6.png[link=self, window=blank, width=100%]
 
 Now that the image has been brought to the fleet desired state OS configuration, let's examine a few items within the Terminal
 
-. Observe that the current booted image has been set to *'...pos-prod:1.0.0'* and our previous *'...base:1.0.0'* image is indicated as a rollback option 
+. Observe that the current booted image has been set to *'...pos-prod:1.0.0'* and our previous *'...base:1.0.0'* image is indicated as a rollback option
 +
 [source,sh,role=execute]
 ----
@@ -293,23 +301,23 @@ image::m2-pos-app.png[link=self, window=blank, width=100%]
 
 [#module2summary]
 == Module 2 Summary
-*Thank you* for completing our Module 2 Lesson.  
+*Thank you* for completing our Module 2 Lesson.
 
 In this Lesson, you learned how to onboard a new store edge device into Edge Manager. You started your device with a simple base image (containing no applications) and then witnessed
-how Edge Manager automatically swapped this image to one containing the POS App (after joining a Fleet that has this desired state configuration). 
+how Edge Manager automatically swapped this image to one containing the POS App (after joining a Fleet that has this desired state configuration).
 
-You may be wondering:  "Why not just 
-join the Fleet as part of onboarding?" and the answer is that you certainly could have done that but then you may not have learned as much about how Edge Manager operates.  Additionally, you 
-may have wondered, "Why not just bake the app(s) into the 'base' image?" and that is also certainly an option. 
+You may be wondering:  "Why not just
+join the Fleet as part of onboarding?" and the answer is that you certainly could have done that but then you may not have learned as much about how Edge Manager operates.  Additionally, you
+may have wondered, "Why not just bake the app(s) into the 'base' image?" and that is also certainly an option.
 
 NOTE: Edge Manager gives users the optionality to configure things as they see fit, in alignment with any of their current build standards.
 
-Regardless of the approach taken, it should hopefully be more evident to you that Edge Manager can play a significant role in helping to maintain desired state configuration for devices.  
+Regardless of the approach taken, it should hopefully be more evident to you that Edge Manager can play a significant role in helping to maintain desired state configuration for devices.
 
 === Up Next
 
 You are well on your way to opening your new store for business; however, there is one small challenge. You may have noticed that our POS app is not the most useful (it doesn't actually _do anything_
-other than present a static user interface with no user interoperability).  
+other than present a static user interface with no user interoperability).
 
 In our final module, you will learn how to create a new fleet from scratch and specify a new point of sale *application* as part
 of the fleet device template.  You will also explore the Edge Manager command line interface along with how to further monitor and decommission devices.

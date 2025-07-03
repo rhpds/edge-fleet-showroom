@@ -1,23 +1,24 @@
 = 3. Edge Manager Additional Topics
+include::./icons.adoc[]
 
 [#newfleetcreation]
 == New Fleet Creation
 
-We're in the home stretch and our new store is almost ready to open (thanks to you). 
+We're in the home stretch and our new store is almost ready to open (thanks to you).
 
-In a moment we will ask you to create a new Fleet and wire in a new (and _functional_) point of sale application into the fleet device template. Before 
+In a moment we will ask you to create a new Fleet and wire in a new (and _functional_) point of sale application into the fleet device template. Before
 doing so, let's examine our networking route that will be utilized to access this *new POS app*.
 
 . Expand and select *local-cluster*
 . Expand *Networking*
 . Select *Routes*
-. Click the 'new-pos' route *Location hyperlink* to open this route-to-app in a new browser tab
+. Click the '*new-pos*' route *Location hyperlink* to open this route-to-app in a new browser tab
 
 NOTE: The 'application is not available' error message is expected at this time since we have not added the new (more functional) POS app to our device yet
 
 image::m3-routes-1.png[link=self, window=blank, width=100%]
 
-Keep the Application Browser Tab open and return to the *Routes* Browser Tab 
+Keep the Application Browser Tab open and return to the *Routes* Browser Tab
 
 . Expand and select *All Clusters*
 . Expand *Edge Management*
@@ -29,12 +30,12 @@ image::m3-createfleet.png[link=self, window=blank, width=100%]
 Populate the *Create fleet* wizard with the following *General info* values +
 
 . *Name:*
-+ 
++
 [source,sh,role=execute,subs=attributes+]
 ----
 {user}-new-store-fleet
 ----
-. *Device selector: (?)* (_Please do not select *Fleet labels* by mistake_)
+. *Device selector: {tooltip-icon}* (_Please do not select *Fleet labels* by mistake_)
 +
 [source,sh,role=execute,subs=attributes+]
 ----
@@ -42,15 +43,15 @@ fleet={user}
 ----
 . Click *Next*
 
-IMPORTANT: The following screenshots are shown for example purposes only and may not match your User ID. 
-Unless you have been assigned, 'user1', do not use 'user1' vs. your assigned User ID: {user}. 
+IMPORTANT: The following screenshots are shown for example purposes only and may not match your User ID.
+Unless you have been assigned, 'user1', do not use 'user1' vs. your assigned User ID: {user}.
 
 image::m3-fleetgeneralinfo.png[link=self, window=blank, width=100%]
 
 Populate the following *Device template* values +
 
 . *System image:* (Note: this is the same '...pos-prod:1.0.0' image that we used previously)
-+ 
++
 [source,sh,role=execute]
 ----
 image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-pos-prod:1.0.0
@@ -99,7 +100,7 @@ image::m3-userdevice-1.png[link=self, window=blank, width=100%]
 image::m3-userdevice-2.png[link=self, window=blank, width=100%]
 
 . Click *Add label*
-. Replace *key=value* with *fleet={user}* and press *enter*
+. Replace *key=value* with *`fleet={user}`* and press *enter*
 . Observe that we are still _running the same_ *System image* ('...pos-prod:1.0.0') (a device reboot will not be required since our new fleet uses the same image that our device is already running)
 . Observe that your device *Applications* pane is now populated with our containerized application
 
@@ -140,7 +141,7 @@ image::m3-new-pos-app.png[link=self, window=blank, width=100%]
 Let's order some (pretend) donuts via the new POS App (because...why not)?
 
 . Select *Red Glazed Donut*
-. Increase *quantity* to *75*
+. Increase *quantity* to *`75`*
 . Tender a _crisp_ 100 dollar bill by clicking *+100.00*
 . Click *Submit*
 
@@ -179,22 +180,23 @@ Your new home town Edge Megastore, Inc. location is now ready to open for busine
 
 You've done a great job at Edge Megastore, Inc.!
 
-If you'd like to call it a day, you are welcome to end the lab here (*thank you)*; however, if you would like to earn some Overtime (mythical) pay and explore a few more *advanced* topics 
+If you'd like to call it a day, you are welcome to end the lab here (*thank you)*; however, if you would like to earn some Overtime (mythical) pay and explore a few more *advanced* topics
 you are welcome to continue.
 
 [#cli]
 == Edge Manager Command Line Interface
 
-The Edge Manager CLI contains a robust set of commands. In fact, most (if not all) of what we have explored in this lab via the Edge Manager UI can 
+The Edge Manager CLI contains a robust set of commands. In fact, most (if not all) of what we have explored in this lab via the Edge Manager UI can
 be done via CLI.
 
-NOTE: The Edge Manager CLI is currently still named after the upstream project: *flightctl* and has been pre-loaded for you in our lab environment 
+NOTE: The Edge Manager CLI is currently still named after the upstream project: *flightctl* and has been pre-loaded for you in our lab environment
 
 . Click the OpenShift *>_* (Terminal) icon in the upper-right hand corner
 . Set *Project* is set to: wksp-{user} (Note: You may need to scroll down to select)
 . Click *Start*
 
-NOTE: The wksp-user in this screenshot may not match your user ID  
+
+NOTE: The wksp-user in this screenshot may not match your user ID
 
 image::m3-cli-1.png[link=self, window=blank, width=100%]
 
@@ -353,7 +355,7 @@ status:
 ----
 
 NOTE: The Edge Manager API is similar to a Kubernetes API in that we can utilize yaml to create/update/remove Edge Manager devices and fleets by using
-'flightctl apply -f file.yaml' commands. 
+'flightctl apply -f file.yaml' commands.
 
 For our last CLI example, let's connect to a console session within your actual hometown-store-{user} device
 
@@ -379,7 +381,7 @@ You can now interact directly with your device via its console!
 +
 [source,sh,role=execute]
 ----
-podman ps -a 
+podman ps -a
 ----
 +
 .Sample Output (your list may vary)
@@ -410,11 +412,11 @@ image::m3-userdevice-1.png[link=self, window=blank, width=100%]
 
 We have previously seen (in the *System status* pane) how Device status and Update status change depending on our device state (rebooting, online, updating, up-to-date, etc.)
 
-. In the *System status* pane, click the *(?)* tooltips for each of the status items and review their contents
+. In the *System status* pane, click the {tooltip-icon} tooltips for each of the status items and review their contents
 
 image::m3-monitoring-2.png[link=self, window=blank, width=100%]
 
-Edge Manager also surfaces Application Status in the Device *Applications* pane. 
+Edge Manager also surfaces Application Status in the Device *Applications* pane.
 
 Let's non-gracefully kill our new-pos-app container app and examine status
 
@@ -426,7 +428,7 @@ Let's non-gracefully kill our new-pos-app container app and examine status
 podman kill -s 9 new-pos-app-173783_edge-megastore-pos_1
 ----
 +
-.Sample Output 
+.Sample Output
 [source,texinfo,subs="attributes"]
 ----
 new-pos-app-173783_edge-megastore-pos_1
@@ -438,7 +440,7 @@ new-pos-app-173783_edge-megastore-pos_1
 podman ps -a
 ----
 +
-.Sample Output 
+.Sample Output
 [source,texinfo,subs="attributes"]
 ----
 CONTAINER ID  IMAGE                                    COMMAND               CREATED       STATUS                           PORTS                                        NAMES
@@ -453,12 +455,12 @@ image::m3-monitoring-3.png[link=self, window=blank, width=100%]
 
 NOTE: This information is also rolled up holistically for all devices at both the Fleet level and overall Edge Manager level
 
-. In the device *Resource status* pane, you can observe that Edge Manager is surfacing device *CPU*, *Disk* and *Memory* pressure status.  
+. In the device *Resource status* pane, you can observe that Edge Manager is surfacing device *CPU*, *Disk* and *Memory* pressure status.
 
 image::m3-monitoring-4.png[link=self, window=blank, width=100%]
 
 NOTE: In Edge Manager, users can customize device resource monitors and define alerts when the utilization
-crosses a defined threshold (for example, 'trigger a *warning alert* if the average disk utilization exceeds 75% for more than 30 minutes' and 'trigger a *critical alert* if disk utilization exceeds 90% for over 10 minutes with a sampling interval of 5 seconds.").  
+crosses a defined threshold (for example, 'trigger a *warning alert* if the average disk utilization exceeds 75% for more than 30 minutes' and 'trigger a *critical alert* if disk utilization exceeds 90% for over 10 minutes with a sampling interval of 5 seconds.").
 
 === Device Decommission
 
@@ -469,8 +471,8 @@ Stop your Edge Device Virtual Machine
 . Expand and select *local-cluster*
 . Expand *Virtualization*
 . Select *VirtualMachines*
-. Select *vertical ellipses* 
-. Click *stop*
+. Select *vertical ellipses*
+. Click *Stop*
 
 image::m3-decommission-4.png[link=self, window=blank, width=100%]
 
@@ -483,7 +485,7 @@ Return to your device within Edge Manager
 . Enter the *hometown name you chose* for your device to filter the device list
 . Click *YourHomeTown-store-{user}* device
 
-Decommission your device 
+Decommission your device
 
 . Expand *Actions*
 . Select *Decommission device*
@@ -494,7 +496,7 @@ image::m3-decommission-1.png[link=self, window=blank, width=100%]
 
 image::m3-decommission-2.png[link=self, window=blank, width=100%]
 
-. Set the *Show only decommissioned devices* toggle to *on* ((You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
+. Set the *Show only decommissioned devices* toggle to *on* (You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
 
 image::m3-decommission-3.png[link=self, window=blank, width=100%]
 
@@ -512,6 +514,3 @@ We hope your time at Edge Megastore, Inc. has been an enjoyable and informative 
 BTW, judging by that store front image above it looks like our EMI Marketing Department has some more work to do... :)
 
 Thank you, again - have a great day!
-
-
-
