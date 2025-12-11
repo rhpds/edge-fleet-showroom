@@ -13,6 +13,7 @@ tabs:
  - name: Terminal 1
    secondary_name: Terminal 2
    type: 'double-terminal'
+   path: /terminal/
 
   # - name: Terminal
   #   path: /terminal/
