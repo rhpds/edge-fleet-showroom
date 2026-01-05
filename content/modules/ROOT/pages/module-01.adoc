@@ -36,16 +36,16 @@ Let's get you logged in to your lab environment. On the right you'll notice your
 . Click *Terminal 1* (if it is not already selected)
 +
 [source,sh,role=execute,subs=attributes+]
-.Copy/Paste (or type) this command
+.Copy/Paste (or type) this command (answer yes when prompted)
 ----
 ssh {user}@rhem-on-rhel-ssh.wksp-{guid}-{user}.svc.cluster.local
 ----
 +
 [.no-copy-label]
-.Enter Password and answer yes when prompted
+.Enter Password 
 [source,sh,role=execute,subs=attributes+]
 ----
-{openshift_cluster_user_password}
+{bastion_ssh_password}
 ----
 +
 .Sample Output
@@ -94,6 +94,10 @@ rhem-on-rhel.wksp-{guid}-{user}.svc.cluster.local
 . You'll also be utilizing the OpenShift console to perform various tasks. Let's get you logged into OpenShift, next:
 +
 Click link:{console_url}[here,window=_blank] to access OpenShift (this link will open in a new browser tab)
++
+.. Click {guid}-htpasswd
++
+image::m1-openshift-login.png[link=self, window=blank, width=100%]
 +
 .Username
 [source,sh,role=execute,subs=attributes+]
