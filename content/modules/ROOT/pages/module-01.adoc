@@ -45,7 +45,7 @@ ssh {user}@rhem-on-rhel-ssh.wksp-{guid}-{user}.svc.cluster.local
 .Enter Password and answer yes when prompted
 [source,sh,role=execute,subs=attributes+]
 ----
-{password}
+{openshift_cluster_user_password}
 ----
 +
 .Sample Output
