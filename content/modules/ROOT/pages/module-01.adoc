@@ -106,7 +106,7 @@ image::m1-openshift-login.png[link=self, window=blank, width=100%]
 ----
 +
 [.no-copy-label]
-..Password
+.Password
 [source,sh,role=execute,subs=attributes+]
 ----
 {bastion_ssh_password}
