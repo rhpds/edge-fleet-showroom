@@ -1,179 +1,370 @@
-= 1. Edge Manager Introduction
-include::./icons.adoc[]
+= 1. Edge Manager  - Deploy
 
-== Welcome to Edge MegaStore, Inc. (Fictional Company)
+== Welcome to SliceOps Delivery Systems (Fictional Company)
 
-Congratulations on your new job at Edge MegaStore, Inc. (EMI)! The pay isn't great
-but if you love to learn about new edge management technology you are in the
-right place. EMI is proud to provide our Customers with the
-finest Edge Equipment available including a snack bar area with refreshments
-(the Red-Sprinkled Donuts are a specialty).
+image::m1-welcome.png[link=self, window=blank, width=100%]
 
-image::EdgeMegastore-storefront.png[link=self, width=75%, window=blank]
+Congratulations on your new role at SliceOps Delivery Systems (SDS)! If you're excited to learn about new Red Hat edge management technologies, you're in the right place.
 
-It looks like our EMI Marketing Department has some work to do with improving AI
-generated images ('Dionuts' and Flying Strawberries?!) but thankfully you don't
-have to worry about that.
+As an SDS technician, you'll be operating far outside the comforts of a traditional datacenter where redundant power, cooling and IT staff are always close at hand. This is often the reality of managing systems at the edge.
 
-Let's dive into your new role.
+It's just you and your Edge gear.  In fact, this could be your new office:
 
-[#currentstorefootprint]
-=== Current Retail Store Footprint
+image::m1-remote-office.png[link=self, window=blank, width=100%]
 
-We have four existing EMI stores spread between the East and West Coasts of the United States.
+Today, you'll bring a new SDS field location and pizza delivery drone online. Along the way, you'll take Edge Manager for a test drive.  Let's begin.
 
-image::RetailExpansion.png[link=self, window=blank]
+Bringing Edge Manager online follows a three-step process:
 
-In each location we have a back of store edge device running a RHEL 9 bootc image (which also includes the mandatory Edge Manager Agent). These store devices run a
-Point-of-Sale (POS) application which is accessible via the front of store point of sale kiosks.
+image::m1-3-step.png[link=self, window=blank, width=100%]
 
-image::StoreComposition.png[link=self, window=blank]
+You'll *deploy* (install) Edge Manager on Red Hat Enterprise Linux, *onboard* your delivery drone, and *manage* the device through Edge Manager.
+
+Speaking of Edge Gear, this is what you have to work with in this lab:
+
+image::m1-edge-gear.png[link=self, window=blank, width=100%]
+
+. (*RHEM-Virtual-Machine*) This is where you'll install Edge Manager. You'll also use this VM as an Image Mode (bootc) build machine, producing the disk image that will later be deployed to the drone virtual machine
+. (*Drone-Virtual-Machine*) The Image Mode (bootc) image you build will be provisioned here. This VM represents the delivery drone and will be onboarded to Edge Manager
+. (*Container Application*) This containerized application runs on the drone VM and simulates a drone camera. You'll deploy it to the managed drone VM using Edge Manager
 
 [#lablogin]
 === Lab Login
 
-In a moment, we are going to need your help bringing a new store online in your
-home town but first let's get you logged into your new work environment for an
-initial look around.
+Let's get you logged in to your lab environment. On the right you'll notice your terminal interfaces.  Utilize this user information to SSH to your RHEM virtual machine
 
-Click link:{console_url}[here,window=_blank] to access your Lab Environment (this link will open in a new browser tab)
-
+. Click *Terminal 1* (if it is not already selected)
++
+[source,sh,role=execute]
+.Copy/Paste (or type) this command
+----
+ssh {user}@rhem-on-rhel-ssh.wksp-{uid}-{user}.svc.cluster.local
+----
++
 [.no-copy-label]
+.Enter Password and answer yes when prompted
+[source,sh,role=execute,subs=attributes+]
+----
+{password}
+----
++
+.Sample Output
+[source,text,role=wrap]
+----
+The authenticity of host 'rhem-on-rhel-ssh.wksp-kddq7-1-user1.svc.cluster.local (172.231.180.2)' 
+can't be established.
+ED25519 key fingerprint is SHA256:poou/FHSrHcFPt5w4qdWBv6098y/OuEz20W1oBjKb+M.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+user1@rhem-on-rhel-ssh.wksp-kddq7-1-user1.svc.cluster.local's password: 
+Register this system with Red Hat Insights: rhc connect
+
+Example:
+# rhc connect --activation-key <key> --organization <org>
+
+The rhc client and Red Hat Insights will enable analytics and additional
+management capabilities on your system.
+View your connected systems at https://console.redhat.com/insights
+
+You can learn more about how to register your system 
+using rhc at https://red.ht/registration
+<...>
+----
++
+[.no-copy-label]
+.Issue the following command to set the Virtual Machine hostname
+[source,sh,role=execute wrap,subs=attributes+]
+----
+sudo hostnamectl hostname rhem-on-rhel.wksp-{uid}-{user}.svc.cluster.local
+----
++
+[.no-copy-label]
+.Confirm that the hostname was set successfully
+[source,sh,role=execute,subs=attributes+]
+----
+hostname
+----
++
+.Sample Output
+[source,text,role=wrap,subs=attributes+]
+----
+rhem-on-rhel.wksp-{uid}-{user}.svc.cluster.local
+----
++
+. You'll also be utilizing the OpenShift console to perform various tasks. Let's get you logged into OpenShift, next:
++
+Click link:{console_url}[here,window=_blank] to access OpenShift (this link will open in a new browser tab)
++
 .Username
 [source,sh,role=execute,subs=attributes+]
 ----
 {user}
 ----
-
++
 [.no-copy-label]
-.Password
+..Password
 [source,sh,role=execute,subs=attributes+]
 ----
 {password}
 ----
 
-You can set your UI Theme as desired (System Default, Light, Dark)
+NOTE: For future reference, all Lab Login information is available via the Lab Manual left-hand nav item, "Lab Access"
 
-. Click *username* in upper-right hand corner
-. Select *User Preferences*
-. Set *Theme* to your desired choice
+[#edgemanagerdeploy]
+=== Installing Edge Manager
 
-image::m1-ui-theme-1.png[link=self, window=blank]
+Let's return to your `Terminal 1` (ssh) session and begin the Edge Manager installation
 
-NOTE: For future reference, all Lab Login information is available via the left-hand nav item, "Lab Access"
+Ken: Once the correct lab repo is synched (https://rpm.flightctl.io/flightctl-lab.repo), the install command might be modified (confirm)
 
-[#edgemanageroverview]
-=== Exploring Edge Manager
+. To install and start Edge Manager, run the following commands:
++
+[source,sh,role=wrap execute]
+.Install the Edge Manager Services
+----
+sudo dnf install -y flightctl-services-0:1.1.0~main~129~g96f9eb13.lab-1.el9.x86_64
+----
++
+.Sample Output
+[source,text, role=wrap]
+----
+<...>
+Installed:
+  flightctl-services-1.1.0~main~129~g96f9eb13.lab-1.el9.x86_64                               
 
-You are now logged into an OpenShift Container Platform environment which also has an Advanced Cluster Management operator installed.
-If you have never used these capabilities before, don't worry.  We are here to examine the Edge Manager portions only.  Edge Manager is running
-on OpenShift as a set of containerized microservices (one of which displays the UI elements that we are going to explore now)
+Complete!
+----
++
+[.no-copy-label]
+.Enable the flightctl target services
+[source,sh,role=execute,subs=attributes+]
+----
+sudo systemctl enable flightctl.target
+----
++
+.Sample Output
+[source,text,role=wrap]
+----
+Created symlink /etc/systemd/system/multi-user.target.wants/flightctl.target → /usr/lib/systemd/system/flightctl.target.
+----
++
+[.no-copy-label]
+.Start the flightctl target services (starting the services takes a few moments to complete, thank you for your patience)
+[source,sh,role=execute]
+----
+sudo systemctl start flightctl.target
+----
 
-. Expand top menu and set to *All Cluster*
-. Expand the *Home* menu
-. Select *Overview*
-. Click *Edge*
+NOTE: We'll examine the services that were installed in more detail later in Module 2
 
-image::m1-edgeoverview.png[link=self, window=blank]
+=== Configuring Edge Manager Authentication
 
-Note that we see top level monitoring information.  We also observe the current quantity of devices under
-management as well as their status. This helps us understand things like, "How many devices are being managed?",
-"Are these devices actually online (or are they in some sort of degraded state)?"
+Now that Edge Manager is installed we are going to configure authentication next.  Edge Manager supports multiple authentication providers.  In this lab, you’ll configure OpenID Connect (OIDC) in combination with a Pluggable Authentication Module (PAM) to authenticate users and authorize access:
 
-Let's continue our exploration by examining an Edge Manager *Fleet*, next.
+image::m1-oidc-with-pam-overview.png[link=self, window=blank, width=100%]
 
-. Expand *Edge Management*
-. Select *Fleets*
-. Click *point-of-sale-prod*
+At a high level, authentication works as follows:
 
-NOTE: Your Fleet list may differ from the screenshot below. You can utilize the *Search by name* filter to find *point-of-sale-prod* if needed
+. The user initiates a login from the Edge Manager UI or CLI 
+. The Edge Manager API service directs the request to the PAM issuer, which acts as the OIDC authentication server
+. The user authenticates with the PAM issuer
+. An access token is issued, containing the role and org for the user
+. Subsequent requests against the Edge Manager API utilize the token 
 
-image::m1-fleet-1.png[link=self, window=blank]
+To configure Edge Manager to use OIDC and PAM authentication, you’ll make a few targeted updates to the Edge Manager configuration file located at: `/etc/flightctl/service-config.yaml`
 
-A *Fleet* is defined as a, "Group of Devices that share the same desired state configuraton ('device template') and common management policies"
+. Instead of editing the the entire configuration file manually, we've made it easier to update service-config.yaml in this lab by copying and pasting the following commands (please do so now):
++
+.Set environment variables for the RHEM Web UI and OIDC PAM endpoints (these variables reference OpenShift Routes that expose the RHEM Web UI and the PAM-based OIDC authentication service)
+[source,sh,role=wrap execute,subs=attributes+]
++
+----
+WEBUI_URL="https://rhem-on-rhel-webui-wksp-xt8pt-1-user1.apps.cluster-xt8pt.dynamic.redhatworkshops.io"
+OIDC_PAM_URL="https://rhem-on-rhel-oidc-pam-wksp-xt8pt-1-user1.apps.cluster-xt8pt.dynamic.redhatworkshops.io"
+----
++
+.Configure the OIDC issuer used by Edge Manager
+[source,sh,role=wrap execute,subs=attributes+]
+----
+sudo sed -i \
+  "s|^      issuer:.*|      issuer: ${OIDC_PAM_URL}/api/v1/auth|" \
+  /etc/flightctl/service-config.yaml
+----
++
+.Configure redirect URIs for the RHEM Web UI. OIDC requires redirect URIs to be explicitly defined (this allows the authentication service to redirect users back to the RHEM Web UI after login)
+[source,sh,role=wrap execute,subs=attributes+]
+----
+sudo sed -i '/pamOidcIssuer:/,/pamService:/ {
+  /redirectUris:/! {
+    /issuer:/a\
+      redirectUris:\n\
+        - '"${WEBUI_URL}"'/callback\n\
+        - http://localhost:8080/callback
+  }
+}' /etc/flightctl/service-config.yaml
+----
++
+.Enable RHEM branding
+[source,sh,role=wrap execute,subs=attributes+]
+----
+sudo sed -i \
+  -e '/^IS_RHEM=/d' \
+  -e '$aIS_RHEM=true' \
+  /usr/share/flightctl/flightctl-ui/env.template
+----
++
+.Set BASE_UI_URL in UI env template (this configures the base URL used by the Edge Manager Web UI)
+[source,sh,role=wrap execute,subs=attributes+]
+----
+sudo sed -i \
+  "s|^BASE_UI_URL=.*|BASE_UI_URL=${WEBUI_URL}|" \
+  /usr/share/flightctl/flightctl-ui/env.template
+----
++
+.Restart RHEM services
+[source,sh,role=wrap execute,subs=attributes+]
+----
+sudo systemctl restart flightctl.target
+----
 
-We are observing the same top level monitoring information we saw previously only now it is specific to this particular Fleet, "*point-of-sale-prod*"
+=== Creating Users and Groups
 
-Let's examine the devices that are currently a member of this fleet
+Now that Edge Manager is configured with the appropriate issuer and redirect URIs, the next step is to create users and groups for authentication and authorization
 
-. Under *Up-to-date/devices*, click *4*
+. Create users and groups by issuing the following podman exec commands against the flightctl-pam-issuer container
++
+.Create the groups for global administrators, operators and viewers
+[source,sh,role=wrap execute,subs=attributes]
++
+----
+sudo podman exec -i flightctl-pam-issuer groupadd flightctl-admin
+sudo podman exec -i flightctl-pam-issuer groupadd flightctl-operator
+sudo podman exec -i flightctl-pam-issuer groupadd flightctl-viewer
+----
++
+.Create your user account
+[source,sh,role=wrap execute,subs=attributes]
+----
+sudo podman exec -i flightctl-pam-issuer adduser {user}
+----
++
+.Set your user account password
+[source,sh,role=wrap execute,subs=attributes]
+----
+sudo podman exec -i flightctl-pam-issuer sh -c 'echo "{user}:redhat123" | chpasswd'
+----
++
+.Assign the Edge Manager administrator role to your user account
+[source,sh,role=wrap execute,subs=attributes]
+----
+sudo podman exec -i flightctl-pam-issuer usermod -aG flightctl-admin {user}
+----
 
-NOTE: The Device count number might be different in your lab - simply click the right-most number
+Ken: Need to make sure the install flightctl version matches the version we roll with for RH1 
 
-image::m1-fleet-2.png[link=self, window=blank]
+=== Edge Manager CLI login validation
 
-Here we observe the 4 _existing_ EMI East/West coast store devices that we discussed earlier.  They are reporting a green '*Online*' device status.
-Let's examine the Fleet configuration in more detail.
+Edge Manager can be accessed via CLI and/or web UI.  
 
-. Click *point-of-sale-prod*
+. Validate CLI login 
++
+.Login via flightctl cli (we've pre-installed the flightctl cli for you in this VM).
+[source,sh,role=wrap execute,subs=attributes]
+----
+flightctl login https://rhem-on-rhel-api-wksp-{guid}-{user}.apps.cluster-{guid}.dynamic.redhatworkshops.io --username {user} --password redhat123 --insecure-skip-tls-verify
+----
++
+.Sample Output (In this lab, a default organization is automatically selected)
+[source,text, role=wrap]
+----
+Auto-selected organization: 00000000-0000-0000-0000-000000000000 Default
+Login successful.
+----
++
+.Examine available commands (we'll explore these in more detail later)
+[source,sh,role=wrap execute]
+----
+flightctl
+----
++
+.Sample Output
+[source,text, role=wrap]
+----
+flightctl controls the Flight Control fleet management service.
 
-NOTE: If there are *Devices pending approval* you may need to scroll down to see the *Devices* list
+Usage:
+  flightctl [flags] [options]
+  flightctl [command]
 
-image::m1-point-of-sale-prod.png[link=self, window=blank]
+Available Commands:
+  apply            Apply a configuration to a resource by file name or stdin.
+  approve          Approve a certificate signing or enrollment request.
+  certificate      Request a new certificate for a device with 'certificate request'
+  completion       Generate shell autocompletion script
+  config           Manage CLI configuration
+  console          Connect a console to the remote device through the server.
+  csr-generate     Generate a CSR resource config .yaml based on a .csr file and optional additional parameters
+  decommission     Decommission a device.
+  delete           Delete one or more resources by name.
+  deny             Deny a certificate signing request.
+  edit             Edit a resource in your default editor.
+  enrollmentconfig Get enrollment config for devices
+  get              Display one or many resources.
+  help             Help about any command
+  login            Login to flight control
+  resume           Resume a device or devices based on selectors or all devices.
+  version          Print flightctl version information.
 
-Let's explore how this Fleet was built in more detail
+Flags:
+  -h, --help   help for flightctl
+----
 
-. Expand the *Actions* menu
-. Click *Edit Fleet*
+=== Edge Manager Web UI login validation
 
-image::m1-editfleet.png[link=self, window=blank]
+Click link:{webui_url}[here,window=_blank] to access the Edge Manager Web UI (the link will open in a new browser tab)
 
-. We see the friendly name that has been chosen for this fleet: *point-of-sale-prod*
-. A *device selector* label has been configured: '*pos=prod*' This is a user generated key-pair value of their choosing. _Any device that matches (contains) this label
-will automatically be made a member of this fleet_. Although we haven't done so in our lab, it is possible to have more than one label configured as a device selector (e.g. "pos=prod" and "loc=store")
-. Note that we have *4 devices matching* this label (these are our existing store edge devices, your lab device count may vary)
-. Click *Next*
+NOTE: This lab environment does not utilize trusted web certificates. As a result, your browser will display a "Your connection is not private" warning
 
-image::m1-editfleet-2.png[link=self, window=blank]
+. Click *Advanced*
++
+image::m1-webui-login-1.png[link=self, window=blank, width=100%]
++
+. Click the *Proceed to … (unsafe)* link (full URL not shown)
 
-We are now looking at what we refer to as the fleet *device template*.  The device template contains the configuration items that we want to specify declaratively
-(with Edge Manager responsible for enforcing these specifications, including healing a given device back to desired state, if any of these items drift).
++
+image::m1-webui-login-2.png[link=self, window=blank, width=100%]
++
+. Enter *Username*: {user}
+. Enter *Password*: redhat123
+. Click *Sign In*
 
-. Here we see the bootc image that *must be running on a device* in this fleet, ending in '...*pos-prod:1.0.0*'
-. Click *+ Add configuration*
+Ken: Update this screenshot once Flight Control is removed
 
-image::m1-editfleet-3.png[link=self, window=blank]
+image::m1-webui-login-3.png[link=self, window=blank, width=100%]
 
-As part of the device template, we can specify additional host configuration items (like custom systemd service config, network config, etc.)
+After initial login, you’ll see a top-level overview of devices and fleets managed by Edge Manager. At this point, no devices have been onboarded, so the dashboard is intentionally empty. We’ll return to this view later once your drone device is under management
 
-. Expand *Select a source type* (Edge manager can load pre-staged (inline) configuration files on the device, configuration files stored in Git or configuration files
-stored on an internal web (http) repository)
-. Since we don't want to add a new configuration at the moment, click the '*-*' symbol to remove this configuration section
+=== (Optional) Change the UI theme
 
-image::m1-editfleet-4.png[link=self, window=blank]
+If you prefer, you can change the Edge Manager UI theme. For consistency in screenshots, this lab will use the Dark theme.
 
-Let's examine another element of the device template
-
-. Click *+ Add Application*
-
-As shown, we can also tie in one or more containerized applications which must be running on devices in the fleet.
-
-image::m1-editfleet-5.png[link=self, window=blank]
-
-Continuing our exploration, let's move on to one final item
-
-. Since we don't want to add any Application workloads at the moment, click the '*-*' symbol to remove *Application 1*
-. Click *Next*
-
-image::m1-editfleet-6.png[link=self, window=blank]
-
-When applying updates to Devices, we have the ability to specify *Advanced configuration* options
-
-. Uncheck the box next to *Use basic configurations*
-. Click the :tooltip-icon: tooltip to learn about setting *rollout policies*
-. Click the :tooltip-icon: tooltip to learn about utilizing a *disruption budget*
-. Click *Cancel* to exit out of the Fleet edit
-
-image::m1-editfleet-7.png[link=self, window=blank]
+. Click your username in the upper-right hand corner. 
+. Select *User preferences*
++
+image::m1-user-pref-1.png[link=self, window=blank, width=100%]
++
+. Click *System default* and make a selection if desired (we'll be using *Dark* for the remainder of this lab)
+. Click *Close* (not shown)
++
+image::m1-user-pref-2.png[link=self, window=blank, width=100%]
 
 [#module1summary]
 == Module 1 Summary
-*Thank you* for completing our Module 1 Lesson.
 
-In this Lesson, you learned how Edge Manager surfaces top level edge device monitoring information.  In addition, you learned how Edge Manager
-Fleet specifications can be set for all devices that are members of a given fleet.  This functionality allows users to declaratively specify their desired state for Edge Devices and subsequently rely
-on Edge Manager to enforce these specifications in order to help eliminate configuration drift.
+*Thank you* for completing our Module 1.  
+
+In this lesson, you installed Edge Manager and validated both CLI and Web UI authentication, confirming that your environment is correctly configured and accessible.
 
 === Up Next
 
-In the next Module we will review the Edge Manager Architecture at a high level and then ask you to onboard your own (new store) edge device.
+In the next module, we’ll continue the test drive by onboarding and managing your delivery drone. To do so, you’ll start by building an Image Mode (bootc) image.

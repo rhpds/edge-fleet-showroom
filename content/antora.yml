@@ -1,12 +1,12 @@
 name: modules
-title: "Device Edge Fleet Management with Red Hat Edge Manager (Tech Preview)"
+title: "LB8580: Edge Manager Test Drive"
 version: master
 nav:
   - modules/ROOT/nav.adoc
 
 asciidoc:
   attributes:
-    lab_name: "Device Edge Fleet Management with Red Hat Edge Manager (Tech Preview)"
+    lab_name: "Edge Manager Test Drive: Hands-on Fleet Management at the Edge"
     release-version: master
     page-pagination: true
     my_var: "foo"
@@ -15,7 +15,6 @@ asciidoc:
     ssh_password: devops
     ssh_command: ssh someone@example.com
     page-links:
-    - url: https://qrcoderaptor.com/
-      text: QR Code Scanner
-    - url: https://github.com/flightctl/flightctl
-      text: Flight Control (Upstream Project)
+    - url: https://redhat.com
+      text: Red Hat
+

@@ -1,7 +1,6 @@
 * xref:module-01.adoc[]
-** xref:module-01.adoc#currentstorefootprint[Current Store Footprint]
 ** xref:module-01.adoc#lablogin[Lab Login]
-** xref:module-01.adoc#edgemanageroverview[Edge Manager Overview]
+** xref:module-01.adoc#edgemanagerdeploy[Deploy]
 ** xref:module-01.adoc#module1summary[Module Summary]
 
 * xref:module-02.adoc[]
@@ -15,5 +14,7 @@
 ** xref:module-03.adoc#cli[Command Line Interface]
 ** xref:module-03.adoc#monitoring[Monitoring & Decommission]
 ** xref:module-03.adoc#labsummary[Lab Summary]
+
+* xref:extra-credit.adoc[]
 
 * xref:lab-access.adoc[]

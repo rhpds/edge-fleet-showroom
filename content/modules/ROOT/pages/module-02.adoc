@@ -1,323 +1,917 @@
-= 2. Edge Manager Operations
-include::./icons.adoc[]
+= 2. Edge Manager - Onboard
 
-[#highlevelarchitecture]
+Now that Edge Manager is installed, we’ll focus on onboarding and managing your delivery drone edge device. The first step is creating an Image Mode (bootc) image.
+
+== Edge Device Onboarding Workflow
+
+image::m2-onboard-overview.png[link=self, window=blank]
+
+We build the bootc image using standard Podman tooling (Podman and a Containerfile). Once the container image is built, we use `bootc-image-builder` to convert it into a bootable disk format such as ISO, QCOW2, or VMDK.
+
+In most real-world deployments, this image would be written to removable media and installed on physical edge hardware. In this lab, we use an OpenShift Virtualization virtual machine to represent the delivery drone, so we’ll create a QCOW2 disk image.
+
+image::m2-device-pre-reqs.png[link=self, window=blank]
+
+To onboard a device, Edge Manager requires the following prerequisites:
+
+. `Edge Manager Agent`: The device agent uses a pull-based architecture to retrieve configuration and updates, which is well suited for edge environments where inbound connectivity may be limited
+. `Image Mode (bootc) image`: In this lab, we’ll build our own image. As shown in the illustration, a Containerfile is used to define the image contents
+. `Enrollment Configuration`: This configuration file contains the information required for the device to enroll and authenticate with Edge Manager
+
+=== Create Image Mode (bootc) Image
+
+Let’s begin by creating the bootc image for our delivery drone device.
+
+. We’ll start by cloning content from a gitea repository that will be used to build our bootc image. This repository contains a sample Containerfile and supporting configuration used to build an Image Mode (bootc) image suitable for onboarding with Edge Manager
++
+.Clone student repository
+[source,sh,role=wrap execute,subs=attributes+]
+----
+git clone https://gitea.apps.cluster-{guid}.dynamic.redhatworkshops.io/{guid}-{user}/rh1-2026-rhem-lab.git
+----
++
+.Sample Output
+[source,text, role=wrap]
+----
+Cloning into 'rh1-2026-rhem-lab'...
+remote: Enumerating objects: 92, done.
+remote: Counting objects: 100% (92/92), done.
+remote: Compressing objects: 100% (56/56), done.
+remote: Total 92 (delta 21), reused 52 (delta 9), pack-reused 0 (from 0)
+Receiving objects: 100% (92/92), 6.50 MiB | 776.00 KiB/s, done.
+Resolving deltas: 100% (21/21), done.
+----
++
+.Change into build directory
+[source,sh,role=wrap execute,subs=attributes+]
+----
+cd rh1-2026-rhem-lab/build/
+----
++
+.Examine the Containerfile
+[source,sh,role=wrap execute,subs=attributes+]
+----
+cat Containerfile
+----
++
+.Sample Output
+[source,text, role=wrap]
+----
+# Base the image off of the official RHEL 9.6 bootc image
+FROM registry.redhat.io/rhel9-eus/rhel-9.6-bootc:9.6
+
+# Install & Enable the Edge Manager Agent, disable (mask) the image mode update timer
+RUN dnf config-manager --add-repo https://rpm.flightctl.io/flightctl-lab.repo && \
+    dnf clean all && \
+    dnf -y install flightctl-agent-0:1.1.0~main~118~g55455431.lab-1.el9.x86_64 && \
+    systemctl enable flightctl-agent.service && \
+    systemctl mask bootc-fetch-apply-updates.timer
+
+# Copy early binding enrollment config.yaml into image
+COPY config.yaml /etc/flightctl/config.yaml
+
+# DO NOT DO THIS IN PRODUCTION ENVIRONMENTS (for lab troubleshooting only)
+RUN echo "root:redhat123" | chpasswd
+----
+
+Did you notice that the 'Containerfile' copies the enrollment configuration file (`config.yaml`) into the image?
+
+*Q*: If you were to build the Container using this Containerfile, would the image build successfully?
+
+*A*: No, the image creation would fail because `config.yaml` doesn't exist yet in this directory.  
+
+Because config.yaml is referenced by a COPY instruction, it must exist in the build context before the image can be built.
+
+NOTE: This is an example of *early binding* enrollment, where device enrollment information is embedded directly into the image at build time.
+
+. To create the config.yaml, we need to run an Edge Manager CLI command
++
+.Login via the Edge Manager CLI
+[source,sh,role=wrap execute,subs=attributes+]
+----
+flightctl login https://rhem-on-rhel-api-wksp-{uid}-{user}.apps.cluster-{uid}.dynamic.redhatworkshops.io --username {user} --password redhat123 --insecure-skip-tls-verify
+----
++
+.Sample Output
+[source,text, role=wrap]
+----
+Auto-selected organization: 00000000-0000-0000-0000-000000000000 Default
+Login successful.
+----
++
+.Issue the following command to generate the enrollment request and output it to config.yaml
+[source,sh,role=wrap execute,subs=attributes+]
+----
+flightctl certificate request --signer=enrollment --expiration=365d --output=embedded > config.yaml
+----
++
+.Sample Output
+[source,text, role=wrap]
+----
+Creating new ECDSA key pair and writing to "client-enrollment.key".
+Submitting certificate signing request "client-enrollment-1d2bfc60"... success.
+Waiting for certificate to be approved and issued.... success.
+----
++
+.Issue an ls command and notice that we now have additional files in this directory
+[source,sh,role=wrap execute,subs=attributes+]
+----
+ls
+----
++
+.Sample Output
+[source,text, role=wrap]
+----
+Containerfile  ca.crt  client-enrollment.crt  client-enrollment.key  config.yaml
+----
+
+Let's recap what we just did to further deepen our understanding.
+
+image::m2-device-enrollment-generation.png[link=self, window=blank, width=100%]
+
+. We logged into Edge Manager utilizing the CLI
+. The CLI generates a local ECDSA private key (`client-enrollment.key`) and uses it to create a Certificate Signing Request (CSR). The CSR is submitted to the Edge Manager enrollment service, which authorizes the request and forwards it to the enrollment signer. The signer issues a temporary enrollment client certificate (`client-enrollment.crt`) *used only for initial device enrollment* and returns it along with the CA bundle (`ca.crt`).
+. `config.yaml` is written to disk along with the aforementioned .crt and .key files
+
+*Q*: How does the Agent know _which endpoint_ to contact when the drone device is powered on? 
+
+*A*: It's written in the config.yaml
+
+. Let's examine your config.yaml
++
+.Grep for the enrollment endpoint
+[source,sh,role=wrap execute,subs=attributes+]
+----
+grep 'server:' config.yaml
+----
++
+.Sample Output
+[source,text, role=wrap,subs=attributes+]
+----
+Server: https://rhem-on-rhel.wksp-{guid}-{user}.svc.cluster.local:7443/
+----
+
+NOTE: The server address shown above identifies the Edge Manager API endpoint used during device enrollment. Port 7443 corresponds to the Edge Manager API service. When the drone virtual machine is powered on, the Edge Manager agent reads this value from config.yaml and uses it to send its initial enrollment request.
+
+. Let's build your Image Mode (bootc) image next
++
+.Set variables and use podman to build image via Containerfile
+[source,sh,role=wrap execute,subs=attributes+]
+----
+IMAGE_NAME=quay.io/user/drone-image
+IMAGE_TAG=v1
+
+sudo podman build -t "${IMAGE_NAME}:${IMAGE_TAG}" -f Containerfile
+----
++
+.Sample Output
+[source,text, role=wrap,subs=attributes+]
+----
+<...>
+Successfully tagged quay.io/user/drone-image:v1
+0fbe763af747a41ea7bdf0e3a41bcd5f5bb261a39b06bf5f0ed0ae7b1146a57f
+----
++
+.Verify that your Image Mode (bootc) container image exists locally
+[source,sh,role=wrap execute,subs=attributes+]
+----
+sudo podman images | grep drone
+----
++
+.Sample Output (Observe your newly created image)
+[source,text, role=wrap,subs=attributes+]
+----
+quay.io/user/drone-image                           v1                            0fbe763af747  50 seconds ago  2.31 GB
+----
+
+At this point the image resides locally on your RHEM Virtual Machine. We _could_ push this image to a container registry, but for this lab that step is unnecessary.  
+
+We do need to _convert the image into a disk format_ that can be utilized by your Drone Virtual Machine. Since our drone device is represented by an OpenShift Virtualization virtual machine, we'll convert the image to the QCOW2 disk format.
+
+NOTE: Creating a disk file is a time intensive task. We'll kick this off, move on to other things and then circle back.
+
+The generated QCOW2 disk image will be written to the local `./output` directory.
+
+. Create disk file (QCOW2)
++
+.Utilize bootc-image-builder to create the disk file
+[source,sh,role=wrap execute,subs=attributes+]
+----
+IMAGE_NAME=quay.io/user/drone-image
+IMAGE_TAG=v1
+
+mkdir ./output
+sudo podman run --rm -it \
+    --privileged \
+    --security-opt label=type:unconfined_t \
+    -v /var/lib/containers/storage:/var/lib/containers/storage \
+    -v ./output:/output \
+    registry.redhat.io/rhel9/bootc-image-builder:latest \
+    --type qcow2 \
+    ${IMAGE_NAME}:${IMAGE_TAG}
+----
+
+While we wait for that process to complete, let's explore Edge Manager in more detail, beginning with a high-level Architecture review.
+
 == Edge Manager Architecture
-Edge Manager consists of the highlighted components as shown in the following high-level architecture diagram:
+Edge Manager consists of the following core components, illustrated in the high-level architecture diagram below:
 
-image::m2-architecture.png[link=self, window=blank, width=100%]
+image::m2-edge-manager-architecture.png[link=self, window=blank, width=100%]
 
-. *Edge Manager Service* which consists of an API Server, worker processes (not shown), and a PostgreSQL database
-utilized for storing inventory and runtime information such as current device target configuration and the reported actual configuration
-. *User access* is achieved via two primary interfaces: Edge Manager Web UI (which we briefly examined earlier) and Edge Manager CLI (which
-we will explore in a later module)
-. *Edge Device access* utilizes an Agent that is running on each managed device. The agent always 'calls home' to the Edge Manager service,
-so the device can be on a private network or have a dynamic IP address (this includes devices that are behind Network Address Translation (NAT), firewalls and cellular / WLAN uplinks)
-. *Git repository integration* (optional) enables storing of device and device fleet configuration. When utilized, the Edge Manager service
-periodically polls Git for updates
-. *External systems* can be utilized by the Edge Manager service to authenticate and authorize users, get mTLS certificates signed, or query
-configuration for managed devices
+. *Edge Manager Service* consists of an API server, background worker processes (not shown), and a PostgreSQL database. The database stores inventory and runtime state, including desired (target) device configuration and reported actual device configuration.
+. *User access* is provided through two primary interfaces: the Edge Manager Web UI and the Edge Manager CLI.
+. *Edge Device access* utilizes an Agent that is running on each managed device. The agent always calls home using a *pull-based model*, allowing devices to operate on private networks or with dynamic IP addresses. This model supports devices located behind NAT, firewalls, or connected via cellular or WLAN uplinks.
+. *Git repository integration* (optional) enables storing desired device and fleet configuration as code. We will explore Git integration in an upcoming lesson.
+. *External systems* are integrated by the Edge Manager service to perform authentication and authorization and retrieve configuration for managed devices.
 
-[#onboarding]
-== New Store Edge Device Onboarding
-Now that you have seen an overview of Edge Manager and examined its architecture, it's time to bring our new store online
+Together, these components enable Edge Manager to centrally manage fleets of edge devices using a secure, pull-based, GitOps-friendly architecture.
 
-NOTE: In the following screenshots, the user ID is set to 'user1'. Your user ID will most likely be different from this. Please refer to the lab guide text for your correct user ID
+== Edge Manager Microservices
 
-=== Device Enrollment
-Return to your lab environment and perform the following steps
+In the previous section, we examined the Edge Manager API service shown in the high-level architecture.
 
-. Expand and select *local-cluster*
-. Expand *Virtualization* menu
-. Select *VirtualMachines*
-. Set *Project: wksp-{user}*
-. Click *wksp-{user}-edge-device*
+In this section, we’ll examine the remaining Edge Manager microservices installed on the system.
 
-image::m2-virtualization.png[link=self, window=blank, width=100%]
+. Click `Terminal 2` in the right-hand pane and establish an SSH session using the following credentials:
++
+.SSH command 
+[source,sh,role=execute]
+----
+ssh {user}@rhem-on-rhel-ssh.wksp-{uid}-1-{user}.svc.cluster.local
+----
++
+.Password
+[source,sh,role=execute,subs=attributes+]
+----
+{password}  (same password used earlier in the lab)
+----
++
+.Sample Output (successful login)
+[source,text,role=wrap]
+----
+<...>
+You can learn more about how to register your system 
+using rhc at https://red.ht/registration
+Last login: Sat Dec 20 10:45:45 2025 from 10.235.0.23
+----
 
-Your Edge Device virtual machine has been pre-configured with a RHEL 9.5 bootc image containing an Edge Manager agent, let's power on the device
+When you installed Edge Manager on RHEL, it was deployed as a set of *Podman quadlets* (systemd-managed containers) running directly on the Edge Manager host.
 
-. Click the VM *start (play)* icon
-. Click *Open web console* (to open the console in a new browser tab)
+Each Edge Manager microservice is defined as a *separate systemd unit*, which makes the platform modular and easier to inspect, operate, and troubleshoot.
 
-image::m2-startvm.png[link=self, window=blank, width=100%]
+. Inspect the Podman quadlet services installed on the system
++
+.Run the following command (this command lists all Edge Manager–related systemd services created from Podman quadlets)
+[source,sh,role=execute]
+----
+sudo systemctl list-units flightctl-*.service
+----
++
+.Sample Output
+[source,text]
+----
+  UNIT                                 LOAD   ACTIVE SUB     DESCRIPTION                                             
+  flightctl-alert-exporter.service     loaded active running Flight Control Alert Exporter service
+  flightctl-alertmanager-proxy.service loaded active running Flight Control Alertmanager Proxy service
+  flightctl-alertmanager.service       loaded active running Flight Control Alertmanager service
+  flightctl-api-init.service           loaded active exited  Flight Control API Initialization
+  flightctl-api.service                loaded active running Flight Control API server
+  flightctl-certs-init.service         loaded active exited  Flight Control Certificates Initialization
+  flightctl-cli-artifacts-init.service loaded active exited  Flight Control CLI Artifacts Certificates Initialization
+  flightctl-cli-artifacts.service      loaded active running Flight Control CLI Artifacts service
+  flightctl-db-migrate.service         loaded active exited  Flight Control Database Migration service
+  flightctl-db-users-init.service      loaded active exited  Flight Control Database Users Initialization
+  flightctl-db-wait.service            loaded active exited  Flight Control Database Wait
+  flightctl-db.service                 loaded active running Flight Control Database service
+  flightctl-kv.service                 loaded active running Flight Control Key Value service
+  flightctl-network.service            loaded active exited  flightctl-network.service
+  flightctl-pam-issuer.service         loaded active running Flight Control PAM OIDC Issuer server
+  flightctl-periodic.service           loaded active running Flight Control Periodic service
+  flightctl-ui-init.service            loaded active exited  Flight Control UI Initialization
+  flightctl-ui.service                 loaded active running Flight Control UI
+  flightctl-worker.service             loaded active running Flight Control Worker service
 
-Your edge device has powered on and established a secure mTLS connection with the Edge Manager API Service. As part of the enrollment process,
-a QR code is conveniently made available to users
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+19 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+----
+NOTE: Services with an -init suffix run once at startup to perform initialization tasks. Services without the -init suffix remain running and provide the ongoing Edge Manager functionality.
++
+.Let’s filter the `-init` services
+[source,sh,role=execute]
+----
+sudo systemctl list-units 'flightctl-*-init.service'
+----
++
+.Sample Output (Notice that all -init services are in an active (exited) state, indicating they completed successfully)
+[source,text]
+----
+  UNIT                                 LOAD   ACTIVE SUB    DESCRIPTION                                             
+  flightctl-api-init.service           loaded active exited Flight Control API Initialization
+  flightctl-certs-init.service         loaded active exited Flight Control Certificates Initialization
+  flightctl-cli-artifacts-init.service loaded active exited Flight Control CLI Artifacts Certificates Initialization
+  flightctl-db-users-init.service      loaded active exited Flight Control Database Users Initialization
+  flightctl-ui-init.service            loaded active exited Flight Control UI Initialization
 
-=== Option 1: QR Enrollment via Mobile Phone
-NOTE: If you have a Mobile Device, continue with the steps indicated below.  If you do not have
-a Mobile Device, skip this section by clicking https://showroom-showroom-{guid}-{user}.apps.cluster-{guid}.dynamic.redhatworkshops.io/content/modules/module-02.html#option-2-anchor[here] to go to the *Option 2: QR Code Enrollment via Web Browser* section (you can also select this section in the *Contents*
-right-hand navigation menu)
-
-. Scan the QR code and open the site in your mobile device browser.
-
-IMPORTANT: Please make sure you utilize the username provided for you as shown in the following steps
-
-. Enter *Username*: `{user}`
-. Enter *Password*: `{password}`
-. Select *Login*
-
-image::m2-mobile-1.png[link=self, window=blank, width=50%]
-
-. Expand *Actions*
-. Select *Approve*
-
-image::m2-mobile-2.png[link=self, window=blank, width=50%]
-
-IMPORTANT: For the device name (alias) please make sure that you replace 'YourHomeTown' with *your own home town* and append the alias with your user number: ({user})
-
-. Enter your *device name (alias)*: `[YourHomeTown]-store-{user}`
-. Select *Approve*
-
-image::m2-mobile-3.png[link=self, window=blank, width=50%]
-
-. (Scroll down if needed) and observe that the device is now in an *Approved* state
-
-image::m2-mobile-4.png[link=self, window=blank, width=50%]
-
-NOTE: Since you just enrolled via a Mobile Device, you do not need to follow the instructions in the next section, "Option 2: QR Code Enrollment via Web Browser".  Click https://showroom-showroom-{guid}-{user}.apps.cluster-{guid}.dynamic.redhatworkshops.io/content/modules/module-02.html#device-details-anchor[here] to skip this section and continue your lab
-
-[[option-2-anchor]]
-pass:[<br>]
-pass:[<br>]
-pass:[<br>]
-pass:[<br>]
-
-=== Option 2: QR Code Enrollment via Web Browser
-
-We are going to utilize the chrome browser *Search with Google Lens* feature to scan the device QR code
-
-. Select the chrome browser menu in the upper-right hand corner
-. Click *Search with Google Lens*
-
-image::m2-lens1.png[link=self, window=blank, width=100%]
-
-. Drag and select the *QR Code* image
-. Click *Website*
-
-image::m2-lens2.png[link=self, window=blank, width=100%]
-
-. Expand *Actions*
-. Select *Approve*
-
-image::m2-qr-web-4.png[link=self, window=blank, width=100%]
-
-IMPORTANT: For the device name (alias) please make sure that you replace 'YourHomeTown' with *your own home town* and append the alias with your user number: ({user})
-
-. Enter your *device name (alias)*: [YourHomeTown]-store-{user}
-. Select *Approve*
-
-image::m2-qr-web-5.png[link=self, window=blank, width=100%]
-
-[[device-details-anchor]]
-pass:[<br>]
-pass:[<br>]
-pass:[<br>]
-pass:[<br>]
-
-=== Device Details
-Now that the device approval is complete, let's jump back into the Edge Manager Lab UI and further examine your new store device.
-
-. Expand and select *All Clusters*
-. Expand *Edge Management*
-. Select *Devices*
-. Change the *Devices* section search filter from *Labels and fleets* to *Name and alias* (You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
-. Enter the *hometown name you chose* for your device [underline]#in the search box# to filter the device list (please note that this search filter is *case sensitive*)
-. Click *YourHomeTown-store-{user}* device
-
-image::m2-userdevice-1.png[link=self, window=blank, width=100%]
-
-In the Device details tab we observe a few important details
-
-. *System image (running)*: the device is running a bootc OS image that ends in *'...base:1.0.0'* (as its name implies, this is a 'base' image containing no custom applications)
-. *Device status: Online* - the device is in an *Online* status (by default, the Edge Manager agent reports in to the Edge Manager service every 60 seconds which populates information like this)
-. *Fleet name: None* - when we enrolled the device, we purposely did not join it to a Fleet (we will do so in a moment)
-. Click *Terminal*
-
-image::m2-userdevice-2.png[link=self, window=blank, width=100%]
-
-NOTE: It can take a few moments for your Terminal session to establish (thank you for your patience)
-
-Let's check a few items on our Edge Device via the Terminal
-
-NOTE: You can copy the contents of these commands to your clipboard (if desired) by clicking the clipboard icon
-
-. Examine the Red Hat Enterprise Linux version that is running on this device
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+5 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+----
 +
 [source,sh,role=execute]
+.Now narrow the result set to examine only the long-running Edge Manager services
+----
+sudo systemctl list-units 'flightctl-*.service' --state=running
+----
++
+.Sample Output
+[source,text]
+----
+  UNIT                                 LOAD   ACTIVE SUB     DESCRIPTION                              
+  flightctl-alert-exporter.service     loaded active running Flight Control Alert Exporter service
+  flightctl-alertmanager-proxy.service loaded active running Flight Control Alertmanager Proxy service
+  flightctl-alertmanager.service       loaded active running Flight Control Alertmanager service
+  flightctl-api.service                loaded active running Flight Control API server
+  flightctl-cli-artifacts.service      loaded active running Flight Control CLI Artifacts service
+  flightctl-db.service                 loaded active running Flight Control Database service
+  flightctl-kv.service                 loaded active running Flight Control Key Value service
+  flightctl-pam-issuer.service         loaded active running Flight Control PAM OIDC Issuer server
+  flightctl-periodic.service           loaded active running Flight Control Periodic service
+  flightctl-ui.service                 loaded active running Flight Control UI
+  flightctl-worker.service             loaded active running Flight Control Worker service
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+11 loaded units listed.
+----
+
+These running services collectively form the active Edge Manager control plane, responsible for API request handling, background reconciliation, authentication and device communication.
+
+You’ll note that the API service sits at the *heart* of Edge Manager, acting as the primary coordination point between clients, workers, observability components and backend services.
+
+image::m2-component-dependencies.png[link=self, window=blank]
+
+The diagram above shows how the Edge Manager control plane is composed of multiple service-isolated components, with the API service acting as the primary integration point.
+
+If you’d like to explore the role of each service in more detail, we’ve included this information in the Lab Appendix. Ken: add section link
+
+As you’ve just seen, this architecture provides lightweight, service-isolated control with full systemd integration, enabling predictable startup ordering, health reporting and logging via Podman quadlets.
+
+== Edge Manager Web UI
+
+Return to your Edge Manager browser tab. *If your session has expired*, you can use the following information to re-login:
+
+Click link:{webui_url}[here,window=_blank] to access your Lab Environment (this link will open in a new browser tab)
+
+. Enter *Username*: {user}
+. Enter *Password*: redhat123
+. Click *Sign In*
+
+The Edge Manager CLI is already pre-installed on your Lab VM. If desired, users can access the CLI downloads directly from the Web UI.
+
+. Click *(?)* near the upper-right hand corner
+. Select *Command Line Tools*
++
+image::m2-command-line-tools.png[link=self, window=blank, width=100%]
++
+. Note that CLI download links are provided for multiple operating system and processor architectures
++
+image::m2-command-line-tools-2.png[link=self, window=blank, width=100%]
+
+== Edge Manager fleets
+
+An Edge Manager fleet is a logical grouping of devices that share a common *desired state* and management policies. Fleets simplify large-scale operations by allowing administrators to define a single *fleet specification* that applies consistently across all devices in the group. This specification can include applications, host configuration, and OS image references, ensuring predictable behavior and updates across the fleet.
+
+NOTE: A device can belong to at most one fleet at a time. This design avoids configuration conflicts and ensures each device has a single, authoritative source of truth for its desired state.
+
+image::m2-fleet-definition-2.png[link=self, window=blank, width=100%]
+
+Fleets provide centralized, template-driven management for groups of edge devices. Without centralized management, each device must be updated, monitored, and managed individually (an approach that is time-consuming and prone to inconsistency). 
+
+With Edge Manager fleet management, a single fleet template defines the desired application set, host configuration and OS image for all member devices. This enables administrators to apply updates consistently, enforce configuration, and monitor fleet-wide health from a single point of control. Fleet status views summarize how many devices are healthy, updating, or in a failed state, enabling quick operational insight.
+
+Let's create a drone fleet in your environment, next:
+
+. Click *Fleets*
+. Select *Create fleet*
++
+image::m2-create-fleet-1.png[link=self, window=blank, width=100%]
++
+. Enter *Fleet name*: `drone-fleet`
+. Enter *Device selector* (label match): `fleet=lab`
++
+NOTE: Fleets do not explicitly “add” devices. Instead, a fleet defines a device selector, and any device whose labels match that selector is automatically associated with the fleet. You can also utilize multiple device selector label matches (for example, 'Country=US', 'State=MN', etc.)
++
+. Click *Next*
++
+image::m2-create-fleet-2.png[link=self, window=blank, width=100%]
++
+. In the *Device template* step, enter *System image*: 
++
+[source,sh,role=execute]
+----
+quay.io/user/drone-image:v1
+----
++
+[IMPORTANT]
+====
+This is the bootc system image you are currently building. By specifying a system image at the fleet level, Edge Manager enforces which OS image must run on all devices that join this fleet.
+
+If a different bootc image were specified here (and made available via an OCI registry), Edge Manager would automatically trigger an OS image replacement when a device joins the fleet. This makes fleet-level OS control a powerful capability for enforcing consistency and performing controlled OS updates across edge devices.
+====
++
+image::m2-create-fleet-3.png[link=self, window=blank, width=100%]
++
+. Click *(+) Add configuration*
++
+image::m2-create-fleet-4.png[link=self, window=blank, width=100%]
++
+This section denotes configurations that will get written to any device that is a member of this fleet.  We’re going to use an inline configuration now (defined directly in the UI) and a Git-based configuration later in the lab.
++
+This inline configuration will write a message of the day (motd) file to /etc/motd:
++
+.. Enter *Source name*: `update-motd`
+.. Select *Source type*: `Inline configuration`
+.. Enter *File path on the device*: `/etc/motd`
+.. Enter inline *Content*: `Today is a good day to deliver pizza!` and press *Enter* once to add a trailing newline
++
+image::m2-create-fleet-5.png[link=self, window=blank, width=100%]
++
+. Scroll down and click *(+) Add application*
++
+image::m2-create-fleet-6.png[link=self, window=blank, width=100%]
++
+Edge Manager will instruct the drone device to pull this application container from an OCI registry when the device joins this fleet. Because this application is defined at the fleet level, it will be deployed to any device whose labels match the fleet’s device selector
++
+.. *Application type*: `Single Container Application`
+.. *Application name*: `drone-cam-app`
+.. *Image*: `quay.io/kenosborn/drone-cam:v1`
+.. *Ports*, *Host port*: `8081`, *Container port*: `8081` (step not shown in screenshot below)
+.. Click *Add ->*
+.. Verify *Added ports (8081:8081)*
++
+NOTE: This port mapping exposes the application running inside the container on port 8081 to the host network of the edge device.
++
+image::m2-create-fleet-7.png[link=self, window=blank, width=100%]
++
+Let's track the system time service for any device that joins the fleet
++
+. Scroll-down to *Tracked systemd services* and select *Add service*
++
+image::m2-create-fleet-8.png[link=self, window=blank, width=100%]
++
+. Enter *Tracked systemd service*: `chronyd.service`
+.. Click *Next*
++
+image::m2-create-fleet-9.png[link=self, window=blank, width=100%]
+
+When a device joins this fleet, a new `renderedVersion` (desired state) for the device will be created and Edge Manager will instruct the device to move itself towards that `renderedVersion`.
+
+But if there are thousands of devices in a single fleet, how will those desired state updates be applied?
+
+By default, via `Use basic configurations`, all the devices will receive updates as soon as they are available.
+
+This may not be desirable when more granular control over update timing and rollout behavior is required.
+
+. Uncheck `Use basic configurations`
++
+image::m2-create-fleet-10.png[link=self, window=blank, width=100%]
++
+Note that we have the ability to specify *Advanced configuration* update options
++
+.. Click the :tooltip-icon: tooltip to learn about *rollout policies*
+.. Click the :tooltip-icon: tooltip to learn about *disruption budgets*
+.. Click the :tooltip-icon: tooltip to learn about *update policies*
++
+NOTE: You can also enable the checkboxes to explore configuration options specific to each item
++
+image::m2-create-fleet-11.png[link=self, window=blank, width=100%]
++
+For this lab, we will continue using basic configurations
++
+.. Uncheck any *Advanced configuration* options you may have selected
+.. Check *Use basic configurations*
+.. Click *Next*
++
+image::m2-create-fleet-12.png[link=self, window=blank, width=100%]
++
+. Review configuration
+. Click *Create fleet*
++
+image::m2-create-fleet-13.png[link=self, window=blank, width=100%]
+
+Now that our Drone Fleet has been successfully created, let's return to our disk image building process and get that delivery drone up in the air for pizza delivery.
+
+. Click `Terminal 1` in the terminal interface portion of your lab manual (the first terminal tab)
+. Confirm that the disk image buid has completed successfully
++
+  a. Progress indicators show `100%`
+  b. Message `Results saved in .` is displayed
++
+[source,text, role=wrap,subs=attributes+]
+----
+[-] Disk image building step
+[5 / 5] Pipeline qcow2 [--------------------------------------------------------------------------------------------->] 100.00%
+[2 / 2] Stage org.osbuild.qemu [------------------------------------------------------------------------------------->] 100.00%
+Message: Results saved in .
+----
+NOTE: If the image build is not yet complete, please wait for it to finish before continuing
++
+. Change into the directory containing our newly built image
++
+[source,sh,role=execute]
+----
+cd output/qcow2/
+----
++
+.Issue a directory list command and note the presence of our newly created qcow2 disk
+[source,sh,role=execute]
+----
+ls
+----
++
+.Sample Output
+[source,text]
+----
+disk.qcow2
+----
+
+Let's recap what we have done so far
+
+image::m2-build-process-1.png[link=self, window=blank, width=100%]
+
+. We generated enrollment information (`config.yaml`) and embedded it (along with agent installation steps) into our `Containerfile`
+. We used podman to build our container image from the Containerfile 
+. We used `bootc-image-builder` to convert the container image into a bootable qcow2 disk
+
+*So, the next question is*: How do we attach this disk to our Edge Device?
+
+With Physical Edge devices, we would use an image burning utility to write this to removable storage media that can be inserted into the device (e.g. USB, SD-Card, etc.)
+
+In our lab environment, we are working with OpenShift Virtualization VM's so we need to expose this disk image in a manner that will make it accessible to the OCP-Virt Catalog when we create our drone virtual machine.
+
+To do so, we have included a `import-disk-image` shell script that:
+
+. Creates a temporary web server (http container)
+. Ensures OpenShift is ready to receive the image (we'll need `oc credentials` for this in a moment)
+. Triggers a DataVolume import into OpenShift-Virtualization so that it can be utilized by a new OCP-Virt Drone Virtual Machine that you will create
+
+Ken: If we cannot resolve the OCP logout issue (when logging into Edge Manager) then change this section to be the first time students login to OCP
+
+Since the script uses oc commands, let's grab our login command
+
+. Return to your OpenShift browser window
+. Select your username in the upper-right hand corner
+. Click *Copy login command*
++
+image::m2-oc-login-1.png[link=self, window=blank, width=100%]
++
+. Click *htpasswd*
++
+image::m2-oc-login-2.png[link=self, window=blank, width=100%]
++
+. Enter *Username*: {user}
+. Enter *Password*: {lab_password}
+. Click *Login*
++
+image::m2-oc-login-3.png[link=self, window=blank, width=100%]
++
+. Click *Display Token* to reveal your `oc login` command
++
+image::m2-oc-login-3.1.png[link=self, window=blank, width=100%]
++
+
+. Copy the full *oc login {...}* to your clipboard
++
+image::m2-oc-login-4.png[link=self, window=blank, width=100%]
+
+Ken: this login info needs to change to user# vs. admin once that is resolved
+
+. Return to your `Terminal 1` interface to the right of your lab manual
++
+.Right-click and paste *your* oc login command
+[source,text,role=wrap execute,subs=attributes+]
+----
+oc login --token={...}
+----
++
+NOTE: You will be prompted to accept an insecure connection. Enter `y` when prompted.
++
+.Sample Output
+[source,text,role=wrap]
+----
+The server uses a certificate signed by an unknown authority.
+You can bypass the certificate check, but any data you send to the server could be intercepted by others.
+Use insecure connections? (y/n): y
+
+Logged into "https://api.cluster-xt8pt.dynamic.redhatworkshops.io:6443" as "admin" using the token provided.
+
+You have access to 92 projects, the list has been suppressed. You can list all projects with 'oc projects'
+
+Using project "default".
+Welcome! See 'oc help' to get started.
+----
++
+.Now that we are logged in via OC, let's run our `import-disk-image` script
+[source,sh,role=wrap execute,subs=attributes+]
+----
+import-disk-image --delete=true --qcow2-path=/home/{user}/rh1-2026-rhem-lab/build/output/qcow2
+----
++
+NOTE: The `--delete=true` flag removes any existing DataVolume with the same name
+before re-importing the image.
++
+.Sample Output (Ken: change this text to user from admin once privileges are resolved)
+[source,text,role=wrap]
+----
+{...}
+Triggering DataVolume import...
+datavolume.cdi.kubevirt.io/drone-virtual-machine created
+Done.
+----
++
+.Although the script reports `Done`, the DataVolume import continues asynchronously and must be monitored until completion.
+[source,sh,role=wrap execute,subs=attributes+]
+----
+watch -d "oc get datavolume"
+----
++
+.Monitor this until `drone-virtual-machine` progress indicates 100% complete
+[source,text]
+----
+NAME                    PHASE       PROGRESS   RESTARTS   AGE
+drone-virtual-machine   Succeeded   100.0%                5m26s
+rhem-virtual-machine    Succeeded   100.0%                6d4h
+----
+Press `CTRL`+`C` to break out of the watch loop
+
+It's time to bring your Drone Virtual Machine to life. 
+
+Ken: Update screenshot to user level vs. admin
+
+Return to your OpenShift Web Interface, and:
+
+. Expand *Virtualization*
+. Select *Catalog*
+. Select *Template Catalog* (not InstanceTypes)
+. Verify that *Template project* is set to your wksp-{uid}-{user}
+. Click *Drone Virtual Machine* Catalog item
++
+image::m2-create-drone-vm-1.png[link=self, window=blank, width=100%]
++
+. Enable *Start this VirtualMachine after creation (Always)* checkbox 
+. Click *Quick create VirtualMachine* (the Virtual Machine will be created and powered on automatically)
++
+image::m2-create-drone-vm-2.png[link=self, window=blank, width=100%]
+
+Monitor Drone Virtual Machine creation
+
+. Monitor the Virtual Machine until the **Status** indicates *Running*
+. Click *Open web console*
++
+image::m2-create-drone-vm-3.png[link=self, window=blank, width=100%]
++
+. Note that an enrollment QR code is present
++
+image::m2-create-drone-vm-4.png[link=self, window=blank, width=100%]
+
+With the Drone Virtual Machine now running, verify that the device is ready for enrollment in Edge Manager.
+
+Return to your `*Edge Manager UI* Browser tab`.  
+
+If prompted to log in again, use the following credentials:
+
+. Enter *Username*: {user}
+. Enter *Password*: redhat123
+. Click *Sign In*
+
+Within the Edge Manager UI:
+
+. Select **Overview**
++
+Note that **1 device pending approval** is displayed.  
+This device is sitting in the *device parking lot* and remains quarantined until it is approved.
+
+. Click *Review pending device*
++
+image::m2-onboard-device-1.png[link=self, window=blank, width=100%]
++
+. Click *Approve*
++
+image::m2-onboard-device-2.png[link=self, window=blank, width=100%]
++
+. Enter *alias*: `drone-01` (this will be the device name shown throughout the UI)
+. Click *Approve*
++
+image::m2-onboard-device-3.png[link=self, window=blank, width=100%]
+
+Our newly approved drone device is now visible in the Devices list
+
+. Click *drone-01*
++
+image::m2-onboard-device-4.png[link=self, window=blank, width=100%]
++
+[NOTE]
+====
+By default, the agent on the device checks in with Edge Manager back-end services every 60 seconds. 
+Each check-in reports device information and status back to Edge Manager.
+====
++
+. Review the device information reported by the Edge Manager agent
+
++
+image::m2-onboard-device-5.png[link=self, window=blank, width=100%]
++
+. Click the *(?)* icons next to each *System status* item and review the status details.
++
+Observe that the device:
++
+- Is not currently running any containerized applications
+- Is in an *Online* state
+- Reports an *Update status* of *Up-to-date*
++
+image::m2-onboard-device-6.png[link=self, window=blank, width=100%]
++
+. Note that the agent reports CPU, Disk, and Memory pressure for the device.
++
+These resource indicators are currently within normal limits. We will customize this later by creating a custom resource monitor.
++
+image::m2-onboard-device-7.png[link=self, window=blank, width=100%]
++
+. Scroll down and note the *System image* that is currently running on this device:
++
+`quay.io/user/drone-image:v1`
++
+This is the image that you built previously and used for this drone virtual machine.  
+It is also the image you configured earlier within your `drone-fleet` as the desired OS system image.
++
+image::m2-onboard-device-8.png[link=self, window=blank, width=100%]
++
+. *Scroll-up* and click *YAML*
++
+image::m2-onboard-device-9.png[link=self, window=blank, width=100%]
++
+The YAML view describes the full desired and reported state of this device.  
+This is the same information that is presented on the *Details* page.
++
+. Note that there are currently no applications or host configurations specified in the `spec:` section of the YAML
++
+image::m2-onboard-device-10.png[link=self, window=blank, width=100%]
++
+Scroll down and examine the remainder of the YAML.
++
+.. Note in the `systemInfo:` section the information that we previously viewed in the *Details* tab
+.. Note in the `updated:` section that the device is currently reporting an `UpToDate` status
++
+image::m2-onboard-device-12.png[link=self, window=blank, width=100%]
++
+. Click *Terminal*
++
+image::m2-onboard-device-13.png[link=self, window=blank, width=100%]
++
+This terminal session may _look_ like an SSH connection, but it is not one.
++
+Instead of connecting directly to the device over SSH, Red Hat Edge Manager provides terminal access using an mTLS-encrypted gRPC tunnel over HTTPS (port 443).
++
+image::m2-gRPC-tunneling.png[link=self, window=blank, width=100%]
++
+Traditional remote access to edge devices often relies on SSH over port 22.
+This approach introduces several challenges at scale:
++
+* NAT traversal and port forwarding requirements
+* Static IP dependencies
+* Firewall rule management
+* SSH key distribution and rotation
+* Limited scalability as device counts grow
++
+[NOTE]
+.Remote access architecture
+====
+Edge Manager provides remote access using outbound, mTLS-secured gRPC streams over port 443.
+
+By avoiding inbound SSH access, this approach reduces firewall complexity, improves security, and enables scalable, centralized access across large device fleets.
+====
++
+Let’s run a few read-only commands to observe the system state from this terminal.
++
+.Examine the Operating System version
+[source,sh,role=wrap execute,subs=attributes+]
 ----
 cat /etc/redhat-release
 ----
 +
 .Sample Output
-[source,texinfo,subs="attributes"]
+[source,text,role=wrap]
 ----
-Red Hat Enterprise Linux release 9.5 (Plow)
+Red Hat Enterprise Linux release 9.6 (Plow)
 ----
-. Observe the current booted 'base' image (with no rollback image present) by issuing this command:
 +
-[source,sh,role=execute]
+.Examine the Message of the Day (MOTD)
+[source,sh,role=wrap execute,subs=attributes+]
+----
+cat /etc/motd
+----
++
+.Sample Output (no MOTD)
+[source,text,role=wrap]
+----
+
+----
++
+.Check Image Mode (bootc) status
+[source,sh,role=wrap execute,subs=attributes+]
 ----
 bootc status
 ----
 +
-.Sample Output
-[source,texinfo,subs="attributes"]
+.Sample Output (running drone-image:v1, no rollback image present)
+[source,text,role=wrap]
 ----
-No staged image present
-Current booted image: image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-base:1.0.0
-    Image version: 9.20250326.0 (2025-04-10 20:57:38.715070587 UTC)
-    Image digest: sha256:e37967518e6f9679f761524ca74b02298b81baa6f82b40112e2c20b1aab2f1f8
-No rollback image present
-----
-. Validate that there are currently no application Containers running:
-+
-[source,sh,role=execute]
-----
-podman ps -a
+● Booted image: quay.io/user/drone-image:v1
+        Digest: sha256:c4326042ebb0e0c7807f9bb5084f06c891566a1243a2b62148b04b7a454ae4a5
+       Version: 9.6 (2025-12-22 05:32:39 UTC)
 ----
 +
-.Sample Output
-[source,texinfo,subs="attributes"]
+.Check for running Podman containers
+[source,sh,role=wrap execute,subs=attributes+]
 ----
-CONTAINER ID  IMAGE                                    COMMAND               CREATED         STATUS         PORTS                                        NAMES
-617ed99c0eae  localhost/podman-pause:5.2.2-1742216634                        10 minutes ago  Up 10 minutes                                               47a0b459f7c9-service
-9d3a9a8a97d3  localhost/podman-pause:5.2.2-1742216634                        10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp                  quay.io/jswanson/pos-v1-prod:1.0.0             7c3f58a2f9bc-infra
-129ccdf236c5/usr/bin/run-http...10 minutes ago    Up 10 minutes
-0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod[root@wksp-user1-edge-device /]#617ed99c0eae  localhost/podman-pause:5.2.2-1742216634                        10 minutes ago  Up 10 minutes                                               47a0b459f7c9-service
-9d3a9a8a97d3  localhost/podman-pause:5.2.2-1742216634                        10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp                  quay.io/jswanson/pos-v1-prod:1.0.0             7c3f58a2f9bc-infra
-129ccdf236c5/usr/bin/run-http...10 minutes ago    Up 10 minutes
-0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod[root@wksp-user1-edge-device /]#
+podman ps -a 
 ----
++
+.Sample Output (no containers)
+[source,text,role=wrap]
+----
+CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
+----
++
+.Check for Podman images present on the device
+[source,sh,role=wrap execute,subs=attributes+]
+----
+podman images
+----
++
+.Sample Output (no images)
+[source,text,role=wrap]
+----
+REPOSITORY  TAG         IMAGE ID    CREATED     SIZE
+----
++
+. Click Events 
++
+image::m2-onboard-device-14.png[link=self, window=blank, width=100%]
++
+Edge Manager tracks events at both the individual Device and Fleet level
++
+. Filter events by severity
+.. Select *Warning* event filter
+.. Click *Normal*
++
+image::m2-onboard-device-15.png[link=self, window=blank, width=100%]
++
+. Scroll to the bottom of the Events list and locate the *Device was created successfully* event.
++
+image::m2-onboard-device-16.png[link=self, window=blank, width=100%]
++
+This event records the device creation timestamp and confirms that the device was successfully enrolled and registered with Edge Manager.
 
-In order for this 'back of store' device to function properly, it needs to have a point-of-sale containerized application present.  Our front
-of store point-of-sale Kiosk's access this application via an OpenShift route.  Let's examine this route next.
+We have pre-configured OpenShift routes that will be used to access applications running on the drone device OpenShift Virtualization virtual machine.
 
-. Expand and select *local-cluster*
+Let’s explore these routes next.
+
+Return to your OpenShift console, and:
+
 . Expand *Networking*
 . Select *Routes*
-. Click the '*pos*' route *Location hyperlink* to open this route-to-app in a new browser tab
+. Click the *drone-cam-app* route hyperlink in the *Location* column
 
-image::m2-routes-1.png[link=self, window=blank, width=100%]
+image::m2-openshift-routes-1.png[link=self, window=blank, width=100%]
 
-. Note that we receive an, *"Application is not available"* error message (this is expected at this time because we are running a 'base' device image which does not contain
-any containerized applications).
+At this point, the browser attempts to access the drone camera application.
 
-image::m2-appnotavailable-1.png[link=self, window=blank, width=100%]
+Houston, we have a problem.
 
-[#fleetmanagement]
-== Fleet Management
+The drone camera application is currently *not available*.
 
-In this section we are going to join our new store device to the existing fleet that you examined earlier, "*point-of-sale-prod*".  During this process, you will experience
-how Edge Manager maintains desired state configuration for any devices that are a member of this fleet.
+image::m2-drone-cam-not-available.png[link=self, window=blank, width=100%]
 
-Keep the Application Browser Tab open and return to the *Routes* Browser Tab
+This is expected.
 
-. Expand and select *All Clusters*
-. Expand *Edge Management*
-. Select *Devices*
-. Change search filter from *Labels and fleets* to *Name and alias*
-. Enter the *hometown name you chose* for your device to filter the device list
-. Click *YourHomeTown-store-{user}*
+Although the OpenShift route has been created, the application workload has not yet been deployed to the drone device. As a result, there is no active service backing this route.
 
-image::m2-userdevice-1.png[link=self, window=blank, width=100%]
-
-*Pop Quiz:* Do you remember the mechanism that we utilize to set fleet membership?
-
-If you answered, "Fleet Device selector label", congratulations!  (This will be noted on your end of year, Edge Megastore, Inc., performance review)
-
-The *'point-of-sale-prod'* fleet is configured with a *device selector* label set to: *pos=prod*.  Let's add that label to our new store device now.
-
-. Click *Add label* and replace 'key=value' with `pos=prod` followed by pressing your *enter* key
-. Select the *(!)* {warning-icon} icon at the end of the *'...base:1.0.0'* image
-
-image::m2-userdevice-3.png[link=self, window=blank, width=100%]
-
-Note that we have a *System image mismatch*.  Edge Manager is informing us that the desired state image for any device that is a member of this fleet
-*must be* a bootc image ending in *'...pos-prod:1.0.0'*.  Since our new device is running a different (base) image, Edge Manager is automatically self-healing
-the device to desired state.
-
-During this self-healing process, you will observe (via the *System status* pane):
-
-. *'Update status'* change to '*Updating*', followed by
-. *'Device status'* change to '*Rebooting*'
-
-image::m2-userdevice-4.png[link=self, window=blank, width=100%]
-
-NOTE: It takes a few minutes for the device to apply the new '...pos-prod:1.0.0' image and reboot. Now would be a good time to relax a little while you wait.
-Thank you for your patience!
-
-. Wait for the device to report *'Online'* and *'Up-to-date'* in the *System status* panel
-. Once item 1 is complete, observe how Edge Manager is now reporting the new '...*pos-prod:1.0.0*' System image in the *Configurations* panel
-. Click *Terminal*
-
-image::m2-userdevice-6.png[link=self, window=blank, width=100%]
-
-Now that the image has been brought to the fleet desired state OS configuration, let's examine a few items within the Terminal
-
-. Observe that the current booted image has been set to *'...pos-prod:1.0.0'* and our previous *'...base:1.0.0'* image is indicated as a rollback option
-+
-[source,sh,role=execute]
-----
-bootc status
-----
-+
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-No staged image present
-Current booted image: containers-storage:image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-pos-prod:1.0.0
-    Image version: 9.20250326.0 (2025-04-10 21:00:03.968743927 UTC)
-    Image digest: sha256:2c30b56e03862b92bbca2a50b3786642c8dd5af5309b8b2fa4f2de08d9a746ec
-Current rollback image: image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-base:1.0.0
-    Image version: 9.20250326.0 (2025-04-10 20:57:38.715070587 UTC)
-    Image digest: sha256:e37967518e6f9679f761524ca74b02298b81baa6f82b40112e2c20b1aab2f1f8
-----
-. Check the containers that are now running on the device:
-+
-[source,sh,role=execute]
-----
-podman ps -a
-----
-+
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-CONTAINER ID  IMAGE                                    COMMAND               CREATED         STATUS         PORTS                                        NAMES
-53347f7ca8f7  localhost/podman-pause:5.2.2-1737721907                        10 minutes ago  Up 10 minutes                                               47a0b459f7c9-service
-8df58eb27786  localhost/podman-pause:5.2.2-1737721907                        10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp                      a5aa9d20b8d3-infra
-268f5b977564  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  10 minutes ago  Up 10 minutes  0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod
-----
-
-NOTE: The '*pos-v1-prod:1.0.0*' container listed is our point of sale application (which is accessed via the front of store pos kiosk's).
-
-Return to your Application browser tab (if you inadvertently closed this tab, you can get back to this view by selecting *local-cluster* in the top menu, followed by
-selecting *Networking\Routes* via the left-hand nav)
-
-. Refresh your browser and note that the point of sale application is now available!
-
-image::m2-pos-app.png[link=self, window=blank, width=100%]
+Do not worry, we will correct this behavior in the next lesson module by deploying the application to the device using Edge Manager and GitOps.
 
 [#module2summary]
 == Module 2 Summary
-*Thank you* for completing our Module 2 Lesson.
 
-In this Lesson, you learned how to onboard a new store edge device into Edge Manager. You started your device with a simple base image (containing no applications) and then witnessed
-how Edge Manager automatically swapped this image to one containing the POS App (after joining a Fleet that has this desired state configuration).
+Thank you for completing *Module 2*.
 
-You may be wondering:  "Why not just
-join the Fleet as part of onboarding?" and the answer is that you certainly could have done that but then you may not have learned as much about how Edge Manager operates.  Additionally, you
-may have wondered, "Why not just bake the app(s) into the 'base' image?" and that is also certainly an option.
-
-NOTE: Edge Manager gives users the optionality to configure things as they see fit, in alignment with any of their current build standards.
-
-Regardless of the approach taken, it should hopefully be more evident to you that Edge Manager can play a significant role in helping to maintain desired state configuration for devices.
+In this module, you built an Image Mode (bootc) image, converted it to a `qcow2` disk, attached the disk to an OpenShift Virtualization virtual machine (`drone-virtual-machine`), and successfully onboarded the device into Red Hat Edge Manager.
 
 === Up Next
 
-You are well on your way to opening your new store for business; however, there is one small challenge. You may have noticed that our POS app is not the most useful (it doesn't actually _do anything_
-other than present a static user interface with no user interoperability).
-
-In our final module, you will learn how to create a new fleet from scratch and specify a new point of sale *application* as part
-of the fleet device template.  You will also explore the Edge Manager command line interface along with how to further monitor and decommission devices.
+In the next module, we’ll continue our test drive by managing your delivery drone. You’ll explore topics including fleet management, custom resource monitoring, and Git repository integration.

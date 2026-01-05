@@ -1,516 +1,726 @@
-= 3. Edge Manager Additional Topics
-include::./icons.adoc[]
+= 3. Edge Manager - Manage
 
-[#newfleetcreation]
-== New Fleet Creation
+Your delivery drone has been successfully onboarded to Edge Manager and is operational. However, it is currently missing a critical application.
 
-We're in the home stretch and our new store is almost ready to open (thanks to you).
+While we *could* edit this device individually and add the application directly, you have already pre-created a `drone-fleet` that defines the desired state configuration (including this application) for any device that joins the fleet.
 
-In a moment we will ask you to create a new Fleet and wire in a new (and _functional_) point of sale application into the fleet device template. Before
-doing so, let's examine our networking route that will be utilized to access this *new POS app*.
+Rather than managing devices one at a time, we’ll use the fleet model to apply configuration consistently and at scale.
 
-. Expand and select *local-cluster*
+*Quick check:*
+Do you remember how devices become associated with a fleet?
+
+*Answer:*  
+By applying *device labels* that match the fleet’s *device selector*.
+
+Let’s do that next.
+
+. Return to your Edge Manager UI browser tab and click *Add label*
++
+image::m3-join-fleet-1.png[link=self, window=blank, width=100%]
++
+. Highlight `key=value`, type `fleet=lab` then press *Enter*
++
+.. Note that the device joins the `drone-fleet` almost immediately
++
+image::m3-join-fleet-2.png[link=self, window=blank, width=100%]
++
+[NOTE]
+====
+The agent on the drone device has checked in. Because the device’s *current configuration* does not match the *desired state* defined by the fleet specification, Edge Manager automatically instructs the device to reconcile itself.
+
+This reconciliation is initiated by the device agent and occurs without manual intervention.
+====
++
+. Note that the device *Update status* changes from *Out-of-date* to *Updating*, indicating that the device is pulling and applying the `drone-cam` application defined by the fleet.
++
+image::m3-join-fleet-3.png[link=self, window=blank, width=100%]
++
+. Scroll to the bottom of the page and observe:
++
+.. The `drone-cam-app` application has been successfully provisioned and is in a *Running* state
+.. The `update-motd` configuration source is present and being tracked, indicating that system configuration content defined by the fleet is actively managed on the device
+.. The `chronyd.service` system service is being tracked and is currently *Enabled*, *Loaded*, and *Active (running)*
++
+image::m3-join-fleet-4.png[link=self, window=blank, width=100%]
++
+. *Scroll Up* to the top of the page and Click *Terminal*
++
+Let's run a few commands to re-examine the device 
++
+.Examine the Message of the Day (MOTD)
+[source,sh,role=wrap execute,subs=attributes+]
+----
+cat /etc/motd
+----
++
+.Sample Output
+[source,text,role=wrap]
+----
+Today is a good day to deliver pizza!
+----
++
+.Verify that the drone-cam container is running
+[source,sh,role=wrap execute,subs=attributes+]
+----
+podman ps -a 
+----
++
+.Sample Output
+[source,text]
+----
+CONTAINER ID  IMAGE                           COMMAND         CREATED        STATUS        PORTS                   NAMES
+d5fbd7c5e120  quay.io/kenosborn/drone-cam:v1  node server.js  9 minutes ago  Up 9 minutes  0.0.0.0:8081->8081/tcp  systemd-drone-cam-app-233433-app
+----
++
+.Verify that the drone-cam image is present on the device
+[source,sh,role=wrap execute,subs=attributes+]
+----
+podman images
+----
++
+.Sample Output
+[source,text,role=wrap]
+----
+REPOSITORY                   TAG         IMAGE ID      CREATED      SIZE
+quay.io/kenosborn/drone-cam  v1          7113794a637a  5 weeks ago  170 MB
+----
+
+Perfect! It looks like the device has reconciled to the desired state defined by the fleet configuration (including system configuration and application deployment) with the only manual step in this lab being the application of the fleet selector label.
+
+Let's see if our Drone Cam is viewable now.
+
+. Return to your drone cam route browser window and click *Reload*
+
+image::m3-join-fleet-5.png[link=self, window=blank, width=100%]
+
+Great job!  You have successfully stood up a new SDS field location, and your virtual pizza delivery is on its way (somewhere in the Greek Islands, by the look of it).
+
+(You should now see the drone camera application load successfully)
+
+Now that this device is onboarded and enforcing fleet-defined state, we’ll use it to explore a few additional Edge Manager concepts.
+
+== Device Monitoring
+
+We briefly looked at device *System status* and *Resource status* earlier.
+
+Edge Manager currently reports the following device and fleet status states:
+
+image::m3-status-states-1.png[link=self, window=blank, width=100%]
+
+The default Resource status states (CPU, Disk, and Memory pressure) are informational and do not alert until they reach *Warning* or *Critical* levels. This design provides visibility without unnecessary alert noise.
+
+Let’s configure a custom disk resource monitor and apply it to our fleet. To do so, we will use the `flightctl` CLI.
+
+Return to your lab manual and input the following commands in `Terminal 1`
+
+.Retrieve the fleet list
+[source,sh,role=wrap execute,subs=attributes+]
+----
+flightctl get fleet
+----
+.Sample Output (returns all fleets)
+[source,text,role=wrap]
+----
+NAME            OWNER   SELECTOR        VALID
+drone-fleet     <none>  fleet=lab       True
+----
+.Export the `drone-fleet` configuration to YAML
+[source,sh,role=wrap execute,subs=attributes+]
+----
+flightctl get fleet/drone-fleet -o yaml > update-fleet.yaml
+----
+.Edit the update-fleet.yaml file
+[source,sh,role=wrap execute,subs=attributes+]
+----
+vim update-fleet.yaml
+----
+
+. While reviewing the `spec:` section, note that this fleet specification now defines:
+* An *application* (`drone-cam-app`)
+* A *host configuration* source (`update-motd`)
+* A *systemd service* that must be present and running (`chronyd.service`)
++
+Together, these entries define the desired state that Edge Manager continuously enforces for every device that matches this fleet.
++
+image::m3-monitor-1.png[link=self, window=blank, width=100%]
++
+. Use the down arrow key to place your cursor on the `status:` line
+. Press `i` to enter insert mode
+. Press `Enter` to create a new blank line
+. Press the up arrow once to move your cursor into the empty line above `status:`
++
+image::m3-monitor-2.png[link=self, window=blank, width=100%]
++
+[source,sh,role=execute,subs=attributes+]
+.Copy the following custom disk resource monitor YAML:
+----
+      resources:
+      - monitorType: Disk
+        samplingInterval: 5s
+        path: /sysroot
+        alertRules:
+        - severity: Warning
+          duration: 1m
+          percentage: 5
+          description: Disk space for /sysroot is >5% full for over 1m.
+        - severity: Critical
+          duration: 10m
+          percentage: 90
+          description: Disk space for /sysroot is >90% full over 10m.
+----
+. Paste this YAML snippet directly above the status: field in the fleet specification
+. Press `ESC` to exit insert mode
+. Type `:wq` and press `Enter` to save and exit the file
++
+We have saved our modification, now let's apply it:
++
+[source,sh,role=wrap execute,subs=attributes+]
+.Type or copy/paste the following command
+----
+flightctl apply -f update-fleet.yaml
+----
++
+.Sample Output (returns all fleets)
+[source,text,role=wrap]
+----
+update-fleet.yaml: applying fleet/drone-fleet: 200 OK
+----
+
+While we wait for this to fully apply, let's examine what this custom disk resource monitor is doing:
+
+image::m3-monitor-3.png[link=self, window=blank, width=100%]
+
+. Specifies a `monitorType: Disk` and samples disk utilization on the `/sysroot` path every `5s`
+. Triggers a *Warning alert* if disk usage on `/sysroot` exceeds *5% for longer than 1 minute*
+. Triggers a *Critical* alert if disk usage on `/sysroot` exceeds *90% for longer than 10 minutes*, which more closely reflects a realistic production threshold.
+
+Return to your Edge Manager browser tab, and
+
+. Observe that *Device Status* is now reporting `(!) Degraded`
+. Observe that *Disk Pressure* is now reporting `(!) Past threshold (5%)`
+. Click each alert to view more details
+
+image::m3-monitor-3.1.png[link=self, window=blank, width=100%]
+
+Edge Manager is now behaving exactly as expected, reporting that the device has entered a degraded state.
+
+The device is marked *Degraded* because a monitored resource (disk utilization) has exceeded its configured threshold.
+
+NOTE: Under the covers, Edge Manager uses AlertManager to evaluate resource monitors and generate alerts. These alerts can optionally be forwarded to external monitoring systems or SNMP trap destinations if desired.
+
+Let’s explore *Events* to see how Edge Manager records and surfaces this condition.
+
+. Click *Events*
+. Note that a Warning event has been captured, timestamped and associated with this device.
+. Click *Overview*
+
+image::m3-monitor-4.png[link=self, window=blank, width=100%]
+
+The Overview UI aggregates health and status signals across *all managed devices and fleets*
+
+. Note that Edge Manager is surfacing the disk utilization warning level 
+. Note that the `Device Status (?)` bubble is indicating 100% degraded (this is because we only have 1 device and that device is currently degraded)
+. Click *100% Degraded*
+
+image::m3-monitor-5.png[link=self, window=blank, width=100%]
+
+We are now in the devices view with a filter set for `Device status: Degraded'
+
+. From here users could drill down on the device to further investigate
+
+image::m3-monitor-6.png[link=self, window=blank, width=100%]
+
+NOTE: The Edge Manager UI that we have been utilizing gets its content via the Edge Manager API service.  We can utilize the CLI to retrieve the same information.  
+
+.In your `Terminal 1` session issues the following command
+[source,sh,role=wrap execute,subs=attributes+]
+----
+flightctl get device
+----
+.Sample Output (your output name uid will be different than what is shown here)
+[source,text]
+----
+NAME                                                    ALIAS           OWNER                   SYSTEM          UPDATED       APPLICATIONS
+gvi4k18tlq2581mro8unh8f4dlkqoiqpe64lsq5v2d1f7d0cvfp0    drone-01        Fleet/drone-fleet       Degraded        UpToDate      Healthy
+----
+.Double-click the NAME uid then right-click and copy to your clipboard, then issue this command
+[source,sh,role=wrap execute,subs=attributes+]
+----
+name=gvi4k18tlq2581mro8unh8f4dlkqoiqpe64lsq5v2d1f7d0cvfp0
+----
+.Inspect the device yaml and note the presence of the same disk warning/degraded messages in the `status:` section
+[source,sh,role=wrap execute,subs=attributes+]
+----
+flightctl get device/$name -o yaml
+----
+.Sample Output (your output name uid will be different than what is shown here)
+[source,text]
+----
+NAME 
+<...>                                                   ALIAS           OWNER                   SYSTEM          UPDATED       APPLICATIONS
+  resources:
+    cpu: Healthy
+    disk: Warning
+    memory: Healthy
+  summary:
+    info: Disk utilization has reached a warning level.
+    status: Degraded
+<...>
+----
+.We can utilize the same Terminal gRPC tunnel to access the device via cli
+[source,sh,role=wrap execute,subs=attributes+]
+----
+flightctl console device/$name
+----
+.Let's examine the device disk free space 
+[source,sh,role=wrap execute,subs=attributes+]
+----
+df -h
+----
+.Sample Output (note that /sysroot is ~10% used, this confirms why the disk resource monitor triggered: /sysroot exceeds the configured 5% warning threshold)
+[source,text]
+----
+Filesystem      Size  Used Avail Use% Mounted on
+devtmpfs        4.0M     0  4.0M   0% /dev
+tmpfs           940M   84K  940M   1% /dev/shm
+tmpfs           376M  708K  376M   1% /run
+efivarfs        256K   50K  202K  20% /sys/firmware/efi/efivars
+/dev/vda4        29G  2.6G   26G  10% /sysroot
+composefs       6.6M  6.6M     0 100% /
+tmpfs           940M     0  940M   0% /tmp
+/dev/vda3       960M  152M  809M  16% /boot
+/dev/vda2       501M  7.1M  494M   2% /boot/efi
+<...>
+----
+.Exit the remote console session
+[source,sh,role=wrap execute,subs=attributes+]
+----
+exit
+----
+.We can also issue remote commands without opening an interactive device console session
+[source,sh,role=wrap execute,subs=attributes+]
+----
+flightctl console device/$name -- df -h
+----
+.Sample Output 
+[source,text]
+----
+Filesystem      Size  Used Avail Use% Mounted on
+devtmpfs        4.0M     0  4.0M   0% /dev
+tmpfs           940M   84K  940M   1% /dev/shm
+tmpfs           376M  708K  376M   1% /run
+efivarfs        256K   50K  202K  20% /sys/firmware/efi/efivars
+/dev/vda4        29G  2.6G   26G  10% /sysroot
+composefs       6.6M  6.6M     0 100% /
+tmpfs           940M     0  940M   0% /tmp
+/dev/vda3       960M  152M  809M  16% /boot
+/dev/vda2       501M  7.1M  494M   2% /boot/efi
+<...>
+----
+
+NOTE: In addition to Events and Alerts, Edge Manager supports Observability capabilities for device and service *metrics, profiling, tracing, and audit logs*. This data can be stored over time to enable historical analysis and long-term insights.
+
+Configuring Observability is beyond the scope of our lab; however, at a high level the following describes this functionality and flow: +
+
+* Uses OpenTelemetry Collector on a device and forwards collected data to the Telemetry Gateway +
+* Telemetry Gateway saves collected data from devices and service, or forwards data to external Collector +
+* Standalone observability stack is available for Edge Manager on RHEL and/or the Observability stack in OpenShift can be utilized
+
+== Edge Manager Repositories
+
+For our final lesson, we are going to tap into Edge Manager repository functionality.  
+
+NOTE: An Edge Manager repository resource defines how Edge Manager can access an _external_ configuration source, such as a Git repository.
+
+We will be repurposing your existing drone virtual machine to take on a new role: housing a Drone Tracker application that keeps track of Pizza Delivery Drones as well as Flight (Weather) Conditions.
+
+We'll be accessing this Drone-Tracker-App via an existing *OpenShift Route*. Let's revisit our routes.
+
+Return to your OpenShift Browser tab:
+
 . Expand *Networking*
 . Select *Routes*
-. Click the '*new-pos*' route *Location hyperlink* to open this route-to-app in a new browser tab
+. Click the `drone-tracker-app` *Location hyper-link*
 
-NOTE: The 'application is not available' error message is expected at this time since we have not added the new (more functional) POS app to our device yet
+image::m3-openshift-routes-1.png[link=self, window=blank, width=100%]
 
-image::m3-routes-1.png[link=self, window=blank, width=100%]
+Houston, ... (we get it, the application isn't available, at least not yet :) )
 
-Keep the Application Browser Tab open and return to the *Routes* Browser Tab
+image::m3-openshift-routes-2.png[link=self, window=blank, width=100%]
 
-. Expand and select *All Clusters*
-. Expand *Edge Management*
-. Select *Fleets*
-. Click *Create fleet*
+Let's examine your `gitea` repository in this lab 
 
-image::m3-createfleet.png[link=self, window=blank, width=100%]
+Ken: All of these screenshots need to be udpated to reflect gitea vs. github (did not have user edit rights for gitea when creating these steps)
 
-Populate the *Create fleet* wizard with the following *General info* values +
+. Select the *<> Code* drop-down menu
+. Click the *copy* icon to cop the repo URL to your clipboard
+. Click the `fleet` directory
++
+image::m3-gitea-repository-1.png[link=self, window=blank, width=100%]
++
+. Click *gitea-fleet.yaml*
++
+image::m3-gitea-repository-2.png[link=self, window=blank, width=100%]
++
+. Examine the *gitea-fleet.yaml* and note in the `spec:` section that there are currently *no applications, configs or os image configured*.
++
+image::m3-gitea-repository-3.png[link=self, window=blank, width=100%]
 
-. *Name:*
+We're going to configure Edge Manager to resource sync this fleet configuration YAML into Edge Manager
+
+. Return to your Edge Manager browser tab and click `Repositories`
++
+image::m3-repository-1.png[link=self, window=blank, width=100%]
++
+. Click *Create repository*
++
+image::m3-repository-2.png[link=self, window=blank, width=100%]
++
+Input the following information
++
+. Enter *Repository name*: `user-repo`
+. Enter *Repository URL*:
 +
 [source,sh,role=execute,subs=attributes+]
 ----
-{user}-new-store-fleet
-----
-. *Device selector: {tooltip-icon}* (_Please do not select *Fleet labels* by mistake_)
+https://github.com/kenosborn-rh/rh1-2026-rhem-lab.git
+---- 
+. Ensure that the check-box for *Use resource syncs (?)* is enabled
+.. Enter *Resource sync name*: `user-rs`
+.. Enter *Target revision*: `main`
+.. Enter *Path (?)*:
 +
 [source,sh,role=execute,subs=attributes+]
 ----
-fleet={user}
-----
-. Click *Next*
-
-IMPORTANT: The following screenshots are shown for example purposes only and may not match your User ID.
-Unless you have been assigned, 'user1', do not use 'user1' vs. your assigned User ID: {user}.
-
-image::m3-fleetgeneralinfo.png[link=self, window=blank, width=100%]
-
-Populate the following *Device template* values +
-
-. *System image:* (Note: this is the same '...pos-prod:1.0.0' image that we used previously)
+/fleet/gitea-fleet.yaml
+---- 
+.. Click *Create repository*
 +
-[source,sh,role=execute]
-----
-image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-pos-prod:1.0.0
-----
-. Click *+ Add application*
-. *Image:*
+. Observe that the resource sync is in a `Sync pending` state
 +
-[source,sh,role=execute]
-----
-quay.io/kenosborn/podman-compose:v2
-----
-. *Application name:*
+image::m3-resource-sync-1.png[link=self, window=blank, width=100%]
+NOTE: Resource Syncs occur every 2 minutes - thank you for your patience while we wait for the OS System image to appear
+
+Importing the Fleet from the Repository
+
+. Click *Fleets*
 +
-[source,sh,role=execute]
-----
-new-pos-app
-----
-. Click *Next*
-
-image::m3-fleetdevicetemplate.png[link=self, window=blank, width=100%]
-
-Leave the *Updates* parameters at their default settings
-
-. Click *Next*
-
-image::m3-fleetupdates.png[link=self, window=blank, width=100%]
-
-*Review and create*
-
-. Review settings and click *Create fleet*
-
-image::m3-fleetreviewcreate.png[link=self, window=blank, width=100%]
-
-Now that the we have created our new fleet, let's go to your recently onboarded device (from Module 2) and change its fleet membership
-
-. Expand *Edge Management*
-. Select *Devices*
-. Change the *Devices* section search filter from *Labels and fleets* to *Name and alias* (You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
-. Enter the *hometown name you chose* for your device to filter the device list
-. Click *YourHomeTown-store-{user}* device
-
-image::m3-userdevice-1.png[link=self, window=blank, width=100%]
-
-. Click the *X* next to *pos=prod* to remove the current label
-
-image::m3-userdevice-2.png[link=self, window=blank, width=100%]
-
-. Click *Add label*
-. Replace *key=value* with *`fleet={user}`* and press *enter*
-. Observe that we are still _running the same_ *System image* ('...pos-prod:1.0.0') (a device reboot will not be required since our new fleet uses the same image that our device is already running)
-. Observe that your device *Applications* pane is now populated with our containerized application
-
-image::m3-userdevice-3.png[link=self, window=blank, width=100%]
-
-NOTE: It can take a few moments for your newly added Application to report a green *Running* status. Thank you for your patience.
-
-After your *new-pos-app* is returning a green *Running* status
-
-. Click *Terminal*
-. Check the containers that are now running on the device:
+image::m3-resource-sync-2.png[link=self, window=blank, width=100%]
 +
-[source,sh,role=execute]
-----
-podman ps -a
-----
+. Note that we receive a messaging indicating that the fleet is being imported via the `user-rs` resource synch
 +
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-CONTAINER ID  IMAGE                                    COMMAND               CREATED         STATUS         PORTS                                        NAMES
-111b1391a311  localhost/podman-pause:5.2.2-1737721907                        38 minutes ago  Up 37 minutes                                               47a0b459f7c9-service
-fd0157f0e2e1  localhost/podman-pause:5.2.2-1737721907                        38 minutes ago  Up 37 minutes  0.0.0.0:30000->8080/tcp                      9ba794295fe8-infra
-c0f559b1dad4  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  37 minutes ago  Up 37 minutes  0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod
-6ca9d626e4bb  quay.io/kenosborn/edge-megastore-pos:v1  nginx -g daemon o...  6 minutes ago   Up 6 minutes   0.0.0.0:8080->8080/tcp, 80/tcp, 8080/tcp     new-pos-app-173783_edge-megastore-pos_1
-----
+image::m3-resource-sync-3.png[link=self, window=blank, width=100%]
++
+. After a few minutes, observe that the `gitea-fleet` has been created and there is a *Git icon* next to the fleet name, indicating that this fleet is *managed by a Git resource sync*
+.. Click *gitea-fleet* to view its details
++
+image::m3-resource-sync-4.png[link=self, window=blank, width=100%]
++
+. In the Fleet details view, observe that there is currently no (OS) System image configured for this fleet
+.. The Fleet is marked as managed by `user-rs`, indicating it is controlled by a Git resource sync
+.. Select the *Actions* drop-down
+.. Note that there is no option to Edit the Fleet nor can we Delete the fleet. This is expected behavior because this fleet is *Git-managed* (Edge Manager treats it as *read-only* in the UI)
++
+image::m3-resource-sync-5.png[link=self, window=blank, width=100%]
++
+NOTE: In this model, Edge Manager is *not the system of record* for fleet configuration. Instead, Git serves as the authoritative source of truth. Any updates (whether manual edits, CI/CD-driven changes, or automated workflows) must be made to the fleet.yaml stored in Gitea and then synchronized into Edge Manager
 
-NOTE: The '*edge-megastore-pos:v1*' container listed at the bottom is our new point of sale application.
+Let's make a change to the fleet yaml in gitea
 
-Return to your Application browser tab (if you inadvertently closed this tab, you can get back to this view by selecting *local-cluster* in the top menu, followed by
-selecting *Networking\Routes* via the left-hand nav)
-
-. Refresh your browser and note that the new point of sale application is now available!
-. Click *Start*
-
-image::m3-new-pos-app.png[link=self, window=blank, width=100%]
-
-Let's order some (pretend) donuts via the new POS App (because...why not)?
-
-. Select *Red Glazed Donut*
-. Increase *quantity* to *`75`*
-. Tender a _crisp_ 100 dollar bill by clicking *+100.00*
-. Click *Submit*
-
-image::m3-new-pos-app-1.png[link=self, window=blank, width=100%]
-
-. Click *Proceed*
-
-image::m3-new-pos-app-2.png[link=self, window=blank, width=100%]
-
-. Click *Cancel*
-
-image::m3-new-pos-app-3.png[link=self, window=blank, width=100%]
-
-Your new home town Edge Megastore, Inc. location is now ready to open for business
-
-++++
-<b style="font-size: 2em;">
-  <span style="color:red;">C</span>
-  <span style="color:orange;">o</span>
-  <span style="color:gold;">n</span>
-  <span style="color:green;">g</span>
-  <span style="color:blue;">r</span>
-  <span style="color:indigo;">a</span>
-  <span style="color:violet;">t</span>
-  <span style="color:red;">u</span>
-  <span style="color:orange;">l</span>
-  <span style="color:gold;">a</span>
-  <span style="color:green;">t</span>
-  <span style="color:blue;">i</span>
-  <span style="color:indigo;">o</span>
-  <span style="color:violet;">n</span>
-  <span style="color:red;">s</span>
-  <span style="color:orange;">!</span>
-</b>
-++++
-
-You've done a great job at Edge Megastore, Inc.!
-
-If you'd like to call it a day, you are welcome to end the lab here (*thank you)*; however, if you would like to earn some Overtime (mythical) pay and explore a few more *advanced* topics
-you are welcome to continue.
-
-[#cli]
-== Edge Manager Command Line Interface
-
-The Edge Manager CLI contains a robust set of commands. In fact, most (if not all) of what we have explored in this lab via the Edge Manager UI can
-be done via CLI.
-
-NOTE: The Edge Manager CLI is currently still named after the upstream project: *flightctl* and has been pre-loaded for you in our lab environment
-
-. Click the OpenShift *>_* (Terminal) icon in the upper-right hand corner
-. Set *Project* is set to: wksp-{user} (Note: You may need to scroll down to select)
-. Click *Start*
-
-
-NOTE: The wksp-user in this screenshot may not match your user ID
-
-image::m3-cli-1.png[link=self, window=blank, width=100%]
-
-. Give yourself some more screen real estate by clicking the *Open terminal in new tab* icon
-
-image::m3-cli-2.png[link=self, window=blank, width=100%]
-
-We are now going to authenticate against the Edge Manager service and issue several CLI commands
-
-. Authenticate to the Edge Manager service via CLI
+. Return to your gitea browser tab and select the edit (pencil) icon
++
+image::m3-resource-sync-6.png[link=self, window=blank, width=100%]
++
+. Copy the following `os: spec` to your clipboard  
 +
 [source,sh,role=execute,subs=attributes+]
 ----
-flightctl login https://api.apps.cluster-{guid}.dynamic.redhatworkshops.io --username {user} --password {password} --insecure-skip-tls-verify
+      os:
+        image: quay.io/user/drone-image:v1
 ----
++
+. Paste the `os: spec` and confirm that the formatting is correct
+.. Click *Commit changes...*
++
+image::m3-resource-sync-7.png[link=self, window=blank, width=100%]
++
+. Click *Commit changes* to save the update to the repository
++
+image::m3-resource-sync-8.png[link=self, window=blank, width=100%]
++
+. Return to your Edge Manager Browser tab and confirm that the Fleet now displays an OS System image (this is the same image you previously built and are running on the drone virtual machine, note that it make take a few minutes for the resource synch to update).
++
+image::m3-resource-sync-9.png[link=self, window=blank, width=100%]
+
+We have just proven that editing the fleet YAML in Gitea automatically propagates changes to Edge Manager
+
+In a a moment, we’ll start adding more substance to this fleet by introducing *Configuration* and *Application* entries into the fleet YAML
+
+. Before making these changes, let’s prepare to monitor the Edge Manager periodic logs:
++
+.Return to your Terminal 1 session (beside your lab manual) and examine the Edge Manager microservices 
+[source,sh,role=wrap execute,subs=attributes+]
+----
+sudo systemctl list-units flightctl-*.service
+---- 
 +
 .Sample Output
-[source,texinfo,subs="attributes"]
+[source,text]
 ----
-Login successful.
-----
-. Examine the commands available
-+
-[source,sh,role=execute]
-----
-flightctl
-----
-+
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-flightctl controls the Flight Control fleet management service.
-
-Usage:
-  flightctl [flags] [options]
-  flightctl [command]
-
-Available Commands:
-  apply            Apply a configuration to a resource by file name or stdin.
-  approve          Approve a certificate signing or enrollment request.
-  certificate      Request a new certificate for a device with 'certificate request'
-  completion       Generate autocompletion script
-  console          Connect a console to the remote device through the server.
-  csr-generate     Generate a CSR resource config .yaml based on a .csr file and optional additional parameters
-  decommission     Decommission a device.
-  delete           Delete resources by resources or owner.
-  deny             Deny a certificate signing or enrollment request.
-  enrollmentconfig Get enrollment config for devices
-  get              Display one or many resources.
-  help             Help about any command
-  login            Login to flight control
-  version          Print flightctl version information.
-
-Flags:
-  -h, --help   help for flightctl
-
-Use "flightctl [command] --help" for more information about a command.
-----
-. Examine versioning information
-+
-[source,sh,role=execute]
-----
-flightctl version
+  UNIT                                 LOAD   ACTIVE SUB     DESCRIPTION                                             
+  flightctl-alert-exporter.service     loaded active running Flight Control Alert Exporter service
+  flightctl-alertmanager-proxy.service loaded active running Flight Control Alertmanager Proxy service
+  flightctl-alertmanager.service       loaded active running Flight Control Alertmanager service
+  flightctl-api-init.service           loaded active exited  Flight Control API Initialization
+  flightctl-api.service                loaded active running Flight Control API server
+  flightctl-certs-init.service         loaded active exited  Flight Control Certificates Initialization
+  flightctl-cli-artifacts-init.service loaded active exited  Flight Control CLI Artifacts Certificates Initialization
+  flightctl-cli-artifacts.service      loaded active running Flight Control CLI Artifacts service
+  flightctl-db-migrate.service         loaded active exited  Flight Control Database Migration service
+  flightctl-db-users-init.service      loaded active exited  Flight Control Database Users Initialization
+  flightctl-db-wait.service            loaded active exited  Flight Control Database Wait
+  flightctl-db.service                 loaded active running Flight Control Database service
+  flightctl-kv.service                 loaded active running Flight Control Key Value service
+  flightctl-network.service            loaded active exited  flightctl-network.service
+  flightctl-pam-issuer.service         loaded active running Flight Control PAM OIDC Issuer server
+  flightctl-periodic.service           loaded active running Flight Control Periodic service
+  flightctl-ui-init.service            loaded active exited  Flight Control UI Initialization
+  flightctl-ui.service                 loaded active running Flight Control UI
+  flightctl-worker.service             loaded active running Flight Control Worker service
+<...>
 ----
 +
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-flightctl CLI version: v0.5.1
-flightctl service version: v0.5.1
-----
-. Retrieve a list of devices
+. We want to monitor events from the flightctl-periodic.service, which (among other things) is responsible for processing Git resource syncs
 +
-[source,sh,role=execute]
+.Run the following command to follow the flightctl-periodic.service logs and filter for resource sync (user-rs) events
+[source,sh,role=execute wrap,subs=attributes+]
 ----
-flightctl get devices
-----
+sudo journalctl -u flightctl-periodic.service -f | grep user-rs
+---- 
+
+Next, we’ll make another update to the fleet YAML in Gitea
+
+. Return to your gitea browser tab and click the *Edit (pencil*) icon
 +
-.Sample Output (your list may vary)
-[source,texinfo,subs="attributes"]
-----
-NAME                                                    ALIAS                   OWNER                           SYSTEM  UPDATED         APPLICATIONS    LAST SEEN
-93og3n5l2n5pv3muj7oh3aut8rhn3ka1cvvhl6qo8nunihr69sng    nc-raleigh-store-01     Fleet/point-of-sale-prod        Online  UpToDate        Healthy         8 seconds ago
-9sb2f8o7bko0q27tusl2c2kkegm5o90f44ej4rj0msb0pjh60m00    ca-paloalto-store-01    Fleet/point-of-sale-prod        Online  UpToDate        Healthy         9 seconds ago
-h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg    maplegrove-store-user1  Fleet/user1-new-store-fleet     Online  UpToDate        Healthy         9 seconds ago
-qgmnbi04co3lc0f3pkko281km71vv4e60vnserde63cb73jhdub0    ca-torrance-store-01    Fleet/point-of-sale-prod        Online  UpToDate        Healthy         8 seconds ago
-v4uh4tbravm7fefgiqjm1prra3sfh1dgrn8uh70fjj8i9m13jo30    nc-charlotte-store-01   Fleet/point-of-sale-prod        Online  UpToDate        Healthy         3 seconds ago
-----
-
-We are now going to grep for your specific hometown-store-{user} device
-
-. Replace 'maplegrove' with *your* home town name
+image::m3-resource-sync-10.png[link=self, window=blank, width=100%]
 +
-[source,sh,role=execute]
-----
-flightctl get device | grep maplegrove
-----
+. Click and drag to highlight the `applications:` and `config:` sections within the `spec:` block
 +
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-NAME                                                    ALIAS                   OWNER                           SYSTEM  UPDATED         APPLICATIONS    LAST SEEN
-h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg    maplegrove-store-user1  Fleet/user1-new-store-fleet     Online  UpToDate        Healthy         4 seconds ago
-----
-
-Double-click to select the entire ID (under the Name Column) for your device, right-click and select copy
-
-. Set a console variable equal to *your device ID* (right-click and paste *your device UID* value)
+image::m3-resource-sync-11.png[link=self, window=blank, width=100%]
 +
-[source,sh,role=execute]
-----
-mydeviceid=right-click & paste your-device-id
-----
-
-We can retrieve your device template specifications and status by piping output to yaml (or json)
-
-. Pipe to yaml and examine the output
+. Press *Backspace* to remove the highlighted `applications:` and `config:` entries
 +
-[source,sh,role=execute]
-----
-flightctl get device/$mydeviceid -o yaml
-----
+image::m3-resource-sync-12.png[link=self, window=blank, width=100%]
 +
-.Sample Output (Abridged)
-[source,texinfo,subs="attributes"]
+.Copy the following *applications:* and *config:* specs to your clipboard  
+[source,sh,role=execute,subs=attributes+]
 ----
-apiVersion: flightctl.io/v1alpha1
-kind: Device
-metadata:
-  annotations:
-    device-controller/renderedVersion: "13"
-    fleet-controller/renderedTemplateVersion: "2025-04-14T21:52:26.688988475Z"
-    fleet-controller/templateVersion: "2025-04-14T21:52:26.688988475Z"
-  creationTimestamp: "2025-04-14T21:14:11.706159Z"
-  generation: 3
-  labels:
-    alias: maplegrove-store-user1
-    fleet: user1
-  name: h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg
-  owner: Fleet/user1-new-store-fleet
-  resourceVersion: "1320"
-spec:
-  applications:
-  - envVars: {}
-    image: quay.io/kenosborn/podman-compose:v2
-    name: new-pos-app
-  config: []
-  os:
-    image: image-registry.openshift-image-registry.svc:5000/student-services/rhel9-bootc-edgemanager-pos-prod:1.0.0
-status:
-  applications:
-  - name: new-pos-app
-    ready: 1/1
-    restarts: 0
-    status: Running
-----
+      applications:
+        - appType: quadlet
+          envVars: {}
+          inline:
+            - path: drone-tracker.container
+              content: |-
+                spec:
+                  applications:
+                    - name: drone-tracker-nginx
+                      appType: quadlet
+                      inline:
+                        - path: app.container
+                          content: |
+                            [Container]
+                            Image=docker.io/library/nginx:1.25
+                            Exec=nginx -g "daemon off;"
+                            PublishPort=8080:80
+                            Volume=/etc/drone-tracker:/usr/share/nginx/html:ro,Z
+                            
+                            [Service]
+                            Restart=on-failure
+                            RestartSec=20
 
-NOTE: The Edge Manager API is similar to a Kubernetes API in that we can utilize yaml to create/update/remove Edge Manager devices and fleets by using
-'flightctl apply -f file.yaml' commands.
-
-For our last CLI example, let's connect to a console session within your actual hometown-store-{user} device
-
-. To initiate a console session, utilize the following command
-+
-[source,sh,role=execute]
-----
-flightctl console device/$mydeviceid
+                            [Install]
+                            WantedBy=default.target
+              contentEncoding: plain
+          name: drone-tracker-app
+          volumes: []
+      config:
+        - name: drone-tracker-web-content
+          gitRef:
+            path: /kiosk/content/flight-conditions-{{ .metadata.labels.weather }}
+            repository: user-repo
+            targetRevision: main
 ----
 +
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-Connecting to device h68mfmg1b63ebv278rr1no5egdcvlmjbsbe4ftc8bit6vttognfg
-Use CTRL+B 3 times to exit console
-----
-
-NOTE: It can take a few moments for your Terminal session to establish (thank you for your patience)
-
-You can now interact directly with your device via its console!
-
-. Examine the containers running on this device (the output should look familiar to you)
+. Ensure the YAML is correctly indented and matches the formatting shown in the screenshot
 +
-[source,sh,role=execute]
-----
-podman ps -a
-----
+image::m3-resource-sync-13.png[link=self, window=blank, width=100%]
 +
-.Sample Output (your list may vary)
-[source,texinfo,subs="attributes"]
-----
-CONTAINER ID  IMAGE                                    COMMAND               CREATED      STATUS      PORTS                                        NAMES
-111b1391a311  localhost/podman-pause:5.2.2-1737721907                        3 hours ago  Up 3 hours                                               47a0b459f7c9-service
-fd0157f0e2e1  localhost/podman-pause:5.2.2-1737721907                        3 hours ago  Up 3 hours  0.0.0.0:30000->8080/tcp                      9ba794295fe8-infra
-c0f559b1dad4  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  3 hours ago  Up 3 hours  0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod
-6ca9d626e4bb  quay.io/kenosborn/edge-megastore-pos:v1  nginx -g daemon o...  2 hours ago  Up 2 hours  0.0.0.0:8080->8080/tcp, 80/tcp, 8080/tcp     new-pos-app-173783_edge-megastore-pos_1
-----
-
-Exit the device remote console session by typing *exit* or by holding down your *CTRL key* and pressing the *B key* three times
-
-[#monitoring]
-== Edge Manager Device Monitoring and Decommission
-
-Let's explore the device monitoring that is available for our new store device
-
-. Expand and select *All Clusters*
-. Expand *Edge Management*
-. Select *Devices*
-. Change the *Devices* section search filter from *Labels and fleets* to *Name and alias* (You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
-. Enter the *hometown name you chose* for your device to filter the device list
-. Click *YourHomeTown-store-{user}* device
-
-image::m3-userdevice-1.png[link=self, window=blank, width=100%]
-
-We have previously seen (in the *System status* pane) how Device status and Update status change depending on our device state (rebooting, online, updating, up-to-date, etc.)
-
-. In the *System status* pane, click the {tooltip-icon} tooltips for each of the status items and review their contents
-
-image::m3-monitoring-2.png[link=self, window=blank, width=100%]
-
-Edge Manager also surfaces Application Status in the Device *Applications* pane.
-
-Let's non-gracefully kill our new-pos-app container app and examine status
-
-. Click *Terminal*
-. Copy/Paste this command to kill our new-pos-app container
+. Click *Commit changes...* to save your updates
 +
-[source,sh,role=execute]
-----
-podman kill -s 9 new-pos-app-173783_edge-megastore-pos_1
-----
+image::m3-resource-sync-14.png[link=self, window=blank, width=100%]
 +
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-new-pos-app-173783_edge-megastore-pos_1
-----
-. List out the containers and note that the *new-pos-app* is in an *'Exited'* state (via the *Status* column)
+. Confirm the commit by clicking *Commit changes*
 +
-[source,sh,role=execute]
+image::m3-resource-sync-15.png[link=self, window=blank, width=100%]
+
+Switch back to your `Terminal 1` window (beside your lab manual) and wait for the next resource-sync log event
+
+.Note the log entries indicating that the resource-sync changes were applied successfully
+[source,text,role=wrap]
 ----
-podman ps -a
+Jan 02 12:58:49 rhem-on-rhel.wksp-xt8pt-1-user1.svc.cluster.local flightctl-periodic[3025]: time="2026-01-02T17:58:49Z" level=info msg="Resource user-rs: applying 1 fleets " func="github.com/flightctl/flightctl/internal/tasks.(*ResourceSync).SyncFleets" file="/app/internal/tasks/resourcesync.go:202" pkg=resource-sync request_id=resource-sync/ZHcRLvhr3S-001829
+Jan 02 12:58:49 rhem-on-rhel.wksp-xt8pt-1-user1.svc.cluster.local flightctl-periodic[3025]: time="2026-01-02T17:58:49Z" level=info msg="Resource user-rs: 1 fleets applied successfully\n" func="github.com/flightctl/flightctl/internal/tasks.(*ResourceSync).SyncFleets" file="/app/internal/tasks/resourcesync.go:225" pkg=resource-sync request_id=resource-sync/ZHcRLvhr3S-001829
 ----
+(Press `CTRL-C` to stop following the resource-sync logs.)
+
+Return to your Edge Manager UI browser tab
+
+. Since the fleet is Git-managed, it cannot be edited directly. Select the Actions drop-down menu
+. Click *View fleet configuratinos*
 +
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-CONTAINER ID  IMAGE                                    COMMAND               CREATED       STATUS                           PORTS                                        NAMES
-111b1391a311  localhost/podman-pause:5.2.2-1737721907                        15 hours ago  Up 15 hours                                                                   47a0b459f7c9-service
-fd0157f0e2e1  localhost/podman-pause:5.2.2-1737721907                        15 hours ago  Up 15 hours                      0.0.0.0:30000->8080/tcp                      9ba794295fe8-infra
-c0f559b1dad4  quay.io/jswanson/pos-v1-prod:1.0.0       /usr/bin/run-http...  15 hours ago  Up 15 hours                      0.0.0.0:30000->8080/tcp, 8080/tcp, 8443/tcp  point-of-sale-pos-prod
-6ca9d626e4bb  quay.io/kenosborn/edge-megastore-pos:v1  nginx -g daemon o...  15 hours ago  Exited (137) About a minute ago  0.0.0.0:8080->8080/tcp, 80/tcp, 8080/tcp     new-pos-app-173783_edge-megastore-pos_1
-----
-. Click *Details* and note that Edge Manager is reporting *'(!) Error'* in both the *System status* and *Applications* pane
+image::m3-resource-sync-16.png[link=self, window=blank, width=100%]
++
+. Click *Next*
++
+image::m3-resource-sync-17.png[link=self, window=blank, width=100%]
++
+A host configuration named drone-tracker-web-content has been added. Let’s walk through what it does:
++
+.. The *Source type* is set to `Git configuration`
+.. The configuration references the same repository created earlier: `user-repo`
+.. The `main` branch of the repository is used
+.. Content from the repository is written to the device at the following path: `/kiosk/content/flight-conditions-{{ .metadata.labels.weather }}`
++
+image::m3-resource-sync-18.png[link=self, window=blank, width=100%]
 
-image::m3-monitoring-3.png[link=self, window=blank, width=100%]
+How does the `{{ .metadata.labels.weather}}` template variable work?
 
-NOTE: This information is also rolled up holistically for all devices at both the Fleet level and overall Edge Manager level
+Let's break it down.
 
-. In the device *Resource status* pane, you can observe that Edge Manager is surfacing device *CPU*, *Disk* and *Memory* pressure status.
+In this case, Edge Manager reads the value of a `weather` label applied to the device (which you will apply in a moment)
 
-image::m3-monitoring-4.png[link=self, window=blank, width=100%]
+For example: `weather=storm`
 
-NOTE: In Edge Manager, users can customize device resource monitors and define alerts when the utilization
-crosses a defined threshold (for example, 'trigger a *warning alert* if the average disk utilization exceeds 75% for more than 30 minutes' and 'trigger a *critical alert* if disk utilization exceeds 90% for over 10 minutes with a sampling interval of 5 seconds.").
+How does this relate to the Git repository content?
 
-=== Device Decommission
+Here’s how it ties together:
 
-All things must come to an end. For our final lesson, we will bid farewell to our new store device by decommissioning it.
+Switch back to your gitea browser tab and:
 
-Stop your Edge Device Virtual Machine
+. Expand the `kiosk` folder
+. Select the `content` folder
+. Note the three subfolders whose names end in: clear, storm, and windy
 
-. Expand and select *local-cluster*
-. Expand *Virtualization*
-. Select *VirtualMachines*
-. Select *vertical ellipses*
-. Click *Stop*
+image::m3-resource-sync-19.png[link=self, window=blank, width=100%]
 
-image::m3-decommission-4.png[link=self, window=blank, width=100%]
+When Edge Manager instructs the device to write content from this Gitea location, it uses the device’s `weather` label value to select the matching folder.
 
-Return to your device within Edge Manager
+That folder contains web content served by the NGINX application.
 
-. Expand and select *All Clusters*
-. Expand *Edge Management*
-. Select *Devices*
-. Change the *Devices* section search filter from *Labels and fleets* to *Name and alias* (You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
-. Enter the *hometown name you chose* for your device to filter the device list
-. Click *YourHomeTown-store-{user}* device
+Next, let’s examine the Fleet application specification.
 
-Decommission your device
+Return to your Edge Manager UI browser tab and scroll to the *Application workloads* section of the Fleet specification. Let’s walk through what this configuration is doing:
 
-. Expand *Actions*
-. Select *Decommission device*
+. We’ve selected a *Quadlet application* as the application type. Earlier, in the `drone-fleet`, we deployed the drone cam as a *single-container application* pulled directly from quay.io. In this case, we are using a Quadlet application, which allows one or more containerized applications to be defined together
+. We’ve configured the *Definition source* as *Inline*, meaning the container definition is written directly into the Fleet specification rather than pulled from an OCI registry
+. We’ve assigned the application name `drone-tracker-app`
+. The contents of this Quadlet application will be written to a file named `drone-tracker.container` on the device
 
-image::m3-decommission-1.png[link=self, window=blank, width=100%]
+image::m3-resource-sync-20.png[link=self, window=blank, width=100%]
 
-. Click  *Decommission device*
+. Scroll down until the *Content* portion is visible
+. Click and drag the *Content* resize handle until the full contents are visible
 
-image::m3-decommission-2.png[link=self, window=blank, width=100%]
+image::m3-resource-sync-21.png[link=self, window=blank, width=100%]
 
-. Set the *Show only decommissioned devices* toggle to *on* (You may need to scroll down to the *Devices* section if there is a list of *Devices pending approval* present at the top of this window)
+This shows the full contents written to the inline Quadlet file, `drone-tracker.container`. Let’s walk through what’s happening:
 
-image::m3-decommission-3.png[link=self, window=blank, width=100%]
+. The NGINX container *image* is pulled from `docker.io/library/nginx:1.25`. An *Exec* command starts NGINX, and a *PublishPort* of 8080 maps traffic to container port 80
+. The container uses a volume mounted at `/etc/drone-tracker`, which is where NGINX serves its web content. This content is written to disk via the Host Configuration specification examined earlier
+. Once you’ve completed the review, click Cancel to exit the wizard
 
-Here we can observe the list of decommisioned devices (there is no need at this point in our Lab to further delete devices)
+image::m3-resource-sync-22.png[link=self, window=blank, width=100%]
 
-[#labsummary]
-== Lab Summary
+Now for the fun part, let’s put this new Gitea-sourced fleet into action. We already have a device enrolled and ready, thanks to your earlier work.
 
-image::m3-summary.png[link=self, window=blank, width=75%]
+Return to your Edge Manager UI Browser tab, and:
 
-On behalf of the entire Red Hat Edge Manager team, we would like to extend a heartfelt *THANK YOU* for taking the time to explore this lab today.
+. Click *Devices*
+. Click *drone-01*
++
+image::m3-drone-tracker-1.png[link=self, window=blank, width=100%]
++
+. Click the *X* next to the device selector to remove the device from the `drone-fleet`
++
+image::m3-drone-tracker-2.png[link=self, window=blank, width=100%]
++
+Next, we will add two labels to the device. The first label will be the *weather* label:
++
+Choose a value for the weather label: `clear`, `storm`, or `windy`
++
+. Click *Add label* and add the weather label: `weather=`{your decision from above: clear, storm or windy}
++
+NOTE: The following screenshot may not reflect your selected value (this is expected)
++
+image::m3-drone-tracker-3.png[link=self, window=blank, width=100%]
++
+Next, we will add the device to the Gitea resource-synced fleet by applying a device selector label:
++
+. Click *Add label* and enter `fleet=gitea` 
 
-We hope your time at Edge Megastore, Inc. has been an enjoyable and informative one.
++
+.. Immediately after pressing Enter, the device joins the `gitea-fleet`
+.. The device enters an *Out-of-date* state because its current configuration does not yet match the Gitea fleet’s desired state
++
+image::m3-drone-tracker-4.png[link=self, window=blank, width=100%]
++
+Because the desired state and current state do not match, Edge Manager instructs the device to reconcile itself toward the desired state
++
+. Observe that the device enters an *Updating* state
++
+image::m3-drone-tracker-5.png[link=self, window=blank, width=100%]
++
+After a short period, observe the following:
++
+.. The device transitions to an *Up-to-date* state
+.. The *Disk pressure* warning is no longer present because the Gitea fleet does not include the custom disk resource monitor previously applied to the `drone-fleet`.
+. A new `drone-tracker-app` application is now *Running*, and the previous `drone-cam` application is no longer present
++
+image::m3-drone-tracker-6.png[link=self, window=blank, width=100%]
++
+. You'll also notice a new configuration *Source* being tracked: Click *drone-tracker-web-content*
++
+image::m3-drone-tracker-7.png[link=self, window=blank, width=100%]
++
+You are taken directly to the Gitea folder that corresponds to the *weather* label you selected
++
+. The folder name matches the selected *weather* label (the example below uses `weather=storm`)
+.. This content is written to the device at */etc/drone-tracker*
++
+image::m3-drone-tracker-8.png[link=self, window=blank, width=100%]
 
-BTW, judging by that store front image above it looks like our EMI Marketing Department has some more work to do... :)
+Return to your `Application is not available` tab and click refresh
 
-Thank you, again - have a great day!
+Ken: Insert screenshot
+
+The Drone Tracker app is now available thanks to our resource synched gitea content.
+
+. Click *View Flight Conditions*
+
+...and observe the weather condition that you chose.  
+
+C O N G R A T U L A T I O N S 
+
+...and thank you for taking Edge Manager for a Test Drive today.  
+
+There is one more important lesson that we would like to leave you with and it speaks to the true declarative nature and power of Edge Manager
+
+Return to the Terminal...
+
+change content
+
+Mention how much better this is than having to roll trucks, have dedicated IT staff onsite, etc.
+
+etc
+
+Done

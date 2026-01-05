@@ -1,37 +1,32 @@
 = Lab Overview
 
-In this lab, we’ll explore *Red Hat Edge Manager* (Tech Preview), a solution
-designed to deliver simple, scalable, and secure management of edge devices
-and applications. With Edge Manager, you declare the desired operating system
-version, host configuration, and set of applications to run on a single device
-or an *entire fleet of devices*. The platform then automatically rolls out these 
-configurations to each device, where a local agent applies the changes and reports
-back on progress and health status.
+In this lab, we’ll explore *Red Hat Edge Manager*, a solution designed to deliver simple, scalable, and
+secure management of edge devices and applications. With Edge Manager, you declare the desired
+operating system image, host configuration and set of applications to run on a single device or an
+*entire fleet of devices.* +
 
-image::EdgeDevice.png[link=self, window=blank, width=75%, align="center"]
+image::i1-overview.png[link=self, window=blank, width=85%, align="center"]
 
-NOTE: Edge Manager currently supports image-based Linux operating systems running https://developers.redhat.com/products/rhel-image-mode/overview?source=sso[Image Mode (bootc),window=blank] 
+Edge Manager distributes these specifications to managed devices, where a local agent executes
+configuration changes, monitors system health and reports status back to a centralized control
+plane. Each device’s real-world state is evaluated against its declared configuration and, when drift
+is detected, Edge Manager automatically initiates corrective actions to return the device to a
+validated, compliant state. This ensures *consistent*, *deterministic* and *resilient* edge operations
+even in *highly distributed, low-touch environments*. +
 
-NOTE: https://github.com/flightctl/flightctl["Flight Control",window=_blank] is the upstream project and is accessible for you to explore outside of this Lab.  Red Hat Edge Manager (RHEM) is the downstream offering, currently in https://access.redhat.com/support/offerings/techpreview[Tech Preview,window=_blank] meaning that it may not be functionally complete and is subject to change prior to GA. 
+NOTE: https://github.com/flightctl/flightctl["Flight Control",window=_blank] is the upstream project and is accessible for anyone to explore outside of this Lab. Red Hat Edge Manager (RHEM) is the downstream offering. Throughout this lab, you will see references to 'flightctl' and you should treat these as analagous to Edge Manager.
 
 == Lab Layout
 
-In this lab you will be utilizing the following Red Hat software components which have already been preinstalled for you
+In this lab you will be utilizing the following Red Hat software components:
 
-- Red Hat Edge Manager + Advanced Cluster Management with OpenShift 
-- OpenShift-Virtualization Virtual Machines (acting as Student Store Edge Devices)
-- (Your Lab Laptop Browser will function as the retail Point of Sale Terminal)
+- Red Hat OpenShift
+- Red Hat OpenShift Virtualization (OCP-Virt)
+- 2x OCP-Virt Virtual Machines 
+- Red Hat Edge Manager
 
-image::LabLayout.png[link=self, window=blank, width=100%]
+image::i-lab-layout-1.png[link=self, window=blank, width=100%]
 
-== Edge Device Images 
+You will spend the majority of your time working within the OCP-Virt VM's and Edge Manager.
 
-We have included a few 'Image Mode' (bootc) pre-built Red Hat Enterprise Linux (RHEL) 9 images for you to utilize during the Lab
-
-Like any Container image, these images can be stored in a container registry (in our lab, they are stored in the internal OpenShift
-Registry)
-
-. image-registry.openshift-image-registry.svc:5000/student-services/*rhel9-bootc-edgemanager-base:1.0.0*
-. image-registry.openshift-image-registry.svc:5000/student-services/*rhel9-bootc-edgemanager-pos-prod:1.0.0*
-
-NOTE: These images were pre-built for you so that you can focus on learning about Edge Manager vs. building images
+Ken: Add screenshot and instructions detailing the Terminal Sessions on the right and being able to re-size (also level set the expectation that users will be switching between different browser tabs: OCP, Terminals, Edge Manager)

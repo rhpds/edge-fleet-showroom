@@ -47,6 +47,12 @@ Live-reload is not supported.
 
 To rebuild your html, run `./utilites/build`.
 
+== Using Podman Compose (live reload supported)
+
+. Run `podman-compose up --build` to start the container
+. Open http://localhost:8080 in your browser
+. Live reload is supported, edit the content and refresh the page to see the changes
+
 == Editing Files
 
 Now you are ready to go!
