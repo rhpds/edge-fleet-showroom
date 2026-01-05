@@ -35,7 +35,7 @@ Let's get you logged in to your lab environment. On the right you'll notice your
 
 . Click *Terminal 1* (if it is not already selected)
 +
-[source,sh,role=execute]
+[source,sh,role=execute,subs=attributes+]
 .Copy/Paste (or type) this command
 ----
 ssh {user}@rhem-on-rhel-ssh.wksp-{uid}-{user}.svc.cluster.local
@@ -88,7 +88,7 @@ hostname
 .Sample Output
 [source,text,role=wrap,subs=attributes+]
 ----
-rhem-on-rhel.wksp-{uid}-{user}.svc.cluster.local
+rhem-on-rhel.wksp-{guid}-{user}.svc.cluster.local
 ----
 +
 . You'll also be utilizing the OpenShift console to perform various tasks. Let's get you logged into OpenShift, next:
