@@ -89,7 +89,7 @@ NOTE: This is an example of *early binding* enrollment, where device enrollment 
 .Login via the Edge Manager CLI
 [source,sh,role=wrap execute,subs=attributes+]
 ----
-flightctl login https://rhem-on-rhel-api-wksp-{uid}-{user}.apps.cluster-{uid}.dynamic.redhatworkshops.io --username {user} --password redhat123 --insecure-skip-tls-verify
+flightctl login https://rhem-on-rhel-api-wksp-{guid}-{user}.apps.cluster-{guid}.dynamic.redhatworkshops.io --username {user} --password redhat123 --insecure-skip-tls-verify
 ----
 +
 .Sample Output
@@ -237,7 +237,7 @@ In this section, we’ll examine the remaining Edge Manager microservices instal
 .SSH command 
 [source,sh,role=execute]
 ----
-ssh {user}@rhem-on-rhel-ssh.wksp-{uid}-1-{user}.svc.cluster.local
+ssh {user}@rhem-on-rhel-ssh.wksp-{guid}-1-{user}.svc.cluster.local
 ----
 +
 .Password
@@ -508,7 +508,7 @@ image::m2-create-fleet-13.png[link=self, window=blank, width=100%]
 Now that our Drone Fleet has been successfully created, let's return to our disk image building process and get that delivery drone up in the air for pizza delivery.
 
 . Click `Terminal 1` in the terminal interface portion of your lab manual (the first terminal tab)
-. Confirm that the disk image buid has completed successfully
+. Confirm that the disk image build has completed successfully
 +
   a. Progress indicators show `100%`
   b. Message `Results saved in .` is displayed
@@ -659,7 +659,7 @@ Return to your OpenShift Web Interface, and:
 . Expand *Virtualization*
 . Select *Catalog*
 . Select *Template Catalog* (not InstanceTypes)
-. Verify that *Template project* is set to your wksp-{uid}-{user}
+. Verify that *Template project* is set to your wksp-{guid}-{user}
 . Click *Drone Virtual Machine* Catalog item
 +
 image::m2-create-drone-vm-1.png[link=self, window=blank, width=100%]

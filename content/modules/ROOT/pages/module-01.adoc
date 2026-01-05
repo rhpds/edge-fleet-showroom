@@ -38,7 +38,7 @@ Let's get you logged in to your lab environment. On the right you'll notice your
 [source,sh,role=execute,subs=attributes+]
 .Copy/Paste (or type) this command
 ----
-ssh {user}@rhem-on-rhel-ssh.wksp-{uid}-{user}.svc.cluster.local
+ssh {user}@rhem-on-rhel-ssh.wksp-{guid}-{user}.svc.cluster.local
 ----
 +
 [.no-copy-label]
@@ -75,7 +75,7 @@ using rhc at https://red.ht/registration
 .Issue the following command to set the Virtual Machine hostname
 [source,sh,role=execute wrap,subs=attributes+]
 ----
-sudo hostnamectl hostname rhem-on-rhel.wksp-{uid}-{user}.svc.cluster.local
+sudo hostnamectl hostname rhem-on-rhel.wksp-{guid}-{user}.svc.cluster.local
 ----
 +
 [.no-copy-label]
