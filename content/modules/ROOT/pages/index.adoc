@@ -28,5 +28,3 @@ In this lab you will be utilizing the following Red Hat software components:
 image::i-lab-layout-1.png[link=self, window=blank, width=100%]
 
 You will spend the majority of your time working within the OCP-Virt VM's and Edge Manager.
-
-Ken: Add screenshot and instructions detailing the Terminal Sessions on the right and being able to re-size (also level set the expectation that users will be switching between different browser tabs: OCP, Terminals, Edge Manager)
