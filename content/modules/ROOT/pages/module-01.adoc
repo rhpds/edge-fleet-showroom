@@ -98,14 +98,14 @@ Click link:{console_url}[here,window=_blank] to access OpenShift (this link will
 .Username
 [source,sh,role=execute,subs=attributes+]
 ----
-{user}
+{guid}-{user}
 ----
 +
 [.no-copy-label]
 ..Password
 [source,sh,role=execute,subs=attributes+]
 ----
-{password}
+{bastion_ssh_password}
 ----
 
 NOTE: For future reference, all Lab Login information is available via the Lab Manual left-hand nav item, "Lab Access"
