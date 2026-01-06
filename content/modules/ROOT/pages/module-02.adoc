@@ -153,6 +153,8 @@ Server: https://rhem-on-rhel.wksp-{guid}-{user}.svc.cluster.local:7443/
 
 NOTE: The server address shown above identifies the Edge Manager API endpoint used during device enrollment. Port 7443 corresponds to the Edge Manager API service. When the drone virtual machine is powered on, the Edge Manager agent reads this value from config.yaml and uses it to send its initial enrollment request.
 
+=== Create QCOW2 Disk 
+
 . Let's build your Image Mode (bootc) image next
 +
 .Set variables and use podman to build image via Containerfile
@@ -383,7 +385,7 @@ image::m2-command-line-tools.png[link=self, window=blank, width=100%]
 +
 image::m2-command-line-tools-2.png[link=self, window=blank, width=100%]
 
-== Edge Manager fleets
+=== Edge Manager Fleets
 
 An Edge Manager fleet is a logical grouping of devices that share a common *desired state* and management policies. Fleets simplify large-scale operations by allowing administrators to define a single *fleet specification* that applies consistently across all devices in the group. This specification can include applications, host configuration, and OS image references, ensuring predictable behavior and updates across the fleet.
 
@@ -541,6 +543,8 @@ ls
 disk.qcow2
 ----
 
+== Onboarding Workflow (continued)
+
 Let's recap what we have done so far
 
 image::m2-build-process-1.png[link=self, window=blank, width=100%]
@@ -548,6 +552,8 @@ image::m2-build-process-1.png[link=self, window=blank, width=100%]
 . We generated enrollment information (`config.yaml`) and embedded it (along with agent installation steps) into our `Containerfile`
 . We used podman to build our container image from the Containerfile 
 . We used `bootc-image-builder` to convert the container image into a bootable qcow2 disk
+
+=== Expose QCOW2 Disk to OpenShift Virtualization
 
 *So, the next question is*: How do we attach this disk to our Edge Device?
 
@@ -650,6 +656,8 @@ rhem-virtual-machine    Succeeded   100.0%                6d4h
 ----
 Press `CTRL`+`C` to break out of the watch loop
 
+== Drone Virtual Machine creation
+
 It's time to bring your Drone Virtual Machine to life. 
 
 Ken: Update screenshot to user level vs. admin
@@ -669,8 +677,6 @@ image::m2-create-drone-vm-1.png[link=self, window=blank, width=100%]
 +
 image::m2-create-drone-vm-2.png[link=self, window=blank, width=100%]
 
-Monitor Drone Virtual Machine creation
-
 . Monitor the Virtual Machine until the **Status** indicates *Running*
 . Click *Open web console*
 +
@@ -679,6 +685,8 @@ image::m2-create-drone-vm-3.png[link=self, window=blank, width=100%]
 . Note that an enrollment QR code is present
 +
 image::m2-create-drone-vm-4.png[link=self, window=blank, width=100%]
+
+=== Enroll Drone Virtual Machine
 
 With the Drone Virtual Machine now running, verify that the device is ready for enrollment in Edge Manager.
 
@@ -709,6 +717,8 @@ image::m2-onboard-device-2.png[link=self, window=blank, width=100%]
 . Click *Approve*
 +
 image::m2-onboard-device-3.png[link=self, window=blank, width=100%]
+
+=== Device Exploration
 
 Our newly approved drone device is now visible in the Devices list
 
@@ -901,7 +911,7 @@ image::m2-drone-cam-not-available.png[link=self, window=blank, width=100%]
 
 This is expected.
 
-Although the OpenShift route has been created, the application workload has not yet been deployed to the drone device. As a result, there is no active service backing this route.
+Although the OpenShift route is valid, the application workload has not yet been deployed to the drone device. As a result, there is no active service backing this route.
 
 Do not worry, we will correct this behavior in the next lesson module by deploying the application to the device using Edge Manager and GitOps.
 

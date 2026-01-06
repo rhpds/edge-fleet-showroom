@@ -71,31 +71,11 @@ using rhc at https://red.ht/registration
 <...>
 ----
 +
-[.no-copy-label]
-.Issue the following command to set the Virtual Machine hostname
-[source,sh,role=execute wrap,subs=attributes+]
-----
-sudo hostnamectl hostname rhem-on-rhel.wksp-{guid}-{user}.svc.cluster.local
-----
-+
-[.no-copy-label]
-.Confirm that the hostname was set successfully
-[source,sh,role=execute,subs=attributes+]
-----
-hostname
-----
-+
-.Sample Output
-[source,text,role=wrap,subs=attributes+]
-----
-rhem-on-rhel.wksp-{guid}-{user}.svc.cluster.local
-----
-+
 . You'll also be utilizing the OpenShift console to perform various tasks. Let's get you logged into OpenShift, next:
 +
 Click link:{console_url}[here,window=_blank] to access OpenShift (this link will open in a new browser tab)
 +
-.. Click {guid}-htpasswd
+.. Click {guid}-htpasswd (select the bottom login box; screenshot below will not match your {guid}-htpasswd value)
 +
 image::m1-openshift-login.png[link=self, window=blank, width=100%]
 +
@@ -111,8 +91,16 @@ image::m1-openshift-login.png[link=self, window=blank, width=100%]
 ----
 {bastion_ssh_password}
 ----
++
+.. Click *Skip tour*
++
+image::m1-openshift-login-2.png[link=self, window=blank, width=100%]
++
+.. Click *_* to minimize *Red Hat OpenShift Lightspeed*
++
+image::m1-openshift-login-3.png[link=self, window=blank, width=100%]
 
-NOTE: For future reference, all Lab Login information is available via the Lab Manual left-hand nav item, "Lab Access"
+NOTE: For future reference, all Lab Login information is available via the Lab Manual left-hand nav item: *Lab Access*
 
 [#edgemanagerdeploy]
 === Installing Edge Manager
@@ -159,7 +147,7 @@ Created symlink /etc/systemd/system/multi-user.target.wants/flightctl.target →
 sudo systemctl start flightctl.target
 ----
 
-NOTE: We'll examine the services that were installed in more detail later in Module 2
+NOTE: We'll examine the services that were installed in more detail later in the lab
 
 === Configuring Edge Manager Authentication
 
@@ -230,6 +218,8 @@ sudo sed -i \
 ----
 sudo systemctl restart flightctl.target
 ----
+
+NOTE: Given the timing of the Edge Manager GA release and this lab’s creation ahead of RH1, an upstream version equivalent to GA 1.0 is used. As a result, the RHEM UI branding shown above is explicitly enabled (via IS_RHEM=true) so you see the GA RHEM UI rather than the default Flightctl UI.
 
 === Creating Users and Groups
 

@@ -93,9 +93,9 @@ Let's see if our Drone Cam is viewable now.
 
 image::m3-join-fleet-5.png[link=self, window=blank, width=100%]
 
-Great job!  You have successfully stood up a new SDS field location, and your virtual pizza delivery is on its way (somewhere in the Greek Islands, by the look of it).
-
 (You should now see the drone camera application load successfully)
+
+Great job!  You have successfully stood up a new SDS field location, and your virtual pizza delivery is on its way (somewhere in the Greek Islands, by the look of it).
 
 Now that this device is onboarded and enforcing fleet-defined state, we’ll use it to explore a few additional Edge Manager concepts.
 

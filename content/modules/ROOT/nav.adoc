@@ -18,3 +18,5 @@
 * xref:extra-credit.adoc[]
 
 * xref:lab-access.adoc[]
+
+* xref:appendix.adoc[]
