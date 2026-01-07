@@ -171,8 +171,8 @@ To configure Edge Manager to use OIDC and PAM authentication, you’ll make a fe
 [source,sh,role=wrap execute,subs=attributes+]
 +
 ----
-WEBUI_URL="https://rhem-on-rhel-webui-wksp-xt8pt-1-user1.apps.cluster-xt8pt.dynamic.redhatworkshops.io"
-OIDC_PAM_URL="https://rhem-on-rhel-oidc-pam-wksp-xt8pt-1-user1.apps.cluster-xt8pt.dynamic.redhatworkshops.io"
+WEBUI_URL="https://rhem-on-rhel-webui-wksp-{guid}-{user}.{openshift_cluster_ingress_domain}"
+OIDC_PAM_URL="https://rhem-on-rhel-oidc-pam-wksp-{guid}-{user}.{openshift_cluster_ingress_domain}"
 ----
 +
 .Configure the OIDC issuer used by Edge Manager
@@ -196,15 +196,6 @@ sudo sed -i '/pamOidcIssuer:/,/pamService:/ {
 }' /etc/flightctl/service-config.yaml
 ----
 +
-.Enable RHEM branding
-[source,sh,role=wrap execute,subs=attributes+]
-----
-sudo sed -i \
-  -e '/^IS_RHEM=/d' \
-  -e '$aIS_RHEM=true' \
-  /usr/share/flightctl/flightctl-ui/env.template
-----
-+
 .Set BASE_UI_URL in UI env template (this configures the base URL used by the Edge Manager Web UI)
 [source,sh,role=wrap execute,subs=attributes+]
 ----
@@ -218,7 +209,15 @@ sudo sed -i \
 ----
 sudo systemctl restart flightctl.target
 ----
-
++
+.Enable RHEM branding
+[source,sh,role=wrap execute,subs=attributes+]
+----
+sudo sed -i \
+  -e '/^IS_RHEM=/d' \
+  -e '$aIS_RHEM=true' \
+  /usr/share/flightctl/flightctl-ui/env.template
+----
 NOTE: Given the timing of the Edge Manager GA release and this lab’s creation ahead of RH1, an upstream version equivalent to GA 1.0 is used. As a result, the RHEM UI branding shown above is explicitly enabled (via IS_RHEM=true) so you see the GA RHEM UI rather than the default Flightctl UI.
 
 === Creating Users and Groups
@@ -253,8 +252,6 @@ sudo podman exec -i flightctl-pam-issuer sh -c 'echo "{user}:redhat123" | chpass
 ----
 sudo podman exec -i flightctl-pam-issuer usermod -aG flightctl-admin {user}
 ----
-
-Ken: Need to make sure the install flightctl version matches the version we roll with for RH1 
 
 === Edge Manager CLI login validation
 
@@ -315,7 +312,7 @@ Flags:
 
 === Edge Manager Web UI login validation
 
-Click link:{webui_url}[here,window=_blank] to access the Edge Manager Web UI (the link will open in a new browser tab)
+Click link:{openshift_cluster_console_url}[here,window=_blank] to access the Edge Manager Web UI (the link will open in a new browser tab)
 
 NOTE: This lab environment does not utilize trusted web certificates. As a result, your browser will display a "Your connection is not private" warning
 
