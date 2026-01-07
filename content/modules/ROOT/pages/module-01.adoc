@@ -312,7 +312,8 @@ Flags:
 
 === Edge Manager Web UI login validation
 
-Click link:{openshift_cluster_console_url}[here,window=_blank] to access the Edge Manager Web UI (the link will open in a new browser tab)
+Click link:https://rhem-on-rhel-webui-wksp-{guid}-{user}.{openshift_cluster_ingress_domain}[here,window=_blank] to access the Edge Manager Web UI (the link will open in a new browser tab)
+https://rhem-on-rhel-webui-wksp-sj4wl-1-user1.apps.cluster-sj4wl.dynamic.redhatworkshops.io
 
 NOTE: This lab environment does not utilize trusted web certificates. As a result, your browser will display a "Your connection is not private" warning
 

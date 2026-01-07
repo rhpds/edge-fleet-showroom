@@ -20,14 +20,14 @@ To onboard a device, Edge Manager requires the following prerequisites:
 
 === Create Image Mode (bootc) Image
 
-Let’s begin by creating the bootc image for our delivery drone device.
+Let’s begin by crealting the bootc image for our delivery drone device.
 
 . We’ll start by cloning content from a gitea repository that will be used to build our bootc image. This repository contains a sample Containerfile and supporting configuration used to build an Image Mode (bootc) image suitable for onboarding with Edge Manager
 +
-.Clone student repository
+.Clone user repository
 [source,sh,role=wrap execute,subs=attributes+]
 ----
-git clone https://gitea.apps.cluster-{guid}.dynamic.redhatworkshops.io/{guid}-{user}/rh1-2026-rhem-lab.git
+git clone https://gitea.apps.cluster-{openshift_cluster_ingress_domain}/{guid}-{user}/rh1-2026-rhem-lab.git
 ----
 +
 .Sample Output
@@ -89,7 +89,7 @@ NOTE: This is an example of *early binding* enrollment, where device enrollment 
 .Login via the Edge Manager CLI
 [source,sh,role=wrap execute,subs=attributes+]
 ----
-flightctl login https://rhem-on-rhel-api-wksp-{guid}-{user}.apps.cluster-{guid}.dynamic.redhatworkshops.io --username {user} --password redhat123 --insecure-skip-tls-verify
+flightctl login https://rhem-on-rhel-api-wksp-{guid}-{user}.apps.cluster-{openshift_cluster_ingress_domain} --username {user} --password redhat123 --insecure-skip-tls-verify
 ----
 +
 .Sample Output
@@ -239,7 +239,7 @@ In this section, we’ll examine the remaining Edge Manager microservices instal
 .SSH command 
 [source,sh,role=execute]
 ----
-ssh {user}@rhem-on-rhel-ssh.wksp-{guid}-1-{user}.svc.cluster.local
+ssh {user}@rhem-on-rhel-ssh.wksp-{guid}-{user}.svc.cluster.local
 ----
 +
 .Password
@@ -368,7 +368,7 @@ As you’ve just seen, this architecture provides lightweight, service-isolated 
 
 Return to your Edge Manager browser tab. *If your session has expired*, you can use the following information to re-login:
 
-Click link:{webui_url}[here,window=_blank] to access your Lab Environment (this link will open in a new browser tab)
+Click link:https://rhem-on-rhel-webui-wksp-{guid}-{user}.{openshift_cluster_ingress_domain}[here,window=_blank] to access the Edge Manager Web UI (the link will open in a new browser tab)
 
 . Enter *Username*: {user}
 . Enter *Password*: redhat123
