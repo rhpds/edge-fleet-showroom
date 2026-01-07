@@ -89,7 +89,7 @@ NOTE: This is an example of *early binding* enrollment, where device enrollment 
 .Login via the Edge Manager CLI
 [source,sh,role=wrap execute,subs=attributes+]
 ----
-flightctl login https://rhem-on-rhel-api-wksp-{guid}-{user}.apps.cluster-{openshift_cluster_ingress_domain} --username {user} --password redhat123 --insecure-skip-tls-verify
+flightctl login https://rhem-on-rhel-api-wksp-{guid}-{user}.{openshift_cluster_ingress_domain} --username {user} --password redhat123 --insecure-skip-tls-verify
 ----
 +
 .Sample Output

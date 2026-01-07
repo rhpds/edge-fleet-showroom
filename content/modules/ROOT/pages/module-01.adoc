@@ -75,7 +75,7 @@ using rhc at https://red.ht/registration
 +
 Click link:{console_url}[here,window=_blank] to access OpenShift (this link will open in a new browser tab)
 +
-.. Click {guid}-htpasswd (select the bottom login box; screenshot below will not match your {guid}-htpasswd value)
+.. Click *{guid}-htpasswd* (select the bottom login box; screenshot below will not match your {guid}-htpasswd value)
 +
 image::m1-openshift-login.png[link=self, window=blank, width=100%]
 +
@@ -106,8 +106,6 @@ NOTE: For future reference, all Lab Login information is available via the Lab M
 === Installing Edge Manager
 
 Let's return to your `Terminal 1` (ssh) session and begin the Edge Manager installation
-
-Ken: Once the correct lab repo is synched (https://rpm.flightctl.io/flightctl-lab.repo), the install command might be modified (confirm)
 
 . To install and start Edge Manager, run the following commands:
 +
@@ -262,7 +260,7 @@ Edge Manager can be accessed via CLI and/or web UI.
 .Login via flightctl cli (we've pre-installed the flightctl cli for you in this VM).
 [source,sh,role=wrap execute,subs=attributes]
 ----
-flightctl login https://rhem-on-rhel-api-wksp-{guid}-{user}.apps.cluster-{openshift_cluster_ingress_domain} --username {user} --password redhat123 --insecure-skip-tls-verify
+flightctl login https://rhem-on-rhel-api-wksp-{guid}-{user}.{openshift_cluster_ingress_domain} --username {user} --password redhat123 --insecure-skip-tls-verify
 ----
 +
 .Sample Output (In this lab, a default organization is automatically selected)
