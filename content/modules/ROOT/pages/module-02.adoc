@@ -245,7 +245,7 @@ ssh {user}@rhem-on-rhel-ssh.wksp-{guid}-{user}.svc.cluster.local
 .Password
 [source,sh,role=execute,subs=attributes+]
 ----
-{password}  (same password used earlier in the lab)
+{bastion_ssh_password}  (same password used earlier in the lab)
 ----
 +
 .Sample Output (successful login)

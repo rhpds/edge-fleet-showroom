@@ -576,7 +576,7 @@ Jan 02 12:58:49 rhem-on-rhel.wksp-xt8pt-1-user1.svc.cluster.local flightctl-peri
 Return to your Edge Manager UI browser tab
 
 . Since the fleet is Git-managed, it cannot be edited directly. Select the Actions drop-down menu
-. Click *View fleet configuratinos*
+. Click *View fleet configurations*
 +
 image::m3-resource-sync-16.png[link=self, window=blank, width=100%]
 +
