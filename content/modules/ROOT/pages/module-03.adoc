@@ -14,7 +14,11 @@ By applying *device labels* that match the fleet’s *device selector*.
 
 Let’s do that next.
 
-. Return to your Edge Manager UI browser tab and click *Add label*
+. Return to your Edge Manager UI browser tab and Click *Details*
++
+image::m3-join-fleet-.5.png[link=self, window=blank, width=100%]
++
+. Click *Add label*
 +
 image::m3-join-fleet-1.png[link=self, window=blank, width=100%]
 +
@@ -226,9 +230,9 @@ image::m3-monitor-5.png[link=self, window=blank, width=100%]
 
 We are now in the devices view with a filter set for `Device status: Degraded'
 
-. From here users could drill down on the device to further investigate
-
 image::m3-monitor-6.png[link=self, window=blank, width=100%]
+
+(From here users could drill down on the device to further investigate - there is no need to do so now)
 
 NOTE: The Edge Manager UI that we have been utilizing gets its content via the Edge Manager API service.  We can utilize the CLI to retrieve the same information.  
 
@@ -348,9 +352,13 @@ Houston, ... (we get it, the application isn't available, at least not yet :) )
 
 image::m3-openshift-routes-2.png[link=self, window=blank, width=100%]
 
-Let's examine your `gitea` repository in this lab 
+=== Gitea Repository Login 
 
-Ken: All of these screenshots need to be udpated to reflect gitea vs. github (did not have user edit rights for gitea when creating these steps)
+
+Let's examine your `gitea` repository in this lab 
+. Click link:https://{gitea_console_url}/{guid}{user}[here,window=_blank] to access your gitea environment 
+.Click 
+
 
 . Select the *<> Code* drop-down menu
 . Click the *copy* icon to cop the repo URL to your clipboard

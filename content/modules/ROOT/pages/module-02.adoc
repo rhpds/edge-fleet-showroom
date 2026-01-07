@@ -27,7 +27,7 @@ Let’s begin by crealting the bootc image for our delivery drone device.
 .Clone user repository
 [source,sh,role=wrap execute,subs=attributes+]
 ----
-git clone https://gitea.apps.cluster-{openshift_cluster_ingress_domain}/{guid}-{user}/rh1-2026-rhem-lab.git
+git clone https://gitea.apps.cluster-{gitea_console_url}/{guid}-{user}/rh1-2026-rhem-lab.git
 ----
 +
 .Sample Output
@@ -150,8 +150,16 @@ grep 'server:' config.yaml
 ----
 Server: https://rhem-on-rhel.wksp-{guid}-{user}.svc.cluster.local:7443/
 ----
-
++
 NOTE: The server address shown above identifies the Edge Manager API endpoint used during device enrollment. Port 7443 corresponds to the Edge Manager API service. When the drone virtual machine is powered on, the Edge Manager agent reads this value from config.yaml and uses it to send its initial enrollment request.
++
+. By default, the Edge Manager agent on a device checks in with the Edge Manager back-end service every 60 seconds.  Let's speed this interval up in our lab.
++
+.Copy/Paste this command
+[source,sh,role=wrap execute,subs=attributes+]
+----
+sudo sed -i '1i spec-fetch-interval: 0m10s\nstatus-update-interval: 0m10s' config.yaml
+----
 
 === Create QCOW2 Disk 
 
@@ -220,7 +228,8 @@ Edge Manager consists of the following core components, illustrated in the high-
 
 image::m2-edge-manager-architecture.png[link=self, window=blank, width=100%]
 
-. *Edge Manager Service* consists of an API server, background worker processes (not shown), and a PostgreSQL database. The database stores inventory and runtime state, including desired (target) device configuration and reported actual device configuration.
+. *Edge Manager microservices* includes an API server and a set of other microservices (which we will examine further in a moment).
+. *Inventory Database* This PostgreSQL database stores inventory and runtime state, including desired (target) device configuration and reported actual device configuration. Edge Manager includes this DB but users are free to bring their own PostgreSQL instead, if desired.
 . *User access* is provided through two primary interfaces: the Edge Manager Web UI and the Edge Manager CLI.
 . *Edge Device access* utilizes an Agent that is running on each managed device. The agent always calls home using a *pull-based model*, allowing devices to operate on private networks or with dynamic IP addresses. This model supports devices located behind NAT, firewalls, or connected via cellular or WLAN uplinks.
 . *Git repository integration* (optional) enables storing desired device and fleet configuration as code. We will explore Git integration in an upcoming lesson.
@@ -237,7 +246,7 @@ In this section, we’ll examine the remaining Edge Manager microservices instal
 . Click `Terminal 2` in the right-hand pane and establish an SSH session using the following credentials:
 +
 .SSH command 
-[source,sh,role=execute]
+[source,sh,role=execute,subs=attributes+]
 ----
 ssh {user}@rhem-on-rhel-ssh.wksp-{guid}-{user}.svc.cluster.local
 ----
@@ -245,7 +254,7 @@ ssh {user}@rhem-on-rhel-ssh.wksp-{guid}-{user}.svc.cluster.local
 .Password
 [source,sh,role=execute,subs=attributes+]
 ----
-{bastion_ssh_password}  (same password used earlier in the lab)
+{bastion_ssh_password}
 ----
 +
 .Sample Output (successful login)
@@ -405,7 +414,7 @@ Let's create a drone fleet in your environment, next:
 image::m2-create-fleet-1.png[link=self, window=blank, width=100%]
 +
 . Enter *Fleet name*: `drone-fleet`
-. Enter *Device selector* (label match): `fleet=lab`
+. Enter *Device selector*: `fleet=lab`
 +
 NOTE: Fleets do not explicitly “add” devices. Instead, a fleet defines a device selector, and any device whose labels match that selector is automatically associated with the fleet. You can also utilize multiple device selector label matches (for example, 'Country=US', 'State=MN', etc.)
 +
@@ -486,9 +495,9 @@ image::m2-create-fleet-10.png[link=self, window=blank, width=100%]
 +
 Note that we have the ability to specify *Advanced configuration* update options
 +
-.. Click the :tooltip-icon: tooltip to learn about *rollout policies*
-.. Click the :tooltip-icon: tooltip to learn about *disruption budgets*
-.. Click the :tooltip-icon: tooltip to learn about *update policies*
+.. Click the *(?)* tooltip icon to learn about *rollout policies*
+.. Click the *(?)* tooltip icon to learn about *disruption budgets*
+.. Click the *(?)* tooltip icon to learn about *update policies*
 +
 NOTE: You can also enable the checkboxes to explore configuration options specific to each item
 +
@@ -632,7 +641,7 @@ import-disk-image --delete=true --qcow2-path=/home/{user}/rh1-2026-rhem-lab/buil
 NOTE: The `--delete=true` flag removes any existing DataVolume with the same name
 before re-importing the image.
 +
-.Sample Output (Ken: change this text to user from admin once privileges are resolved)
+.Sample Output
 [source,text,role=wrap]
 ----
 {...}
@@ -667,7 +676,7 @@ Return to your OpenShift Web Interface, and:
 . Expand *Virtualization*
 . Select *Catalog*
 . Select *Template Catalog* (not InstanceTypes)
-. Verify that *Template project* is set to your wksp-{guid}-{user}
+. Set *Template project* to `wksp-{guid}-{user}`
 . Click *Drone Virtual Machine* Catalog item
 +
 image::m2-create-drone-vm-1.png[link=self, window=blank, width=100%]

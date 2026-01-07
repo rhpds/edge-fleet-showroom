@@ -202,12 +202,6 @@ sudo sed -i \
   /usr/share/flightctl/flightctl-ui/env.template
 ----
 +
-.Restart RHEM services
-[source,sh,role=wrap execute,subs=attributes+]
-----
-sudo systemctl restart flightctl.target
-----
-+
 .Enable RHEM branding
 [source,sh,role=wrap execute,subs=attributes+]
 ----
@@ -216,6 +210,13 @@ sudo sed -i \
   -e '$aIS_RHEM=true' \
   /usr/share/flightctl/flightctl-ui/env.template
 ----
++
+.Restart RHEM services
+[source,sh,role=wrap execute,subs=attributes+]
+----
+sudo systemctl restart flightctl.target
+----
+
 NOTE: Given the timing of the Edge Manager GA release and this lab’s creation ahead of RH1, an upstream version equivalent to GA 1.0 is used. As a result, the RHEM UI branding shown above is explicitly enabled (via IS_RHEM=true) so you see the GA RHEM UI rather than the default Flightctl UI.
 
 === Creating Users and Groups
@@ -311,7 +312,6 @@ Flags:
 === Edge Manager Web UI login validation
 
 Click link:https://rhem-on-rhel-webui-wksp-{guid}-{user}.{openshift_cluster_ingress_domain}[here,window=_blank] to access the Edge Manager Web UI (the link will open in a new browser tab)
-https://rhem-on-rhel-webui-wksp-sj4wl-1-user1.apps.cluster-sj4wl.dynamic.redhatworkshops.io
 
 NOTE: This lab environment does not utilize trusted web certificates. As a result, your browser will display a "Your connection is not private" warning
 
