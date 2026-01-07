@@ -262,7 +262,7 @@ Edge Manager can be accessed via CLI and/or web UI.
 .Login via flightctl cli (we've pre-installed the flightctl cli for you in this VM).
 [source,sh,role=wrap execute,subs=attributes]
 ----
-flightctl login https://rhem-on-rhel-api-wksp-{guid}-{user}.apps.cluster-{guid}.dynamic.redhatworkshops.io --username {user} --password redhat123 --insecure-skip-tls-verify
+flightctl login https://rhem-on-rhel-api-wksp-{guid}-{user}.apps.cluster-{openshift_cluster_ingress_domain} --username {user} --password redhat123 --insecure-skip-tls-verify
 ----
 +
 .Sample Output (In this lab, a default organization is automatically selected)
