@@ -689,8 +689,6 @@ image::m3-resource-sync-22.png[link=self, window=blank, width=100%]
 
 Now for the fun part, let’s put this new Gitea-sourced fleet into action. We already have a device enrolled and ready, thanks to your earlier work.
 
-Return to your Edge Manager UI Browser tab, and:
-
 . Click *Devices*
 . Click *drone-01*
 +
