@@ -407,6 +407,8 @@ image::m3-gitea-repository-7.png[link=self, window=blank, width=100%]
 +
 image::m3-gitea-repository-8.png[link=self, window=blank, width=100%]
 
+=== Edge Manager Repository Configuration
+
 We're going to configure Edge Manager to resource sync this fleet configuration YAML into Edge Manager
 
 . Return to your Edge Manager browser tab and click `Repositories`
@@ -480,12 +482,12 @@ image::m3-resource-sync-6.png[link=self, window=blank, width=100%]
         image: quay.io/user/drone-image:v1
 ----
 +
-. Paste the `os: spec` and confirm that the formatting is correct
+. Paste the `os: spec` directly below `config: []` line and confirm that the `os:` lines up under the 'c' in config 
 .. Click *Commit changes...*
 +
 image::m3-resource-sync-7.png[link=self, window=blank, width=100%]
 +
-. Click *Commit changes* to save the update to the repository
+. Scroll down and click *Commit changes* to save the update to the repository
 +
 image::m3-resource-sync-8.png[link=self, window=blank, width=100%]
 +
