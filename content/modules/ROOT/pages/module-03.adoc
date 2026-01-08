@@ -359,7 +359,7 @@ Let's examine your `gitea` repository in this lab:
 
 Click link:{gitea_console_url}/{guid}-{user}[here,window=_blank] to access your gitea environment 
 
-. Click *Sign In*
+. Click *Sign In* in the upper right-hand corner
 +
 [source,sh,role=wrap execute,subs=attributes+]
 .Enter Username
@@ -398,6 +398,10 @@ image::m3-gitea-repository-5.png[link=self, window=blank, width=100%]
 . Click *{guid}-{user}/rh1-2026-rhem-lab*
 +
 image::m3-gitea-repository-6.png[link=self, window=blank, width=100%]
++
+. Click the *fleet* folder
++
+image::m3-gitea-repository-6.5.png[link=self, window=blank, width=100%]
 +
 . Click *gitea-fleet.yaml*
 +
@@ -444,7 +448,7 @@ Input the following information
 image::m3-resource-sync-1.png[link=self, window=blank, width=100%]
 NOTE: Resource Syncs occur every 2 minutes - thank you for your patience while we wait for the OS System image to appear
 
-Importing the Fleet from the Repository
+Examining the imported gitea Fleet
 
 . Click *Fleets*
 +
@@ -459,14 +463,14 @@ image::m3-resource-sync-3.png[link=self, window=blank, width=100%]
 +
 image::m3-resource-sync-4.png[link=self, window=blank, width=100%]
 +
-. In the Fleet details view, observe that there is currently no (OS) System image configured for this fleet
+. In the Fleet *Details* view, observe that there is currently no (OS) System image configured for this fleet
 .. The Fleet is marked as managed by `user-rs`, indicating it is controlled by a Git resource sync
 .. Select the *Actions* drop-down
 .. Note that there is no option to Edit the Fleet nor can we Delete the fleet. This is expected behavior because this fleet is *Git-managed* (Edge Manager treats it as *read-only* in the UI)
 +
 image::m3-resource-sync-5.png[link=self, window=blank, width=100%]
 +
-NOTE: In this model, Edge Manager is *not the system of record* for fleet configuration. Instead, Git serves as the authoritative source of truth. Any updates (whether manual edits, CI/CD-driven changes, or automated workflows) must be made to the fleet.yaml stored in Gitea and then synchronized into Edge Manager
+NOTE: In this model, Edge Manager is *not the system of record* for fleet configuration. Instead, Git serves as the authoritative source of truth. Any updates (whether manual edits, CI/CD-driven changes, or automated workflows) must be made to the *gitea-fleet.yaml* stored in Gitea after which those changes will be automatically synchronized into Edge Manager
 
 Let's make a change to the fleet yaml in gitea
 
@@ -483,7 +487,6 @@ image::m3-resource-sync-6.png[link=self, window=blank, width=100%]
 ----
 +
 . Paste the `os: spec` directly below `config: []` line and confirm that the `os:` lines up under the 'c' in config 
-.. Click *Commit changes...*
 +
 image::m3-resource-sync-7.png[link=self, window=blank, width=100%]
 +
@@ -496,6 +499,8 @@ image::m3-resource-sync-8.png[link=self, window=blank, width=100%]
 image::m3-resource-sync-9.png[link=self, window=blank, width=100%]
 
 We have just proven that editing the fleet YAML in Gitea automatically propagates changes to Edge Manager
+
+==== Monitoring Resource Sync Events
 
 In a a moment, we’ll start adding more substance to this fleet by introducing *Configuration* and *Application* entries into the fleet YAML
 
@@ -594,32 +599,30 @@ image::m3-resource-sync-12.png[link=self, window=blank, width=100%]
             targetRevision: main
 ----
 +
-. Ensure the YAML is correctly indented and matches the formatting shown in the screenshot
+. Paste the YAML in the gitea editor and ensure that the YAML is correctly indented and matches the formatting shown in the screenshot
 +
 image::m3-resource-sync-13.png[link=self, window=blank, width=100%]
 +
-. Click *Commit changes...* to save your updates
+. Scroll down and click *Commit changes*
 +
 image::m3-resource-sync-14.png[link=self, window=blank, width=100%]
-+
-. Confirm the commit by clicking *Commit changes*
-+
-image::m3-resource-sync-15.png[link=self, window=blank, width=100%]
 
 Switch back to your `Terminal 1` window (beside your lab manual) and wait for the next resource-sync log event
 
 .Note the log entries indicating that the resource-sync changes were applied successfully
-[source,text,role=wrap]
+[source,text]
 ----
+{...}
 Jan 02 12:58:49 rhem-on-rhel.wksp-xt8pt-1-user1.svc.cluster.local flightctl-periodic[3025]: time="2026-01-02T17:58:49Z" level=info msg="Resource user-rs: applying 1 fleets " func="github.com/flightctl/flightctl/internal/tasks.(*ResourceSync).SyncFleets" file="/app/internal/tasks/resourcesync.go:202" pkg=resource-sync request_id=resource-sync/ZHcRLvhr3S-001829
 Jan 02 12:58:49 rhem-on-rhel.wksp-xt8pt-1-user1.svc.cluster.local flightctl-periodic[3025]: time="2026-01-02T17:58:49Z" level=info msg="Resource user-rs: 1 fleets applied successfully\n" func="github.com/flightctl/flightctl/internal/tasks.(*ResourceSync).SyncFleets" file="/app/internal/tasks/resourcesync.go:225" pkg=resource-sync request_id=resource-sync/ZHcRLvhr3S-001829
+{...}
 ----
 (Press `CTRL-C` to stop following the resource-sync logs.)
 
 Return to your Edge Manager UI browser tab
 
-. Since the fleet is Git-managed, it cannot be edited directly. Select the Actions drop-down menu
-. Click *View fleet configurations*
+. Since the fleet is Git-managed, it cannot be edited directly. Select the *Actions* drop-down menu
+.. Click *View fleet configurations*
 +
 image::m3-resource-sync-16.png[link=self, window=blank, width=100%]
 +
@@ -627,7 +630,7 @@ image::m3-resource-sync-16.png[link=self, window=blank, width=100%]
 +
 image::m3-resource-sync-17.png[link=self, window=blank, width=100%]
 +
-A host configuration named drone-tracker-web-content has been added. Let’s walk through what it does:
+A *host configuration* named *drone-tracker-web-content* has been added. Let’s walk through what it does:
 +
 .. The *Source type* is set to `Git configuration`
 .. The configuration references the same repository created earlier: `user-repo`
@@ -652,7 +655,7 @@ Switch back to your gitea browser tab and:
 
 . Expand the `kiosk` folder
 . Select the `content` folder
-. Note the three subfolders whose names end in: clear, storm, and windy
+. Note the three subfolders whose names end in: *clear*, *storm*, and *windy*
 
 image::m3-resource-sync-19.png[link=self, window=blank, width=100%]
 
