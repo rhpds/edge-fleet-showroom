@@ -355,24 +355,57 @@ image::m3-openshift-routes-2.png[link=self, window=blank, width=100%]
 === Gitea Repository Login 
 
 
-Let's examine your `gitea` repository in this lab 
-. Click link:https://{gitea_console_url}/{guid}{user}[here,window=_blank] to access your gitea environment 
-.Click 
+Let's examine your `gitea` repository in this lab: 
 
+Click link:{gitea_console_url}/{guid}-{user}[here,window=_blank] to access your gitea environment 
 
-. Select the *<> Code* drop-down menu
-. Click the *copy* icon to cop the repo URL to your clipboard
-. Click the `fleet` directory
+. Click *Sign In*
++
+[source,sh,role=wrap execute,subs=attributes+]
+.Enter Username
+----
+{guid}-{user}
+----
++
+.Enter Password
+[source,sh,role=wrap execute,subs=attributes+]
+----
+{bastion_ssh_password}
+----
+
+. Select *Profile* drop-down menu in upper-right hand corner
+.. Click *Settings*
 +
 image::m3-gitea-repository-1.png[link=self, window=blank, width=100%]
 +
-. Click *gitea-fleet.yaml*
+. Click *Appearance*
 +
 image::m3-gitea-repository-2.png[link=self, window=blank, width=100%]
 +
-. Examine the *gitea-fleet.yaml* and note in the `spec:` section that there are currently *no applications, configs or os image configured*.
+. Select *Theme* drop-down menu
+.. Click *gitea-dark*
 +
 image::m3-gitea-repository-3.png[link=self, window=blank, width=100%]
++
+. Click *Update Theme*
++
+image::m3-gitea-repository-4.png[link=self, window=blank, width=100%]
++
+. Click *Gitea Icon* in upper-left hand corner
++
+image::m3-gitea-repository-5.png[link=self, window=blank, width=100%]
++
+. Click *{guid}-{user}/rh1-2026-rhem-lab*
++
+image::m3-gitea-repository-6.png[link=self, window=blank, width=100%]
++
+. Click *gitea-fleet.yaml*
++
+image::m3-gitea-repository-7.png[link=self, window=blank, width=100%]
++
+. Examine the *gitea-fleet.yaml* and note in the `spec:` section that there are currently *no applications, configs or os image configured*.
++
+image::m3-gitea-repository-8.png[link=self, window=blank, width=100%]
 
 We're going to configure Edge Manager to resource sync this fleet configuration YAML into Edge Manager
 
@@ -391,7 +424,7 @@ Input the following information
 +
 [source,sh,role=execute,subs=attributes+]
 ----
-https://github.com/kenosborn-rh/rh1-2026-rhem-lab.git
+{gitea_console_url}/{guid}-{user}/rh1-2026-rhem-lab.git
 ---- 
 . Ensure that the check-box for *Use resource syncs (?)* is enabled
 .. Enter *Resource sync name*: `user-rs`
