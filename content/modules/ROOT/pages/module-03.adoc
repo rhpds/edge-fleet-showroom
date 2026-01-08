@@ -720,15 +720,15 @@ image::m3-drone-tracker-4.png[link=self, window=blank, width=100%]
 +
 Because the desired state and current state do not match, Edge Manager instructs the device to reconcile itself toward the desired state
 +
-. Observe that the device enters an *Updating* state
+. Note that the device enters an *Updating* state
 +
 image::m3-drone-tracker-5.png[link=self, window=blank, width=100%]
 +
-After a short period, observe the following:
+. After a short period, observe the following:
 +
 .. The device transitions to an *Up-to-date* state
 .. The *Disk pressure* warning is no longer present because the Gitea fleet does not include the custom disk resource monitor previously applied to the `drone-fleet`.
-. A new `drone-tracker-app` application is now *Running*, and the previous `drone-cam` application is no longer present
+.. A new `drone-tracker-app` application is now *Running*, and the previous `drone-cam` application is no longer present
 +
 image::m3-drone-tracker-6.png[link=self, window=blank, width=100%]
 +
