@@ -18,13 +18,13 @@ To onboard a device, Edge Manager requires the following prerequisites:
 . `Image Mode (bootc) image`: In this lab, we’ll build our own image. As shown in the illustration, a Containerfile is used to define the image contents
 . `Enrollment Configuration`: This configuration file contains the information required for the device to enroll and authenticate with Edge Manager
 
-=== Create Image Mode (bootc) Image
+=== Image Preparation 
 
-Let’s begin by crealting the bootc image for our delivery drone device.
+We’ll start by cloning content from a gitea repository that will be used to build our bootc image. This repository contains a sample Containerfile and supporting configuration used to build an Image Mode (bootc) image suitable for onboarding with Edge Manager
 
-. We’ll start by cloning content from a gitea repository that will be used to build our bootc image. This repository contains a sample Containerfile and supporting configuration used to build an Image Mode (bootc) image suitable for onboarding with Edge Manager
+. Clone user repository
 +
-.Clone user repository
+.Issue the following git clone command 
 [source,sh,role=wrap execute,subs=attributes+]
 ----
 git clone https://gitea.apps.cluster-{gitea_console_url}/{guid}-{user}/rh1-2026-rhem-lab.git
@@ -161,7 +161,7 @@ NOTE: The server address shown above identifies the Edge Manager API endpoint us
 sudo sed -i '1i spec-fetch-interval: 0m10s\nstatus-update-interval: 0m10s' config.yaml
 ----
 
-=== Create QCOW2 Disk 
+=== Create Image Mode (bootc) image
 
 . Let's build your Image Mode (bootc) image next
 +
@@ -196,6 +196,8 @@ quay.io/user/drone-image                           v1                           
 
 At this point the image resides locally on your RHEM Virtual Machine. We _could_ push this image to a container registry, but for this lab that step is unnecessary.  
 
+=== Create QCOW2 Disk
+
 We do need to _convert the image into a disk format_ that can be utilized by your Drone Virtual Machine. Since our drone device is represented by an OpenShift Virtualization virtual machine, we'll convert the image to the QCOW2 disk format.
 
 NOTE: Creating a disk file is a time intensive task. We'll kick this off, move on to other things and then circle back.
@@ -222,6 +224,8 @@ sudo podman run --rm -it \
 ----
 
 While we wait for that process to complete, let's explore Edge Manager in more detail, beginning with a high-level Architecture review.
+
+#highlevelarchitecture
 
 == Edge Manager Architecture
 Edge Manager consists of the following core components, illustrated in the high-level architecture diagram below:
@@ -393,6 +397,8 @@ image::m2-command-line-tools.png[link=self, window=blank, width=100%]
 . Note that CLI download links are provided for multiple operating system and processor architectures
 +
 image::m2-command-line-tools-2.png[link=self, window=blank, width=100%]
+
+[#fleetcreation]
 
 === Edge Manager Fleets
 
@@ -576,25 +582,58 @@ To do so, we have included a `import-disk-image` shell script that:
 . Ensures OpenShift is ready to receive the image (we'll need `oc credentials` for this in a moment)
 . Triggers a DataVolume import into OpenShift-Virtualization so that it can be utilized by a new OCP-Virt Drone Virtual Machine that you will create
 
-Ken: If we cannot resolve the OCP logout issue (when logging into Edge Manager) then change this section to be the first time students login to OCP
+=== OpenShift Console Login
 
-Since the script uses oc commands, let's grab our login command
-
-. Return to your OpenShift browser window
-. Select your username in the upper-right hand corner
-. Click *Copy login command*
+. Since the script uses oc commands, we'll need to apply your `oc login command` token
++
+. Click link:{console_url}[here,window=_blank] to access OpenShift (this link will open in a new browser tab)
++
+.. Click *{guid}-htpasswd* (select the bottom login box; screenshot below will not match your {guid}-htpasswd value)
++
+image::m1-openshift-login.png[link=self, window=blank, width=100%]
++
+.Enter Username
+[source,sh,role=execute,subs=attributes+]
+----
+{guid}-{user}
+----
++
+[.no-copy-label]
+.Enter Password
+[source,sh,role=execute,subs=attributes+]
+----
+{bastion_ssh_password}
+----
++
+.. Click *Skip tour*
++
+image::m1-openshift-login-2.png[link=self, window=blank, width=100%]
++
+.. Click *_* to minimize *Red Hat OpenShift Lightspeed*
++
+image::m1-openshift-login-3.png[link=self, window=blank, width=100%]
++
+. Select your *username* in the upper-right hand corner
+.. Click *Copy login command*
 +
 image::m2-oc-login-1.png[link=self, window=blank, width=100%]
 +
-. Click *htpasswd*
+.. Click *{guid}-htpasswd* (select the bottom login box; screenshot below will not match your {guid}-htpasswd value)
 +
 image::m2-oc-login-2.png[link=self, window=blank, width=100%]
 +
-. Enter *Username*: {user}
-. Enter *Password*: {lab_password}
-. Click *Login*
+.Enter Username
+[source,sh,role=execute,subs=attributes+]
+----
+{guid}-{user}
+----
 +
-image::m2-oc-login-3.png[link=self, window=blank, width=100%]
+[.no-copy-label]
+.Enter Password
+[source,sh,role=execute,subs=attributes+]
+----
+{bastion_ssh_password}
+----
 +
 . Click *Display Token* to reveal your `oc login` command
 +
@@ -604,9 +643,7 @@ image::m2-oc-login-3.1.png[link=self, window=blank, width=100%]
 . Copy the full *oc login {...}* to your clipboard
 +
 image::m2-oc-login-4.png[link=self, window=blank, width=100%]
-
-Ken: this login info needs to change to user# vs. admin once that is resolved
-
++
 . Return to your `Terminal 1` interface to the right of your lab manual
 +
 .Right-click and paste *your* oc login command
@@ -664,6 +701,8 @@ drone-virtual-machine   Succeeded   100.0%                5m26s
 rhem-virtual-machine    Succeeded   100.0%                6d4h
 ----
 Press `CTRL`+`C` to break out of the watch loop
+
+[#fleetcreation]
 
 == Drone Virtual Machine creation
 

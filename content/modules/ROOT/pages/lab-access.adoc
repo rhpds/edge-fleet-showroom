@@ -2,25 +2,45 @@
 
 For your convenience, this page contains access information to all systems in your lab environment.
 
-== Lab Login (OpenShift Console)
-Click link:{console_url}[here,window=_blank] to access your Lab Environment
-
+== Lab Login (SSH to rhem-virtual-machine)
+. Click *Terminal 1* or *Terminal 2*
++
+[source,sh,role=execute,subs=attributes+]
+.Copy/Paste (or type) this command (answer yes when prompted)
+----
+ssh {user}@rhem-on-rhel-ssh.wksp-{guid}-{user}.svc.cluster.local
+----
++
 [.no-copy-label]
+.Enter Password 
+[source,sh,role=execute,subs=attributes+]
+----
+{bastion_ssh_password}
+----
+
+== Lab Login (OpenShift Console)
+Click link:{console_url}[here,window=_blank] to access OpenShift (this link will open in a new browser tab)
+
+. Click *{guid}-htpasswd* (select the bottom login box; screenshot below will not match your {guid}-htpasswd value)
++
+image::m1-openshift-login.png[link=self, window=blank, width=100%]
++
 .Username
 [source,sh,role=execute,subs=attributes+]
 ----
-{user}
+{guid}-{user}
 ----
-
++
 [.no-copy-label]
 .Password
 [source,sh,role=execute,subs=attributes+]
 ----
-{password}
+{bastion_ssh_password}
 ----
 
+
 == Edge Manager CLI Login
-[source,sh,role=execute,subs=attributes+]
+[source,sh,role=wrap execute,subs=attributes+]
 ----
-flightctl login https://api.apps.cluster-{guid}.dynamic.redhatworkshops.io --username {user} --password {password} --insecure-skip-tls-verify
+flightctl login https://rhem-on-rhel-api-wksp-{guid}-{user}.{openshift_cluster_ingress_domain} --username {user} --password redhat123 --insecure-skip-tls-verify
 ----

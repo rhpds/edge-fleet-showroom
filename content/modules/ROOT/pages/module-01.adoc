@@ -1,5 +1,6 @@
 = 1. Edge Manager  - Deploy
 
+[#introduction]
 == Welcome to SliceOps Delivery Systems (Fictional Company)
 
 image::m1-welcome.png[link=self, window=blank, width=100%]
@@ -70,35 +71,6 @@ You can learn more about how to register your system
 using rhc at https://red.ht/registration
 <...>
 ----
-+
-. You'll also be utilizing the OpenShift console to perform various tasks. Let's get you logged into OpenShift, next:
-+
-Click link:{console_url}[here,window=_blank] to access OpenShift (this link will open in a new browser tab)
-+
-.. Click *{guid}-htpasswd* (select the bottom login box; screenshot below will not match your {guid}-htpasswd value)
-+
-image::m1-openshift-login.png[link=self, window=blank, width=100%]
-+
-.Username
-[source,sh,role=execute,subs=attributes+]
-----
-{guid}-{user}
-----
-+
-[.no-copy-label]
-.Password
-[source,sh,role=execute,subs=attributes+]
-----
-{bastion_ssh_password}
-----
-+
-.. Click *Skip tour*
-+
-image::m1-openshift-login-2.png[link=self, window=blank, width=100%]
-+
-.. Click *_* to minimize *Red Hat OpenShift Lightspeed*
-+
-image::m1-openshift-login-3.png[link=self, window=blank, width=100%]
 
 NOTE: For future reference, all Lab Login information is available via the Lab Manual left-hand nav item: *Lab Access*
 

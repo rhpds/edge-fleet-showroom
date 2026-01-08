@@ -14,6 +14,9 @@ By applying *device labels* that match the fleet’s *device selector*.
 
 Let’s do that next.
 
+[#fleetmembership]
+== Fleet Membership 
+
 . Return to your Edge Manager UI browser tab and Click *Details*
 +
 image::m3-join-fleet-.5.png[link=self, window=blank, width=100%]
@@ -103,6 +106,7 @@ Great job!  You have successfully stood up a new SDS field location, and your vi
 
 Now that this device is onboarded and enforcing fleet-defined state, we’ll use it to explore a few additional Edge Manager concepts.
 
+[#devicemonitoring]
 == Device Monitoring
 
 We briefly looked at device *System status* and *Resource status* earlier.
@@ -329,6 +333,8 @@ Configuring Observability is beyond the scope of our lab; however, at a high lev
 * Uses OpenTelemetry Collector on a device and forwards collected data to the Telemetry Gateway +
 * Telemetry Gateway saves collected data from devices and service, or forwards data to external Collector +
 * Standalone observability stack is available for Edge Manager on RHEL and/or the Observability stack in OpenShift can be utilized
+
+[#repositories]
 
 == Edge Manager Repositories
 
@@ -656,11 +662,11 @@ Switch back to your gitea browser tab and:
 . Expand the `kiosk` folder
 . Select the `content` folder
 . Note the three subfolders whose names end in: *clear*, *storm*, and *windy*
-
++
 image::m3-resource-sync-19.png[link=self, window=blank, width=100%]
-
++
 When Edge Manager instructs the device to write content from this Gitea location, it uses the device’s `weather` label value to select the matching folder.
-
++
 That folder contains web content served by the NGINX application.
 
 Next, let’s examine the Fleet application specification.
@@ -686,6 +692,8 @@ This shows the full contents written to the inline Quadlet file, `drone-tracker.
 . Once you’ve completed the review, click Cancel to exit the wizard
 
 image::m3-resource-sync-22.png[link=self, window=blank, width=100%]
+
+=== Join gitea-fleet 
 
 Now for the fun part, let’s put this new Gitea-sourced fleet into action. We already have a device enrolled and ready, thanks to your earlier work.
 
@@ -728,22 +736,51 @@ image::m3-drone-tracker-5.png[link=self, window=blank, width=100%]
 +
 .. The device transitions to an *Up-to-date* state
 .. The *Disk pressure* warning is no longer present because the Gitea fleet does not include the custom disk resource monitor previously applied to the `drone-fleet`.
+.. A new (gitea) configuration *Source* is being tracked:  *drone-tracker-web-content*
 .. A new `drone-tracker-app` application is now *Running*, and the previous `drone-cam` application is no longer present
 +
 image::m3-drone-tracker-6.png[link=self, window=blank, width=100%]
 +
-. You'll also notice a new configuration *Source* being tracked: Click *drone-tracker-web-content*
+. Scroll up and click *Terminal*
 +
-image::m3-drone-tracker-7.png[link=self, window=blank, width=100%]
+image::m3-drone-tracker-6.png[link=self, window=blank, width=100%]
 +
-You are taken directly to the Gitea folder that corresponds to the *weather* label you selected
+. Let’s run a few read-only commands to observe the system state from this terminal.
 +
-. The folder name matches the selected *weather* label (the example below uses `weather=storm`)
-.. This content is written to the device at */etc/drone-tracker*
+.Change into the /etc/drone-tracker folder which was created via the gitea resource sync
+[source,sh,role=wrap execute,subs=attributes+]
+----
+cd /etc/drone-tracker
+----
 +
-image::m3-drone-tracker-8.png[link=self, window=blank, width=100%]
+.Perform a directory listing and note the content that was resource sync'd via the gitea respository
+[source,sh,role=wrap execute,subs=attributes+]
+----
+ls
+----
++
+.Sample Output
+[source,text,role=wrap]
+----
+app.js  images  index.html  styles.css  weather.html
+----
++
+.Examine the weather.html file
+[source,sh,role=wrap execute,subs=attributes+]
+----
+cat weather.html
+----
++
+.Sample Output (note the Flight Conditions sub-header, this matches the `weather=` label you tagged the device with. Unless you chose `weather=storm`, your sample output will differ)
+[source,text,role=wrap]
+----
+<h1>Flight Conditions</h1>
+<h2>S T O R M</h2>
+----
 
-Return to your `Application is not available` tab and click refresh
+== Drone Tracker Application 
+
+. Return to your `Application is not available` tab and click refresh
 
 Ken: Insert screenshot
 
@@ -768,3 +805,6 @@ Mention how much better this is than having to roll trucks, have dedicated IT st
 etc
 
 Done
+
+[#labsummary]
+= Lab Summary 
