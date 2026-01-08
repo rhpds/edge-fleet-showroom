@@ -5,7 +5,9 @@
 
 image::m1-welcome.png[link=self, window=blank, width=100%]
 
-Congratulations on your new role at SliceOps Delivery Systems (SDS)! If you're excited to learn about new Red Hat edge management technologies, you're in the right place.
+Congratulations on your new role at SliceOps Delivery Systems (SDS)! 
+
+If you're excited to learn about utilizing new Red Hat edge management technologies in your new job role, you're in the right place.
 
 As an SDS technician, you'll be operating far outside the comforts of a traditional datacenter where redundant power, cooling and IT staff are always close at hand. This is often the reality of managing systems at the edge.
 

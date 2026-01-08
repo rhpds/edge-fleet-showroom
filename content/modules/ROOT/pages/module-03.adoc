@@ -781,24 +781,53 @@ cat weather.html
 == Drone Tracker Application 
 
 . Return to your `Application is not available` tab and click refresh
-
-Ken: Insert screenshot
-
-The Drone Tracker app is now available thanks to our resource synched gitea content.
-
++
+image::m3-drone-tracker-app-1.png[link=self, window=blank, width=100%]
++
 . Click *View Flight Conditions*
++
+image::m3-drone-tracker-app-2.png[link=self, window=blank, width=100%]
++
+.. Note that the weather.html containing storm is being served up 
+.. Note that we have indicated that this content was injected via the gitea `flight-conditions-storm` folder
++
+image::m3-drone-tracker-app-3.png[link=self, window=blank, width=100%]
++
 
-...and observe the weather condition that you chose.  
+The Drone Tracker app is now fully available thanks to our resource synched gitea content.
 
-C O N G R A T U L A T I O N S 
+++++
+<b style="font-size: 2em;">
+  <span style="color:red;">C</span>
+  <span style="color:orange;">o</span>
+  <span style="color:gold;">n</span>
+  <span style="color:green;">g</span>
+  <span style="color:blue;">r</span>
+  <span style="color:indigo;">a</span>
+  <span style="color:violet;">t</span>
+  <span style="color:red;">u</span>
+  <span style="color:orange;">l</span>
+  <span style="color:gold;">a</span>
+  <span style="color:green;">t</span>
+  <span style="color:blue;">i</span>
+  <span style="color:indigo;">o</span>
+  <span style="color:violet;">n</span>
+  <span style="color:red;">s</span>
+  <span style="color:orange;">!</span>
+</b>
+++++
 
-...and thank you for taking Edge Manager for a Test Drive today.  
+You've done a great job today at SliceOps Delivery Systems today!
 
-There is one more important lesson that we would like to leave you with and it speaks to the true declarative nature and power of Edge Manager
+Before you decide if you want to work through an optional Extra Credit exercise, there is one last important thing we would like to show you.
 
-Return to the Terminal...
+=== Desired State Configuration (Why it matters)
 
-change content
+Imagine that you have been asked to change the title of the Drone Tracker App.  
+
+A junior administrator (or even someone with decades of experience a muscle memory might go directly to the web content on the device to do so):
+
+
 
 Mention how much better this is than having to roll trucks, have dedicated IT staff onsite, etc.
 
