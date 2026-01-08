@@ -728,7 +728,7 @@ image::m2-create-drone-vm-2.png[link=self, window=blank, width=100%]
 +
 image::m2-create-drone-vm-3.png[link=self, window=blank, width=100%]
 +
-. Note that an enrollment QR code is present
+. Note that an enrollment QR code is present (field technicians could scan this code to bring them to the Edge Manager enrollment approval flow; in our Lab, we'll approve the device in the Edge Manager UI momentarily)
 +
 image::m2-create-drone-vm-4.png[link=self, window=blank, width=100%]
 
