@@ -959,7 +959,7 @@ This is expected.
 
 Although the OpenShift route is valid, the application workload has not yet been deployed to the drone device. As a result, there is no active service backing this route.
 
-Do not worry, we will correct this behavior in the next lesson module by deploying the application to the device using Edge Manager and GitOps.
+Do not worry, we will correct this behavior in the next lesson module by deploying the application to the device using Edge Manager.
 
 [#module2summary]
 == Module 2 Summary
