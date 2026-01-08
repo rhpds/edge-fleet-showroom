@@ -813,27 +813,68 @@ The Drone Tracker app is now fully available thanks to our resource synched gite
   <span style="color:indigo;">o</span>
   <span style="color:violet;">n</span>
   <span style="color:red;">s</span>
-  <span style="color:orange;">!</span>
 </b>
 ++++
 
-You've done a great job today at SliceOps Delivery Systems today!
+You've done a great job at SliceOps Delivery Systems today!
 
 Before you decide if you want to work through an optional Extra Credit exercise, there is one last important thing we would like to show you.
 
-=== Desired State Configuration (Why it matters)
+=== Desired State Configuration: Why It Matters
 
-Imagine that you have been asked to change the title of the Drone Tracker App.  
+Imagine that you have been asked to change the title of the Drone Tracker application.  
 
-A junior administrator (or even someone with decades of experience a muscle memory might go directly to the web content on the device to do so):
+A junior administrator (or even an experienced operator with decades of muscle memory might go directly to device and edit the web content in place). Let's follow that approach:
 
+. Return to the Device *Terminal* in the Edge Manager UI
++
+.Change into the `/etc/drone-tracker` directory
+[source,sh,role=wrap execute,subs=attributes+]
+----
+cd /etc/drone-tracker
+----
++
+.Open `index.html' for editing
+[source,sh,role=wrap execute,subs=attributes+]
+----
+vi index.html
+----
++
+. Navigate to '*<h1>SliceOps Delivery Systems* ...</h1>' line and press `i` for insert 
++
+. Replace `SliceOps Delivery Systems` with any company name of your choosing
++
+. Press *ESC*, then type `:wq` and press *Enter* to save the file 
++
+. Return to your `Drone Tracker` browser tab and refresh the page
 
+Notice that the page header now reflects the company name you entered. The change was successful and is immediately visible in the Drone Tracker application.
 
-Mention how much better this is than having to roll trucks, have dedicated IT staff onsite, etc.
+So what’s the problem with this approach?
 
-etc
+*Ask yourself this*: was this change made through the correct *desired state configuration* for the device?
 
-Done
+*Answer*: No, it was not.
+
+In fact, within a few minutes, you’ll notice the change automatically reverts back to *SliceOps Delivery Systems Drone Tracker*.
+
+This happens because the device agent periodically checks in and evaluates whether its current state matches the desired state. When it detects a mismatch, Edge Manager automatically works to self-heal the device back to the declared configuration.
+
+This is a powerful capability. Device self-healing can save organizations significant time and money by reducing manual intervention and avoiding costly truck rolls to remote edge locations. Edge Manager becomes the first line of remediation.
+
+The correct approach in this case would have been to edit the gitea content and let the Fleet Specification (desired state configuration) do the rest.
 
 [#labsummary]
-= Lab Summary 
+== Lab Summary 
+
+On behalf of the entire Red Hat Edge Manager team, we would like to extend a heartfelt *THANK YOU* for taking the time to explore this lab today.
+
+We hope your time at SliceOps Delivery Systems has been an enjoyable and informative one.
+
+=== Key Takeaways
+
+From a technology perspective, you learned how Edge Manager combines image-based OS management, GitOps workflows, fleet abstractions, and application lifecycle management into a single control plane that detects and remediates configuration drift through continuous desired-state enforcement.
+
+From a business perspective, this approach reduces operational risk, minimizes manual intervention and enables consistent, policy-driven operations across distributed edge devices.
+
+Thank you, again - have a great day!
