@@ -708,8 +708,6 @@ Press `CTRL`+`C` to break out of the watch loop
 
 It's time to bring your Drone Virtual Machine to life. 
 
-Ken: Update screenshot to user level vs. admin
-
 Return to your OpenShift Web Interface, and:
 
 . Expand *Virtualization*
