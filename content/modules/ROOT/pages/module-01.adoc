@@ -302,10 +302,6 @@ image::m1-webui-login-2.png[link=self, window=blank, width=100%]
 . Enter *Password*: redhat123
 . Click *Sign In*
 
-Ken: Update this screenshot once Flight Control is removed
-
-image::m1-webui-login-3.png[link=self, window=blank, width=100%]
-
 After initial login, you’ll see a top-level overview of devices and fleets managed by Edge Manager. At this point, no devices have been onboarded, so the dashboard is intentionally empty. We’ll return to this view later once your drone device is under management
 
 === (Optional) Change the UI theme
