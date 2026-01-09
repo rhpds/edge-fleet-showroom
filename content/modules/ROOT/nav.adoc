@@ -5,10 +5,9 @@
 ** xref:module-01.adoc#module1summary[Module Summary]
 
 * xref:module-02.adoc[]
-** xref:module-02.adoc#highlevelarchitecture[Onboard Workflow]
 ** xref:module-02.adoc#highlevelarchitecture[High Level Architecture]
 ** xref:module-02.adoc#fleetcreation[Fleet Creation]
-** xref:module-02.adoc#fleetcreation[Drone VM Creation]
+** xref:module-02.adoc#dronevmcreation[Drone VM Creation]
 ** xref:module-02.adoc#module2summary[Module Summary]
 
 * xref:module-03.adoc[]

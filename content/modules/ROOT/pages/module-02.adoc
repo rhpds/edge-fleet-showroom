@@ -702,7 +702,7 @@ rhem-virtual-machine    Succeeded   100.0%                6d4h
 ----
 Press `CTRL`+`C` to break out of the watch loop
 
-[#fleetcreation]
+[#dronevmcreation]
 
 == Drone Virtual Machine creation
 
