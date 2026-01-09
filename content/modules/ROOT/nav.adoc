@@ -16,9 +16,9 @@
 ** xref:module-03.adoc#repositories[Repositories]
 ** xref:module-03.adoc#labsummary[Lab Summary]
 
-* xref:appendix.adoc[]
-
 * xref:extra-credit.adoc[]
+
+* xref:appendix.adoc[]
 
 * xref:lab-access.adoc[]
 
