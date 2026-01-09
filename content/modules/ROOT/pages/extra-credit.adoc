@@ -15,7 +15,7 @@ Create a Containerfile on your *rhem-virtual-machine* with the following content
 [source,sh,role=execute,subs=attributes+]
 ----
 # Start with a normal bootc image, which has bootc-base-imagectl in it
-FROM registry.redhat.io/rhel9/rhel-bootc:latest
+FROM registry.redhat.io/rhel9/rhel-bootc:latest as builder
 # Create a new rootfs
 RUN /usr/libexec/bootc-base-imagectl build-rootfs --manifest=minimal /target-rootfs
 # Add additional packages to the new rootfs
@@ -45,9 +45,9 @@ CMD ["/sbin/init"]
 To build this bootc image, additional capability is required for generation of the new `rootfs`. Utilize the following podman build command to include these additional capabilities:
 [source,sh,role=execute,subs=attributes+]
 ----
-podman build Containerfile --cap-add=all /
---security-opt=label=type:container_runtime_t /
---device /dev/fuse /
+podman build . --cap-add=all \
+--security-opt=label=type:container_runtime_t \
+--device /dev/fuse \
 --tag localhost/minimal-bootc:latest
 ----
 
@@ -56,13 +56,15 @@ Once the image build completes, the image can be pushed up to registry like any 
 Complete the following commands to authenticate to the registry and push the image:
 [source,sh,role=execute,subs=attributes+]
 ----
+# Set OCP Namespace 
+NAMESPACE=wksp-{guid}-{user}
 # Set the registry as a variable for less typing:
 HOST=image-registry.openshift-image-registry.svc:5000
 podman login -u $(oc whoami) -p $(oc whoami -t) $HOST --tls-verify=false
 # Add a tag to the minimal image
-podman tag localhost/minimal-bootc:latest $HOST/YOUR-NAMESPACE/minimal-bootc:latest
+podman tag localhost/minimal-bootc:latest $HOST/$NAMESPACE/minimal-bootc:latest
 # Push the image to the registry
-podman push $HOST/YOUR-NAMESPACE/minimal-bootc:latest --tls-verify=false
+podman push $HOST/$NAMESPACE/minimal-bootc:latest --tls-verify=false
 ----
 
 Notice that during the image push, a single large layer (around ~1 GB) was pushed into the registry:
