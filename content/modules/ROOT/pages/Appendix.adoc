@@ -1,4 +1,4 @@
-= Appendix 
+= 5. Appendix 
 
 This Appendix provides an architectural overview of the Edge Manaeger service components. Each component serves a specific purpose in the device fleet management system.
 
