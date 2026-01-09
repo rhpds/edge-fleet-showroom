@@ -1,18 +1,21 @@
-= 5. Appendix 
+= Appendix
+:navtitle: Appendix
 
-This Appendix provides an architectural overview of the Edge Manaeger service components. Each component serves a specific purpose in the device fleet management system.
+This appendix provides an architectural overview of the Edge Manager service components.
+Each component serves a specific purpose in the device fleet management system.
 
-== Component diagram
-
-## Service Components diagram
+== Component Diagram
 
 image::m2-component-dependencies.png[link=self, window=blank, width=100%]
 
-### flightctl-api
+== Service Components
 
-The primary API server that handles all REST and gRPC requests from clients and agents. It exposes two endpoints: one for user/CLI operations (HTTPS) and one for agent communication (mTLS).
+=== flightctl-api
 
-**Overview:**
+The primary API server that handles all REST and gRPC requests from clients and agents.
+It exposes two endpoints: one for user/CLI operations (HTTPS) and one for agent communication (mTLS).
+
+*Overview:*
 
 - Device enrollment and certificate signing
 - Fleet and device configuration management
@@ -20,13 +23,13 @@ The primary API server that handles all REST and gRPC requests from clients and 
 - Remote console session management
 - Metrics collection and exposure
 
-**Dependencies:** PostgreSQL, Redis
+*Dependencies:* PostgreSQL, Redis
 
-### flightctl-worker
+=== flightctl-worker
 
 An asynchronous task processor that handles background operations queued by the API server.
 
-**Overview:**
+*Overview:*
 
 - Template version rendering
 - Git repository synchronization
@@ -34,13 +37,14 @@ An asynchronous task processor that handles background operations queued by the 
 - Device configuration rendering
 - ResourceSync processing
 
-**Dependencies:** PostgreSQL, Redis
+*Dependencies:* PostgreSQL, Redis
 
-### flightctl-periodic
+=== flightctl-periodic
 
-A scheduler service that runs periodic maintenance tasks against the database. Runs as a singleton to avoid duplicate task execution.
+A scheduler service that runs periodic maintenance tasks against the database.
+Runs as a singleton to avoid duplicate task execution.
 
-**Overview:**
+*Overview:*
 
 - Marking devices offline when heartbeats are missed
 - Repository health testing
@@ -48,13 +52,14 @@ A scheduler service that runs periodic maintenance tasks against the database. R
 - Rollout device selection and disruption budget reconciliation
 - Event cleanup
 
-**Dependencies:** PostgreSQL
+*Dependencies:* PostgreSQL
 
-### flightctl-agent
+=== flightctl-agent
 
-The device side agent that runs on each managed device. It handles the full device lifecycle from enrollment through ongoing configuration and application management.
+The device-side agent that runs on each managed device.
+It handles the full device lifecycle from enrollment through ongoing configuration and application management.
 
-**Overview:**
+*Overview:*
 
 - Device enrollment and certificate management
 - Fetching desired configuration from the service
@@ -63,110 +68,113 @@ The device side agent that runs on each managed device. It handles the full devi
 - Application lifecycle management (containers, systemd services)
 - Status reporting
 
-**Dependencies:** flightctl-api (enrollment and management endpoints)
+*Dependencies:* flightctl-api (enrollment and management endpoints)
 
-### flightctl-db-migrate
+=== flightctl-db-migrate
 
 A utility for running database schema migrations.
 
-**Overview:**
+*Overview:*
 
 - Applying pending database schema changes
 - Validating migrations
 
-**Dependencies:** PostgreSQL
+*Dependencies:* PostgreSQL
 
-### flightctl-restore
+=== flightctl-restore
 
 A post-restore utility that prepares devices after database restoration from backup.
 
-**Overview:**
+*Overview:*
 
 - Invalidating caches and preparing devices to resume after disaster recovery
 
-**Dependencies:** PostgreSQL, Redis
+*Dependencies:* PostgreSQL, Redis
 
-## Authentication Components
+== Authentication Components
 
-### flightctl-pam-issuer
+=== flightctl-pam-issuer
 
-An OIDC token issuer that authenticates users via PAM (Pluggable Authentication Modules). Used in Linux standalone deployments.
+An OIDC token issuer that authenticates users via PAM (Pluggable Authentication Modules).
+Used in Linux standalone deployments.
 
-**Overview:**
+*Overview:*
 
 - Authenticating users against local system credentials
 - Issuing JWT tokens for API access
 
-**Platform:** Linux only
+*Platform:* Linux only
 
-### flightctl-userinfo-proxy
+=== flightctl-userinfo-proxy
 
-A proxy service that translates Ansible Automation Platform (AAP) user API responses into OpenID Connect UserInfo format.
+A proxy service that translates Ansible Automation Platform (AAP) user API responses
+into OpenID Connect UserInfo format.
 
-**Overview:**
+*Overview:*
 
 - Transforming AAP user responses to OIDC UserInfo format
 
-**Dependencies:** Ansible Automation Platform
+*Dependencies:* Ansible Automation Platform
 
-## Observability Components
+== Observability Components
 
-### flightctl-telemetry-gateway
+=== flightctl-telemetry-gateway
 
 An OpenTelemetry-based gateway for collecting and forwarding telemetry data from devices.
 
-**Overview:**
+*Overview:*
 
 - Receiving telemetry from agents via OTEL protocol (metrics, traces)
 - Routing telemetry to configured backends
 
-**Dependencies:** Observability backend (Prometheus)
+*Dependencies:* Observability backend (Prometheus)
 
-### flightctl-alert-exporter
+=== flightctl-alert-exporter
 
 Monitors device and fleet state to generate alerts based on configured rules.
 
-**Overview:**
+*Overview:*
 
 - Processing Flight Control events
 - Generating Prometheus-compatible alerts
 - Forwarding alerts to Alertmanager
 
-**Dependencies:** PostgreSQL, Redis, Alertmanager
+*Dependencies:* PostgreSQL, Redis, Alertmanager
 
-### flightctl-alertmanager-proxy
+=== flightctl-alertmanager-proxy
 
 A reverse proxy for Alertmanager that integrates with Flight Control authentication.
 
-**Overview:**
+*Overview:*
 
 - Checking user permissions for alert access
 - Proxying requests to Alertmanager
 
-**Dependencies:** PostgreSQL, Alertmanager
+*Dependencies:* PostgreSQL, Alertmanager
 
-## CLI and Utilities
+== CLI and Utilities
 
-### flightctl
+=== flightctl
 
-The command-line interface for interacting with the Flight Control service. Provides commands for managing devices, fleets, repositories, and other resources.
+The command-line interface for interacting with the Flight Control service.
+Provides commands for managing devices, fleets, repositories, and other resources.
 
-**Overview:**
+*Overview:*
 
 - Resource CRUD operations
 - Device enrollment approval
 - Remote console access
 - Certificate management
 
-**Dependencies:** flightctl-api
+*Dependencies:* flightctl-api
 
-### flightctl-standalone
+=== flightctl-standalone
 
 A collection of utilities for standalone Linux deployments.
 
-**Overview:**
+*Overview:*
 
 - Rendering systemd quadlet files
 - Rendering configuration templates
 
-**Dependencies:** None
+*Dependencies:* None
