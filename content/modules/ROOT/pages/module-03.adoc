@@ -27,7 +27,7 @@ image::m3-join-fleet-1.png[link=self, window=blank, width=100%]
 +
 . Highlight `key=value`, type `fleet=lab` then press *Enter*
 +
-.. Note that the device joins the `drone-fleet` almost immediately
+.. Observe that the device joins the `drone-fleet` almost immediately
 +
 image::m3-join-fleet-2.png[link=self, window=blank, width=100%]
 +
@@ -199,14 +199,15 @@ While we wait for this to fully apply, let's examine what this custom disk resou
 image::m3-monitor-3.png[link=self, window=blank, width=100%]
 
 . Specifies a `monitorType: Disk` and samples disk utilization on the `/sysroot` path every `5s`
-. Triggers a *Warning alert* if disk usage on `/sysroot` exceeds *5% for longer than 1 minute*
+. Triggers a *Warning alert* if disk usage on `/sysroot` exceeds *5% for longer than 1 minute* (5% disk usage is not a real world value; we're simply using this in order to get an alert notification)
 . Triggers a *Critical* alert if disk usage on `/sysroot` exceeds *90% for longer than 10 minutes*, which more closely reflects a realistic production threshold.
 
 Return to your Edge Manager browser tab, and
 
+. Click *Details*
 . Observe that *Device Status* is now reporting `(!) Degraded`
 . Observe that *Disk Pressure* is now reporting `(!) Past threshold (5%)`
-. Click each alert to view more details
+. (Click each alert to view more details)
 
 image::m3-monitor-3.1.png[link=self, window=blank, width=100%]
 
@@ -275,7 +276,7 @@ NAME
     status: Degraded
 <...>
 ----
-.We can utilize the same Terminal gRPC tunnel to access the device via cli
+.We can utilize the same Terminal (non-SSH) gRPC tunnel to access the device via cli
 [source,sh,role=wrap execute,subs=attributes+]
 ----
 flightctl console device/$name
@@ -338,7 +339,7 @@ Configuring Observability is beyond the scope of our lab; however, at a high lev
 
 == Edge Manager Repositories
 
-For our final lesson, we are going to tap into Edge Manager repository functionality.  
+For our next lesson, we are going to tap into Edge Manager repository functionality.  
 
 NOTE: An Edge Manager repository resource defines how Edge Manager can access an _external_ configuration source, such as a Git repository.
 
@@ -452,7 +453,6 @@ Input the following information
 . Observe that the resource sync is in a `Sync pending` state
 +
 image::m3-resource-sync-1.png[link=self, window=blank, width=100%]
-NOTE: Resource Syncs occur every 2 minutes - thank you for your patience while we wait for the OS System image to appear
 
 Examining the imported gitea Fleet
 
@@ -500,13 +500,14 @@ image::m3-resource-sync-7.png[link=self, window=blank, width=100%]
 +
 image::m3-resource-sync-8.png[link=self, window=blank, width=100%]
 +
-. Return to your Edge Manager Browser tab and confirm that the Fleet now displays an OS System image (this is the same image you previously built and are running on the drone virtual machine, note that it make take a few minutes for the resource synch to update).
+NOTE: Resource Syncs occur every 2 minutes - thank you for your patience while we wait for the OS System image to appear
+. Return to your Edge Manager Browser tab and confirm that the Fleet now displays an OS System image (this is the same image you previously built and are running on the drone virtual machine).
 +
 image::m3-resource-sync-9.png[link=self, window=blank, width=100%]
 
 We have just proven that editing the fleet YAML in Gitea automatically propagates changes to Edge Manager
 
-==== Monitoring Resource Sync Events
+=== Monitoring Resource Sync Events
 
 In a a moment, we’ll start adding more substance to this fleet by introducing *Configuration* and *Application* entries into the fleet YAML
 
@@ -544,7 +545,7 @@ sudo systemctl list-units flightctl-*.service
 <...>
 ----
 +
-. We want to monitor events from the flightctl-periodic.service, which (among other things) is responsible for processing Git resource syncs
+. We want to monitor events from the *flightctl-periodic.service*, which (among other things) is responsible for processing Git resource syncs
 +
 .Run the following command to follow the flightctl-periodic.service logs and filter for resource sync (user-rs) events
 [source,sh,role=execute wrap,subs=attributes+]
@@ -716,7 +717,7 @@ NOTE: The following screenshot may not reflect your selected value (this is expe
 +
 image::m3-drone-tracker-3.png[link=self, window=blank, width=100%]
 +
-Next, we will add the device to the Gitea resource-synced fleet by applying a device selector label:
+Next, we will add the device to the Gitea resource-synced fleet by applying its device selector label:
 +
 . Click *Add label* and enter `fleet=gitea` 
 
@@ -846,7 +847,7 @@ vi index.html
 +
 . Press *ESC*, then type `:wq` and press *Enter* to save the file 
 +
-. Return to your `Drone Tracker` browser tab and refresh the page
+. Return to your `Drone Tracker` browser tab, click *Back to Tracker Map* and refresh the page
 
 Notice that the page header now reflects the company name you entered. The change was successful and is immediately visible in the Drone Tracker application.
 

@@ -27,7 +27,7 @@ We’ll start by cloning content from a gitea repository that will be used to bu
 .Issue the following git clone command 
 [source,sh,role=wrap execute,subs=attributes+]
 ----
-git clone https://gitea.apps.cluster-{gitea_console_url}/{guid}-{user}/rh1-2026-rhem-lab.git
+git clone {gitea_console_url}/{guid}-{user}/rh1-2026-rhem-lab.git
 ----
 +
 .Sample Output
@@ -225,7 +225,7 @@ sudo podman run --rm -it \
 
 While we wait for that process to complete, let's explore Edge Manager in more detail, beginning with a high-level Architecture review.
 
-#highlevelarchitecture
+[#highlevelarchitecture]
 
 == Edge Manager Architecture
 Edge Manager consists of the following core components, illustrated in the high-level architecture diagram below:
@@ -373,7 +373,7 @@ image::m2-component-dependencies.png[link=self, window=blank]
 
 The diagram above shows how the Edge Manager control plane is composed of multiple service-isolated components, with the API service acting as the primary integration point.
 
-If you’d like to explore the role of each service in more detail, we’ve included this information in the Lab Appendix. Ken: add section link
+If you’d like to explore the role of each service in more detail, we’ve included this information in the Lab Appendix (accessible via the lab manual left-hand nav).
 
 As you’ve just seen, this architecture provides lightweight, service-isolated control with full systemd integration, enabling predictable startup ordering, health reporting and logging via Podman quadlets.
 
@@ -476,7 +476,7 @@ NOTE: This port mapping exposes the application running inside the container on 
 +
 image::m2-create-fleet-7.png[link=self, window=blank, width=100%]
 +
-Let's track the system time service for any device that joins the fleet
+Let's track the system time service on any device that joins the fleet
 +
 . Scroll-down to *Tracked systemd services* and select *Add service*
 +
@@ -712,8 +712,10 @@ Return to your OpenShift Web Interface, and:
 
 . Expand *Virtualization*
 . Select *Catalog*
+. Set *Project*: to `wksp-{guid}-{user}`
 . Select *Template Catalog* (not InstanceTypes)
 . Set *Template project* to `wksp-{guid}-{user}`
+. Select *All templates*
 . Click *Drone Virtual Machine* Catalog item
 +
 image::m2-create-drone-vm-1.png[link=self, window=blank, width=100%]
@@ -728,7 +730,7 @@ image::m2-create-drone-vm-2.png[link=self, window=blank, width=100%]
 +
 image::m2-create-drone-vm-3.png[link=self, window=blank, width=100%]
 +
-. Note that an enrollment QR code is present (field technicians could scan this code to bring them to the Edge Manager enrollment approval flow; in our Lab, we'll approve the device in the Edge Manager UI momentarily)
+. Note that an enrollment QR code is present (field technicians could scan this code to initiate the Edge Manager enrollment approval flow; in our Lab, we'll approve the device in the Edge Manager UI momentarily)
 +
 image::m2-create-drone-vm-4.png[link=self, window=blank, width=100%]
 
@@ -793,7 +795,7 @@ Observe that the device:
 +
 image::m2-onboard-device-6.png[link=self, window=blank, width=100%]
 +
-. Note that the agent reports CPU, Disk, and Memory pressure for the device.
+. Note that the agent reports *CPU*, *Disk*, and *Memory* pressure for the device.
 +
 These resource indicators are currently within normal limits. We will customize this later by creating a custom resource monitor.
 +
