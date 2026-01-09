@@ -2,98 +2,6 @@
 
 NOTE: This 'Extra Credit' section is entirely optional; however, we believe it is beneficial to understand these helpful suggestions when utilizing Image Mode (bootc) for preparing images for Edge Manager
 
-== Creating bootc images from minimal with scratch
-
-Sometimes, it’s desireable to build a bootc image from a very small amount of content, then copy that content into a scratch container to further limit the size of the image.
-
-To achieve this, two main concepts are used:
-
-* Building from a minimal content set
-* Copying the content into a scratch container
-
-Create a Containerfile on your *rhem-virtual-machine* with the following contents:
-[source,sh,role=execute,subs=attributes+]
-----
-# Start with a normal bootc image, which has bootc-base-imagectl in it
-FROM registry.redhat.io/rhel9/rhel-bootc:latest as builder
-# Create a new rootfs
-RUN /usr/libexec/bootc-base-imagectl build-rootfs --manifest=minimal /target-rootfs
-# Add additional packages to the new rootfs
-RUN dnf -y install --installroot=/target-rootfs --config=/etc/dnf/dnf.conf --setopt=reposdir=/etc/yum.repos.d/ --enablerepo=Red_Hat_RHDP_Labs_flightctl_edge_manager__flightctl NetworkManager openssh-server flightctl-agent-1.0.0~rc3-1.el9
-# Start a new container image from nothing
-FROM scratch as bootc-image
-# Copy in the rootfs
-COPY --from=builder /target-rootfs/ /
-# Additional configuration if desired
-RUN <<EORUN
-set -xeuo pipefail
-systemctl enable flightctl-agent
-systemctl mask bootc-fetch-apply-updates.timer
-dnf clean all
-rm /var/{log,cache,lib}/* -rf
-bootc container lint
-EORUN
-# Add in the flightctl agent config
-COPY config.yaml /etc/flightctl/config.yaml
-# Required labels for bootc
-LABEL containers.bootc 1
-LABEL ostree.bootable 1
-STOPSIGNAL SIGRTMIN+3
-CMD ["/sbin/init"]
-----
-
-To build this bootc image, additional capability is required for generation of the new `rootfs`. Utilize the following podman build command to include these additional capabilities:
-[source,sh,role=execute,subs=attributes+]
-----
-podman build . --cap-add=all \
---security-opt=label=type:container_runtime_t \
---device /dev/fuse \
---tag localhost/minimal-bootc:latest
-----
-
-Once the image build completes, the image can be pushed up to registry like any other container image. For these steps, an ImageStream has been set up to store this image.
-
-Complete the following commands to authenticate to the registry and push the image:
-[source,sh,role=execute,subs=attributes+]
-----
-# Set OCP Namespace 
-NAMESPACE=wksp-{guid}-{user}
-# Set the registry as a variable for less typing:
-HOST=image-registry.openshift-image-registry.svc:5000
-podman login -u $(oc whoami) -p $(oc whoami -t) $HOST --tls-verify=false
-# Add a tag to the minimal image
-podman tag localhost/minimal-bootc:latest $HOST/$NAMESPACE/minimal-bootc:latest
-# Push the image to the registry
-podman push $HOST/$NAMESPACE/minimal-bootc:latest --tls-verify=false
-----
-
-Notice that during the image push, a single large layer (around ~1 GB) was pushed into the registry:
-
-screenshot
-
-NOTE: This is caused by the build process lumping things into a single large layer. While this is technically valid, additional steps to rechunk up that large layer can be taken to increase efficiency when deploying the image.
-
-Return to your RHEM virtual machine, and run the following:
-[source,sh,role=execute,subs=attributes+]
-----
-# Copy the image to root's container storage/context
-podman image scp $(whoami)@localhost::localhost/minimal-bootc:latest root@localhost::
-# Rechunk the image
-sudo podman run --rm --privileged -v /var/lib/containers:/var/lib/containers registry.redhat.io/rhel9/rhel-bootc:latest /usr/libexec/bootc-base-imagectl rechunk localhost/minimal-bootc:latest localhost/minimal-bootc-rechunked:latest
-# Copy the image back to your user
-sudo podman image scp root@localhost::localhost/minimal-bootc-rechunked:latest YOUR-USER@localhost::
-# Tag the image approproiately
-podman tag localhost/minimal-bootc-rechunked:latest $HOST/YOUR-NAMESPACE/minimal-bootc-rechunked:latest
-# Push the image
-podman push $HOST/YOUR-NAMESPACE/minimal-bootc-rechunked:latest --tls=verify=false
-----
-
-Notice that during the push, many smaller layers are pushed, instead of fewer larger layers:
-
-screenshot
-
-IMPORTANT: This can help limit the amount of data that needs to traverse the networking during a device update, as only the changed layers will be pulled instead of one large layer - which may have only had a single file or small amount of data actually changed.
-
 == Building Bootc Images using OpenShift Builds
 
 Since bootc images are fundamentally container images, they can also be built using other build methods, such as the build functionality in OpenShift.
@@ -165,3 +73,126 @@ Once the BuildConfig has been created, select the BuildConfig, then from the Act
 Navigate to *Builds > Builds*, and select the in-progress build, then switch to the Logs tab. Here, the output of the build will be displayed, showing a similar flow/output to builds being run via podman on a RHEL system.
 
 Once the build completes, navigate to *Builds > ImageStreams > ocp-build-bootc*, and take note of the Tags section at the bottom of the page - the newly built image has been successfully pushed, and is available for use.
+
+== Creating bootc images from minimal with scratch
+
+Sometimes, it’s desireable to build a bootc image from a very small amount of content, then copy that content into a scratch container to further limit the size of the image.
+
+To achieve this, two main concepts are used:
+
+* Building from a minimal content set
+* Copying the content into a scratch container
+
+Return to your `Terminal 1` window beside your Lab Manual
+
+. Create a new directory
++
+[source,sh,role=wrap execute,subs=attributes+]
+----
+mkdir minimal-build 
+----
++
+. Change into the newly created directory
++
+[source,sh,role=wrap execute,subs=attributes+]
+----
+cd minimal-build 
+----
++
+. Create a Containerfile by copying/pasting the following content then press *Enter*
++
+[source,sh,role=execute,subs=attributes+]
+----
+cat <<'EOF' | tee Containerfile
+# Start with a normal bootc image, which has bootc-base-imagectl in it
+FROM registry.redhat.io/rhel9/rhel-bootc:latest as builder
+
+# Create a new rootfs
+RUN /usr/libexec/bootc-base-imagectl build-rootfs --manifest=minimal /target-rootfs
+
+# Add additional packages to the new rootfs
+RUN dnf -y install \
+    --installroot=/target-rootfs \
+    --config=/etc/dnf/dnf.conf \
+    --setopt=reposdir=/etc/yum.repos.d/ \
+    --enablerepo=Red_Hat_RHDP_Labs_flightctl_edge_manager__flightctl \
+    NetworkManager \
+    openssh-server
+
+# Start a new container image from nothing
+FROM scratch as bootc-image
+
+# Copy in the rootfs
+COPY --from=builder /target-rootfs/ /
+
+# Additional configuration
+RUN <<EORUN
+set -xeuo pipefail
+dnf clean all
+rm -rf /var/{log,cache,lib}/*
+bootc container lint
+EORUN
+
+# Required labels for bootc
+LABEL containers.bootc=1
+LABEL ostree.bootable=1
+
+STOPSIGNAL SIGRTMIN+3
+CMD ["/sbin/init"]
+EOF
+----
++
+. To build this bootc image, additional capability is required for generation of the new `rootfs`. Utilize the following podman build command to include these additional capabilities:
++
+[source,sh,role=execute,subs=attributes+]
+----
+podman build . --cap-add=all \
+--security-opt=label=type:container_runtime_t \
+--device /dev/fuse \
+--tag localhost/minimal-bootc:latest
+----
++
+Once the image build completes, the image can be pushed up to registry like any other container image. For these steps, an ImageStream has been set up to store this image.
++
+. Complete the following commands to authenticate to the registry and push the image:
++
+[source,sh,role=execute,subs=attributes+]
+----
+# Set OCP Namespace 
+NAMESPACE=wksp-{guid}-{user}
+# Set the registry as a variable for less typing:
+HOST=image-registry.openshift-image-registry.svc:5000
+podman login -u $(oc whoami) -p $(oc whoami -t) $HOST --tls-verify=false
+# Add a tag to the minimal image
+podman tag localhost/minimal-bootc:latest $HOST/$NAMESPACE/minimal-bootc:latest
+# Push the image to the registry
+podman push $HOST/$NAMESPACE/minimal-bootc:latest --tls-verify=false
+----
++
+Notice that during the image push, a single large layer (around ~1 GB) was pushed into the registry:
++
+image::ec-minimal-build-1.png[link=self, window=blank, width=100%]
++
+NOTE: This is caused by the build process lumping things into a single large layer. While this is technically valid, additional steps to rechunk up that large layer can be taken to increase efficiency when deploying the image.
++
+. Return to your RHEM virtual machine, and run the following:
++
+[source,sh,role=execute,subs=attributes+]
+----
+# Copy the image to root's container storage/context
+podman image scp $(whoami)@localhost::localhost/minimal-bootc:latest root@localhost::
+# Rechunk the image
+sudo podman run --rm --privileged -v /var/lib/containers:/var/lib/containers registry.redhat.io/rhel9/rhel-bootc:latest /usr/libexec/bootc-base-imagectl rechunk localhost/minimal-bootc:latest localhost/minimal-bootc-rechunked:latest
+# Copy the image back to your user
+sudo podman image scp root@localhost::localhost/minimal-bootc-rechunked:latest YOUR-USER@localhost::
+# Tag the image approproiately
+podman tag localhost/minimal-bootc-rechunked:latest $HOST/YOUR-NAMESPACE/minimal-bootc-rechunked:latest
+# Push the image
+podman push $HOST/YOUR-NAMESPACE/minimal-bootc-rechunked:latest --tls=verify=false
+----
++
+Notice that during the push, many smaller layers are pushed, instead of fewer larger layers:
++
+image::ec-minimal-build-2.png[link=self, window=blank, width=100%]
++
+IMPORTANT: This can help limit the amount of data that needs to traverse the networking during a device update, as only the changed layers will be pulled instead of one large layer - which may have only had a single file or small amount of data actually changed.

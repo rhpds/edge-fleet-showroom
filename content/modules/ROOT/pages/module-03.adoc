@@ -255,7 +255,7 @@ gvi4k18tlq2581mro8unh8f4dlkqoiqpe64lsq5v2d1f7d0cvfp0    drone-01        Fleet/dr
 .Double-click the NAME uid then right-click and copy to your clipboard, then issue this command
 [source,sh,role=wrap execute,subs=attributes+]
 ----
-name=gvi4k18tlq2581mro8unh8f4dlkqoiqpe64lsq5v2d1f7d0cvfp0
+name={paste your clipboard value}
 ----
 .Inspect the device yaml and note the presence of the same disk warning/degraded messages in the `status:` section
 [source,sh,role=wrap execute,subs=attributes+]
@@ -500,7 +500,7 @@ image::m3-resource-sync-7.png[link=self, window=blank, width=100%]
 +
 image::m3-resource-sync-8.png[link=self, window=blank, width=100%]
 +
-NOTE: Resource Syncs occur every 2 minutes - thank you for your patience while we wait for the OS System image to appear
+NOTE: Resource Syncs occur every 2 minutes - thank you for your patience while we wait for the OS System image to appear in the next step
 . Return to your Edge Manager Browser tab and confirm that the Fleet now displays an OS System image (this is the same image you previously built and are running on the drone virtual machine).
 +
 image::m3-resource-sync-9.png[link=self, window=blank, width=100%]
@@ -614,7 +614,7 @@ image::m3-resource-sync-13.png[link=self, window=blank, width=100%]
 +
 image::m3-resource-sync-14.png[link=self, window=blank, width=100%]
 
-Switch back to your `Terminal 1` window (beside your lab manual) and wait for the next resource-sync log event
+Switch back to your `Terminal 1` window (beside your lab manual) and wait for the next resource-sync log event.
 
 .Note the log entries indicating that the resource-sync changes were applied successfully
 [source,text]
