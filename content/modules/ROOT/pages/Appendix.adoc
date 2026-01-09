@@ -2,6 +2,8 @@
 
 This Appendix provides an architectural overview of the Edge Manaeger service components. Each component serves a specific purpose in the device fleet management system.
 
+== Component diagram
+
 ## Service Components diagram
 
 image::m2-component-dependencies.png[link=self, window=blank, width=100%]
