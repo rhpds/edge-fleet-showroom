@@ -38,6 +38,11 @@ image::m1-openshift-login.png[link=self, window=blank, width=100%]
 {bastion_ssh_password}
 ----
 
+== Edge Manager UI Login
+Click link:https://rhem-on-rhel-webui-wksp-{guid}-{user}.{openshift_cluster_ingress_domain}[here,window=_blank] to access the Edge Manager Web UI (the link will open in a new browser tab)
+
+. Enter *Username*: {user}
+. Enter *Password*: redhat123
 
 == Edge Manager CLI Login
 [source,sh,role=wrap execute,subs=attributes+]

@@ -39,7 +39,7 @@ Let's get you logged in to your lab environment. On the right you'll notice your
 . Click *Terminal 1* (if it is not already selected)
 +
 [source,sh,role=execute,subs=attributes+]
-.Copy/Paste (or type) this command (answer yes when prompted)
+.Copy/Paste (or type) this command (answer yes when prompted and you can safely ignore any failed updates to known_hosts messages)
 ----
 ssh {user}@rhem-on-rhel-ssh.wksp-{guid}-{user}.svc.cluster.local
 ----
@@ -119,7 +119,7 @@ Created symlink /etc/systemd/system/multi-user.target.wants/flightctl.target →
 sudo systemctl start flightctl.target
 ----
 
-NOTE: We'll examine the services that were installed in more detail later in the lab
+NOTE: We'll examine the Edge Manager podman quadlet services that were installed in more detail later in the lab
 
 === Configuring Edge Manager Authentication
 
@@ -191,7 +191,7 @@ sudo sed -i \
 sudo systemctl restart flightctl.target
 ----
 
-NOTE: Given the timing of the Edge Manager GA release and this lab’s creation ahead of RH1, an upstream version equivalent to GA 1.0 is used. As a result, the RHEM UI branding shown above is explicitly enabled (via IS_RHEM=true) so you see the GA RHEM UI rather than the default Flightctl UI.
+NOTE: Given the timing of the Edge Manager GA release and this lab’s creation ahead of RH1, an upstream version equivalent to GA 1.0 is used. As a result, the RHEM UI branding shown above is explicitly enabled (via IS_RHEM=true) so that you see the GA RHEM UI (branding) rather than the default Flightctl UI.
 
 === Creating Users and Groups
 

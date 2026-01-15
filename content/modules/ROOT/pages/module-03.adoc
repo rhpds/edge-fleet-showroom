@@ -100,7 +100,7 @@ Let's see if our Drone Cam is viewable now.
 
 image::m3-join-fleet-5.png[link=self, window=blank, width=100%]
 
-(You should now see the drone camera application load successfully)
+(You should now see the drone camera application load successfully - if you do not, please make sure that your browser URL is prefaced with `http:` and not `https:`)
 
 Great job!  You have successfully stood up a new SDS field location, and your virtual pizza delivery is on its way (somewhere in the Greek Islands, by the look of it).
 
@@ -199,7 +199,7 @@ While we wait for this to fully apply, let's examine what this custom disk resou
 image::m3-monitor-3.png[link=self, window=blank, width=100%]
 
 . Specifies a `monitorType: Disk` and samples disk utilization on the `/sysroot` path every `5s`
-. Triggers a *Warning alert* if disk usage on `/sysroot` exceeds *5% for longer than 1 minute* (5% disk usage is not a real world value; we're simply using this in order to get an alert notification)
+. Triggers a *Warning alert* if disk usage on `/sysroot` exceeds *5% for longer than 1 minute* (5% disk usage is not a realistic (real world) value; we're simply using this in order to generate an alert notification)
 . Triggers a *Critical* alert if disk usage on `/sysroot` exceeds *90% for longer than 10 minutes*, which more closely reflects a realistic production threshold.
 
 Return to your Edge Manager browser tab, and
@@ -252,7 +252,7 @@ flightctl get device
 NAME                                                    ALIAS           OWNER                   SYSTEM          UPDATED       APPLICATIONS
 gvi4k18tlq2581mro8unh8f4dlkqoiqpe64lsq5v2d1f7d0cvfp0    drone-01        Fleet/drone-fleet       Degraded        UpToDate      Healthy
 ----
-.Double-click the NAME uid then right-click and copy to your clipboard, then issue this command
+.Double-click the NAME uid value then right-click and copy to your clipboard, then issue this command
 [source,sh,role=wrap execute,subs=attributes+]
 ----
 name={paste your clipboard value}
@@ -784,6 +784,8 @@ cat weather.html
 . Return to your `Application is not available` tab and click refresh
 +
 image::m3-drone-tracker-app-1.png[link=self, window=blank, width=100%]
++
+NOTE: If the web application is still showing 'Application is not Available' please make sure that your browser URL is prefaced with `http:` and not `https:`
 +
 . Click *View Flight Conditions*
 +

@@ -1,6 +1,6 @@
 = 2. Edge Manager - Onboard
 
-Now that Edge Manager is installed, we’ll focus on onboarding and managing your delivery drone edge device. The first step is creating an Image Mode (bootc) image.
+Now that Edge Manager is installed, we’ll focus next on onboarding and managing your delivery drone edge device. The first step is creating an Image Mode (bootc) image.
 
 == Edge Device Onboarding Workflow
 
@@ -8,7 +8,7 @@ image::m2-onboard-overview.png[link=self, window=blank]
 
 We build the bootc image using standard Podman tooling (Podman and a Containerfile). Once the container image is built, we use `bootc-image-builder` to convert it into a bootable disk format such as ISO, QCOW2, or VMDK.
 
-In most real-world deployments, this image would be written to removable media and installed on physical edge hardware. In this lab, we use an OpenShift Virtualization virtual machine to represent the delivery drone, so we’ll create a QCOW2 disk image.
+In most real-world scenarios, this image would be written to removable media and installed on physical edge hardware. In this lab, we use an OpenShift Virtualization virtual machine to represent the delivery drone, so we’ll create a QCOW2 disk image.
 
 image::m2-device-pre-reqs.png[link=self, window=blank]
 
@@ -206,7 +206,7 @@ The generated QCOW2 disk image will be written to the local `./output` directory
 
 . Create disk file (QCOW2)
 +
-.Utilize bootc-image-builder to create the disk file
+.Utilize bootc-image-builder to create the QCOW2 disk file
 [source,sh,role=wrap execute,subs=attributes+]
 ----
 IMAGE_NAME=quay.io/user/drone-image
@@ -338,6 +338,17 @@ To show all installed unit files use 'systemctl list-unit-files'.
 ----
 +
 [source,sh,role=execute]
+.Utilize journalctl to inspect the logs for the flightct-ui-init.service
+----
+journalctl -u flightctl-ui-init.service | tail -n 5
+----
++ 
+.Sample Output (note that this -init service successfully initialized the UI service)
+[source,text]
+{...}
+Jan 15 12:11:12 rhem-on-rhel.wksp-2h98d-1-user10.svc.cluster.local systemd[1]: Finished Flight Control UI Initialization.
++
+[source,sh,role=execute]
 .Now narrow the result set to examine only the long-running Edge Manager services
 ----
 sudo systemctl list-units 'flightctl-*.service' --state=running
@@ -367,11 +378,11 @@ SUB    = The low-level unit activation state, values depend on unit type.
 
 These running services collectively form the active Edge Manager control plane, responsible for API request handling, background reconciliation, authentication and device communication.
 
-You’ll note that the API service sits at the *heart* of Edge Manager, acting as the primary coordination point between clients, workers, observability components and backend services.
-
 image::m2-component-dependencies.png[link=self, window=blank]
 
-The diagram above shows how the Edge Manager control plane is composed of multiple service-isolated components, with the API service acting as the primary integration point.
+You’ll note that the API service sits at the *heart* of Edge Manager, acting as the primary coordination point between clients, workers, observability components and backend services.
+
+The Edge Manager control plane is composed of multiple service-isolated components, with the aforementioned API service acting as the primary integration point.
 
 If you’d like to explore the role of each service in more detail, we’ve included this information in the Lab Appendix (accessible via the lab manual left-hand nav).
 
@@ -467,7 +478,13 @@ Edge Manager will instruct the drone device to pull this application container f
 +
 .. *Application type*: `Single Container Application`
 .. *Application name*: `drone-cam-app`
-.. *Image*: `quay.io/kenosborn/drone-cam:v1`
+.. *Image*:
++
+[source,sh,role=execute]
+----
+quay.io/kenosborn/drone-cam:v1
+----
++
 .. *Ports*, *Host port*: `8081`, *Container port*: `8081` (step not shown in screenshot below)
 .. Click *Add ->*
 .. Verify *Added ports (8081:8081)*
@@ -693,7 +710,7 @@ Done.
 watch -d "oc get datavolume"
 ----
 +
-.Monitor this until `drone-virtual-machine` progress indicates 100% complete
+.Monitor this until `drone-virtual-machine` progress indicates 100% complete (and once again, thank you for your patience)
 [source,text]
 ----
 NAME                    PHASE       PROGRESS   RESTARTS   AGE
@@ -730,7 +747,9 @@ image::m2-create-drone-vm-2.png[link=self, window=blank, width=100%]
 +
 image::m2-create-drone-vm-3.png[link=self, window=blank, width=100%]
 +
-. Note that an enrollment QR code is present (field technicians could scan this code to initiate the Edge Manager enrollment approval flow; in our Lab, we'll approve the device in the Edge Manager UI momentarily)
+NOTE: If your console does not appear (or you receive an error), you will need to refresh your browser 
++
+. Observe that an enrollment QR code is present (field technicians could scan this code to initiate the Edge Manager enrollment approval flow; in our Lab, we'll approve the device in the Edge Manager UI momentarily)
 +
 image::m2-create-drone-vm-4.png[link=self, window=blank, width=100%]
 
@@ -961,7 +980,7 @@ This is expected.
 
 Although the OpenShift route is valid, the application workload has not yet been deployed to the drone device. As a result, there is no active service backing this route.
 
-Do not worry, we will correct this behavior in the next lesson module by deploying the application to the device using Edge Manager.
+No need to worry, we will correct this behavior in the next lesson module by deploying the application to the device using Edge Manager.
 
 [#module2summary]
 == Module 2 Summary
