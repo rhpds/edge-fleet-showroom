@@ -117,6 +117,8 @@ image::m3-status-states-1.png[link=self, window=blank, width=100%]
 
 The default Resource status states (CPU, Disk, and Memory pressure) are informational and do not alert until they reach *Warning* or *Critical* levels. This design provides visibility without unnecessary alert noise.
 
+=== Custom Resource Monitor Creation
+
 Let’s configure a custom disk resource monitor and apply it to our fleet. To do so, we will use the `flightctl` CLI.
 
 Return to your lab manual and input the following commands in `Terminal 1`
@@ -152,7 +154,7 @@ Together, these entries define the desired state that Edge Manager continuously 
 +
 image::m3-monitor-1.png[link=self, window=blank, width=100%]
 +
-. Use the down arrow key to place your cursor on the `status:` line
+. Use the down arrow key to position your cursor on the `status:` line
 . Press `i` to enter insert mode
 . Press `Enter` to create a new blank line
 . Press the up arrow once to move your cursor into the empty line above `status:`
@@ -238,6 +240,8 @@ We are now in the devices view with a filter set for `Device status: Degraded'
 image::m3-monitor-6.png[link=self, window=blank, width=100%]
 
 (From here users could drill down on the device to further investigate - there is no need to do so now)
+
+=== CLI Exploration
 
 NOTE: The Edge Manager UI that we have been utilizing gets its content via the Edge Manager API service.  We can utilize the CLI to retrieve the same information.  
 
@@ -326,6 +330,51 @@ tmpfs           940M     0  940M   0% /tmp
 /dev/vda2       501M  7.1M  494M   2% /boot/efi
 <...>
 ----
+
+=== Custom Resource Monitor Deletion
+
+When you created the Custom Resource Monitor earlier, you:
+
+. Exported the fleet specification to .yaml (`flightctl get fleet/drone-fleet -o yaml > update-fleet.yaml`)
+. Inserted the custom disk resource monitor yaml via `vim`, and 
+. Applied the updated fleet specification (`flightctl apply -f update-fleet.yaml`) 
+
+We can combine these three steps into one by utilizing the flighctl cli to directly edit our fleet template:
+
+. Edit the fleet directly using flightctl cli
++
+[source,sh,role=wrap execute,subs=attributes+]
+----
+flightctl edit fleet/drone-fleet
+----
++
+. Use the down arrow key to position your cursor on the `resources:` line 
++
+image::m3-direct-cli-edit-1.png[link=self, window=blank, width=100%]
++
+. Press `Shift+V` to enter _Visual Line_ mode
++ 
+image::m3-direct-cli-edit-2.png[link=self, window=blank, width=100%]
++
+. Use the down arrow key to highlight the entire custom resource monitor block, ending at `samplingInterval: 5s`
++
+image::m3-direct-cli-edit-3.png[link=self, window=blank, width=100%]
++
+. Type `d` to delete the custom resource monitor lines
++
+image::m3-direct-cli-edit-4.png[link=self, window=blank, width=100%]
++
+. Type `:wq` and press `Enter` to save your changes and exit 
++
+.Sample Output 
+[source,text]
+----
+fleet/drone-fleet edited
+----
+
+While this section focused on fleet-level template edits, the same approaches can also be used for individual devices that are not members of a fleet.
+
+=== Observability
 
 NOTE: In addition to Events and Alerts, Edge Manager supports Observability capabilities for device and service *metrics, profiling, tracing, and audit logs*. This data can be stored over time to enable historical analysis and long-term insights.
 

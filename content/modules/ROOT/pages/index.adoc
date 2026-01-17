@@ -14,7 +14,7 @@ is detected, Edge Manager automatically initiates corrective actions to return t
 validated, compliant state. This ensures *consistent*, *deterministic* and *resilient* edge operations
 even in *highly distributed, low-touch environments*. +
 
-NOTE: https://github.com/flightctl/flightctl["Flight Control",window=_blank] is the upstream open-source project and is available for anyone to explore outside of this lab. *Red Hat Edge Manager (RHEM)* is the downstream, supported offering. Throughout this lab, references to `flightctl` should be treated as functionally equivalent to Edge Manager.
+NOTE: https://github.com/flightctl/flightctl["Flight Control",window=_blank] is the upstream open-source project and is freely available for anyone to explore and/or contribute to. *Red Hat Edge Manager (RHEM)* is the downstream, supported offering. Throughout this lab, references to `flightctl` should be treated as functionally equivalent to Edge Manager.
 
 == Lab Layout
 
