@@ -431,7 +431,7 @@ Let's create a drone fleet in your environment, next:
 image::m2-create-fleet-1.png[link=self, window=blank, width=100%]
 +
 . Enter *Fleet name*: `drone-fleet`
-. (Configure Device Selector) Click *Add Label* and enter: `fleet=lab`
+. (Configure *Device Selector*) Click *Add Label* and enter: `fleet=lab`
 +
 NOTE: Fleets do not explicitly “add” devices. Instead, a fleet defines a device selector, and any device whose labels match that selector is automatically associated with the fleet. You can also utilize multiple device selector label matches (for example, 'Country=US', 'State=MN', etc.)
 +
