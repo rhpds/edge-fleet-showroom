@@ -626,10 +626,6 @@ image::m1-openshift-login.png[link=self, window=blank, width=100%]
 +
 image::m1-openshift-login-2.png[link=self, window=blank, width=100%]
 +
-.. Click *_* to minimize *Red Hat OpenShift Lightspeed*
-+
-image::m1-openshift-login-3.png[link=self, window=blank, width=100%]
-+
 . Select your *username* in the upper-right hand corner
 .. Click *Copy login command*
 +
