@@ -200,7 +200,7 @@ At this point the image resides locally on your RHEM Virtual Machine. We _could_
 
 We do need to _convert the image into a disk format_ that can be utilized by your Drone Virtual Machine. Since our drone device is represented by an OpenShift Virtualization virtual machine, we'll convert the image to the QCOW2 disk format.
 
-NOTE: Creating a disk file is a time intensive task. We'll kick this off, move on to other things and then circle back.
+NOTE: Creating a disk file is a time intensive task. We'll kick this off, move on to other things and then circle back
 
 The generated QCOW2 disk image will be written to the local `./output` directory.
 
