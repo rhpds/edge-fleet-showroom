@@ -752,7 +752,7 @@ Now for the fun part, let’s put this new Gitea-sourced fleet into action. We a
 +
 image::m3-drone-tracker-1.png[link=self, window=blank, width=100%]
 +
-. Click the *X* next to the device selector to remove the device from the `drone-fleet`
+. In the *Labels* section, click the *X* next to `fleet=lab` to remove the device from the `drone-fleet`
 +
 image::m3-drone-tracker-2.png[link=self, window=blank, width=100%]
 +

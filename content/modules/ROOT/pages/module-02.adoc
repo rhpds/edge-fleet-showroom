@@ -20,7 +20,7 @@ To onboard a device, Edge Manager requires the following prerequisites:
 
 === Image Preparation 
 
-We’ll start by cloning content from a gitea repository that will be used to build our bootc image. This repository contains a sample Containerfile and supporting configuration used to build an Image Mode (bootc) image suitable for onboarding with Edge Manager
+We’ll start by cloning the lab-hosted Gitea repository that contains a sample Containerfile used to build our Image Mode (bootc) image for Edge Manager onboarding.
 
 . Clone user repository
 +
@@ -86,7 +86,7 @@ NOTE: This is an example of *early binding* enrollment, where device enrollment 
 
 . To create the config.yaml, we need to run an Edge Manager CLI command
 +
-.Login via the Edge Manager CLI
+.Login via the Edge Manager CLI (if you are still logged in from your previous session, you do not need to re-login)
 [source,sh,role=wrap execute,subs=attributes+]
 ----
 flightctl login https://rhem-on-rhel-api-wksp-{guid}-{user}.{openshift_cluster_ingress_domain} --username {user} --password redhat123 --insecure-skip-tls-verify

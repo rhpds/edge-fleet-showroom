@@ -118,8 +118,46 @@ Created symlink /etc/systemd/system/multi-user.target.wants/flightctl.target →
 ----
 sudo systemctl start flightctl.target
 ----
++
+[.no-copy-label]
+.List the flighctl podman quadlet services that were installed
+[source,sh,role=execute,subs=attributes+]
+----
+sudo systemctl list-units flighctl-*.service
+----
++
+.Sample Output
+[source,text]
+----
+  UNIT                                 LOAD   ACTIVE SUB     DESCRIPTION                                    >
+  flightctl-alert-exporter.service     loaded active running Flight Control Alert Exporter service
+  flightctl-alertmanager-proxy.service loaded active running Flight Control Alertmanager Proxy service
+  flightctl-alertmanager.service       loaded active running Flight Control Alertmanager service
+  flightctl-api-init.service           loaded active exited  Flight Control API Initialization
+  flightctl-api.service                loaded active running Flight Control API server
+  flightctl-certs-init.service         loaded active exited  Flight Control Certificates Initialization
+  flightctl-cli-artifacts-init.service loaded active exited  Flight Control CLI Artifacts Certificates Initi>
+  flightctl-cli-artifacts.service      loaded active running Flight Control CLI Artifacts service
+  flightctl-db-migrate.service         loaded active exited  Flight Control Database Migration service
+  flightctl-db-users-init.service      loaded active exited  Flight Control Database Users Initialization
+  flightctl-db-wait.service            loaded active exited  Flight Control Database Wait
+  flightctl-db.service                 loaded active running Flight Control Database service
+  flightctl-kv.service                 loaded active running Flight Control Key Value service
+  flightctl-network.service            loaded active exited  flightctl-network.service
+  flightctl-pam-issuer.service         loaded active running Flight Control PAM OIDC Issuer server
+  flightctl-periodic.service           loaded active running Flight Control Periodic service
+  flightctl-ui-init.service            loaded active exited  Flight Control UI Initialization
+  flightctl-ui.service                 loaded active running Flight Control UI
+  flightctl-worker.service             loaded active running Flight Control Worker service
 
-NOTE: We'll examine the Edge Manager podman quadlet services that were installed in more detail later in the lab
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+19 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+----
+
+NOTE: We'll examine these Edge Manager podman quadlet services in more detail later in the lab
 
 === Configuring Edge Manager Authentication
 
@@ -191,7 +229,7 @@ sudo sed -i \
 sudo systemctl restart flightctl.target
 ----
 
-NOTE: Given the timing of the Edge Manager GA release and this lab’s creation ahead of RH1, an upstream version equivalent to GA 1.0 is used. As a result, the RHEM UI branding shown above is explicitly enabled (via IS_RHEM=true) so that you see the GA RHEM UI (branding) rather than the default Flightctl UI.
+NOTE: Given the timing of the Edge Manager GA release and this lab’s creation ahead of RH1, an upstream version equivalent to GA 1.0 is used. As a result, the RHEM UI branding shown above is explicitly enabled (via IS_RHEM=true) so that you see the GA RHEM UI (branding) rather than the default Flight Control UI.
 
 === Creating Users and Groups
 

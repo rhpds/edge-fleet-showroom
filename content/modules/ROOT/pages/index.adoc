@@ -21,6 +21,7 @@ NOTE: https://github.com/flightctl/flightctl["Flight Control",window=_blank] is 
 In this lab you will be utilizing the following Red Hat software components:
 
 - Red Hat OpenShift
+- Gitea Operator
 - Red Hat OpenShift Virtualization (OCP-Virt)
 - 2x OCP-Virt Virtual Machines 
 - Red Hat Edge Manager
