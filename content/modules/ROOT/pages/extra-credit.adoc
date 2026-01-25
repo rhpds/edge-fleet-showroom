@@ -8,7 +8,7 @@ Since bootc images are fundamentally container images, they can also be built us
 
 In the OpenShift web console, navigate to Builds > BuildConfigs, and click the Create BuildConfig button in the top right corner.
 
-Paste in the following BuildConfig:
+Select *YAML view* then paste in the following BuildConfig:
 [source,sh,role=execute,subs=attributes+]
 ----
 ---
@@ -76,7 +76,7 @@ Once the build completes, navigate to *Builds > ImageStreams > ocp-build-bootc*,
 
 == Creating bootc images from minimal with scratch
 
-Sometimes, it’s desireable to build a bootc image from a very small amount of content, then copy that content into a scratch container to further limit the size of the image.
+Sometimes, it’s desirable to build a bootc image from a very small amount of content, then copy that content into a scratch container to further limit the size of the image.
 
 To achieve this, two main concepts are used:
 
@@ -185,7 +185,7 @@ podman image scp $(whoami)@localhost::localhost/minimal-bootc:latest root@localh
 sudo podman run --rm --privileged -v /var/lib/containers:/var/lib/containers registry.redhat.io/rhel9/rhel-bootc:latest /usr/libexec/bootc-base-imagectl rechunk localhost/minimal-bootc:latest localhost/minimal-bootc-rechunked:latest
 # Copy the image back to your user
 sudo podman image scp root@localhost::localhost/minimal-bootc-rechunked:latest YOUR-USER@localhost::
-# Tag the image approproiately
+# Tag the image appropriately
 podman tag localhost/minimal-bootc-rechunked:latest $HOST/YOUR-NAMESPACE/minimal-bootc-rechunked:latest
 # Push the image
 podman push $HOST/YOUR-NAMESPACE/minimal-bootc-rechunked:latest --tls=verify=false
