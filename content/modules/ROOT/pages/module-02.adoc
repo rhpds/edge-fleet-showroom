@@ -165,7 +165,7 @@ sudo sed -i '1i spec-fetch-interval: 0m10s\nstatus-update-interval: 0m10s' confi
 
 . Let's build your Image Mode (bootc) image next
 +
-.Set variables and use podman to build image via Containerfile
+.Set variables and use podman to build image via Containerfile (this takes a few minutes to complete in our lab environment, thank you again for your patience)
 [source,sh,role=wrap execute,subs=attributes+]
 ----
 IMAGE_NAME=quay.io/user/drone-image
