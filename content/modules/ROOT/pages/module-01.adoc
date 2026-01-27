@@ -123,7 +123,7 @@ sudo systemctl start flightctl.target
 .List the flighctl podman quadlet services that were installed
 [source,sh,role=execute,subs=attributes+]
 ----
-sudo systemctl list-units flighctl-*.service
+sudo systemctl list-units flightctl-*.service
 ----
 +
 .Sample Output
