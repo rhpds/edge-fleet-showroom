@@ -314,6 +314,8 @@ To show all installed unit files use 'systemctl list-unit-files'.
 ----
 NOTE: Services with an -init suffix run once at startup to perform initialization tasks. Services without the -init suffix remain running and provide the ongoing Edge Manager functionality.
 +
+Press `q` or `CTRL`+`C` to break out of the systemctl command
++
 .Let’s filter the `-init` services
 [source,sh,role=execute]
 ----
@@ -394,8 +396,20 @@ Return to your Edge Manager browser tab. *If your session has expired*, you can 
 
 Click link:https://rhem-on-rhel-webui-wksp-{guid}-{user}.{openshift_cluster_ingress_domain}[here,window=_blank] to access the Edge Manager Web UI (the link will open in a new browser tab)
 
-. Enter *Username*: {user}
-. Enter *Password*: redhat123
+. Enter *Username*: 
++
+[source,sh,role=execute,subs=attributes+]
+----
+{user}
+----
++
+. Enter *Password*:
++
+[source,sh,role=execute,subs=attributes+]
+---- 
+redhat123
+----
++
 . Click *Sign In*
 
 The Edge Manager CLI is already pre-installed on your Lab VM. If desired, users can access the CLI downloads directly from the Web UI.
@@ -430,8 +444,23 @@ Let's create a drone fleet in your environment, next:
 +
 image::m2-create-fleet-1.png[link=self, window=blank, width=100%]
 +
-. Enter *Fleet name*: `drone-fleet`
-. (Configure *Device Selector*) Click *Add Label* and enter: `fleet=lab`
+. Enter *Fleet name*:
++
+[source,sh,role=execute,subs=attributes+]
+----
+drone-fleet
+----
++
+[IMPORTANT]
+====
+In the next step, please make sure that you select *Add Label* underneath *Device Selector* and not *Add Label* underneath *Fleet labels*
+====
+. (Configure *Device Selector*) Click *Add Label* and enter:
++
+[source,sh,role=execute,subs=attributes+]
+----
+fleet=lab
+----
 +
 NOTE: Fleets do not explicitly “add” devices. Instead, a fleet defines a device selector, and any device whose labels match that selector is automatically associated with the fleet. You can also utilize multiple device selector label matches (for example, 'Country=US', 'State=MN', etc.)
 +
@@ -463,9 +492,21 @@ This section denotes configurations that will get written to any device that is 
 +
 This inline configuration will write a message of the day (motd) file to /etc/motd:
 +
-.. Enter *Source name*: `update-motd`
+.. Enter *Source name*:
++
+[source,sh,role=execute,subs=attributes+]
+----
+update-motd
+----
++
 .. Select *Source type*: `Inline configuration`
-.. Enter *File path on the device*: `/etc/motd`
++
+.. Enter *File path on the device*:
++
+[source,sh,role=execute,subs=attributes+]
+----
+/etc/motd
+----
 .. Enter inline *Content*: `Today is a good day to deliver pizza!` and press *Enter* once to add a trailing newline
 +
 image::m2-create-fleet-5.png[link=self, window=blank, width=100%]
@@ -474,10 +515,18 @@ image::m2-create-fleet-5.png[link=self, window=blank, width=100%]
 +
 image::m2-create-fleet-6.png[link=self, window=blank, width=100%]
 +
-Edge Manager will instruct the drone device to pull this application container from an OCI registry when the device joins this fleet. Because this application is defined at the fleet level, it will be deployed to any device whose labels match the fleet’s device selector
+NOTE: Edge Manager will instruct the drone device to pull this application container from an Open Container Initiative (OCI) registry when the device joins this fleet. Because this application is defined at the fleet level, it will be deployed to any device whose labels match the fleet’s device selector
++
+Enter application details:
 +
 .. *Application type*: `Single Container Application`
-.. *Application name*: `drone-cam-app`
+.. *Application name*:
++
+[source,sh,role=execute,subs=attributes+]
+----
+drone-cam-app
+----
++
 .. *Image*:
 +
 [source,sh,role=execute]
@@ -713,7 +762,7 @@ NAME                    PHASE       PROGRESS   RESTARTS   AGE
 drone-virtual-machine   Succeeded   100.0%                5m26s
 rhem-virtual-machine    Succeeded   100.0%                6d4h
 ----
-Press `CTRL`+`C` to break out of the watch loop
+After `Progress = 100%`, Press `CTRL`+`C` to break out of the watch loop 
 
 [#dronevmcreation]
 
@@ -757,8 +806,20 @@ Return to your `*Edge Manager UI* Browser tab`.
 
 If prompted to log in again, use the following credentials:
 
-. Enter *Username*: {user}
-. Enter *Password*: redhat123
+. Enter *Username*: 
++
+[source,sh,role=execute,subs=attributes+]
+----
+{user}
+----
++
+. Enter *Password*:
++
+[source,sh,role=execute,subs=attributes+]
+---- 
+redhat123
+----
++
 . Click *Sign In*
 
 Within the Edge Manager UI:

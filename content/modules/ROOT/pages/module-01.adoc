@@ -336,8 +336,20 @@ image::m1-webui-login-1.png[link=self, window=blank, width=100%]
 +
 image::m1-webui-login-2.png[link=self, window=blank, width=100%]
 +
-. Enter *Username*: {user}
-. Enter *Password*: redhat123
+. Enter *Username*: 
++
+[source,sh,role=execute,subs=attributes+]
+----
+{user}
+----
++
+. Enter *Password*:
++
+[source,sh,role=execute,subs=attributes+]
+---- 
+redhat123
+----
++
 . Click *Sign In*
 
 After initial login, you’ll see a top-level overview of devices and fleets managed by Edge Manager. At this point, no devices have been onboarded, so the dashboard is intentionally empty. We’ll return to this view later once your drone device is under management
