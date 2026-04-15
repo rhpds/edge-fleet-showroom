@@ -481,7 +481,12 @@ image::m3-repository-2.png[link=self, window=blank, width=100%]
 +
 Input the following information
 +
-. Enter *Repository name*: `user-repo`
+. Enter *Repository name*:
++
+[source,sh,role=execute,subs=attributes+]
+----
+user-repo
+---- 
 . Enter *Repository URL*:
 +
 [source,sh,role=execute,subs=attributes+]
