@@ -229,7 +229,7 @@ sudo sed -i \
 sudo systemctl restart flightctl.target
 ----
 
-NOTE: Given the timing of the Edge Manager GA release and this lab’s creation ahead of RH1, an upstream version equivalent to GA 1.0 is used. As a result, the RHEM UI branding shown above is explicitly enabled (via IS_RHEM=true) so that you see the GA RHEM UI (branding) rather than the default Flight Control UI.
+NOTE: Given the timing of the Edge Manager GA release and this lab’s creation, an upstream version equivalent to GA 1.0 is used. As a result, the RHEM UI branding shown above is explicitly enabled (via IS_RHEM=true) so that you see the GA RHEM UI (branding) rather than the upstream Flight Control UI.
 
 === Creating Users and Groups
 
