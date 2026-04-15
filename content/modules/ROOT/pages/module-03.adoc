@@ -494,8 +494,16 @@ user-repo
 {gitea_console_url}/{guid}-{user}/rh1-2026-rhem-lab.git
 ---- 
 . Ensure that the check-box for *Use resource syncs (?)* is enabled
-.. Enter *Resource sync name*: `user-rs`
-.. Enter *Target revision*: `main`
+.. Enter *Resource sync name*:
+[source,sh,role=execute,subs=attributes+]
+----
+user-rs
+---- 
+.. Enter *Target revision*:
+[source,sh,role=execute,subs=attributes+]
+----
+main
+---- 
 .. Enter *Path (?)*:
 +
 [source,sh,role=execute,subs=attributes+]
