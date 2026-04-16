@@ -496,11 +496,13 @@ user-repo
 . Ensure that the check-box for *Use resource syncs (?)* is enabled
 .. Enter *Resource sync name*:
 [source,sh,role=execute,subs=attributes+]
++
 ----
 user-rs
 ---- 
 .. Enter *Target revision*:
 [source,sh,role=execute,subs=attributes+]
++
 ----
 main
 ---- 
