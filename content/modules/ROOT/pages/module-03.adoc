@@ -100,7 +100,7 @@ Let's see if our Drone Cam is viewable now.
 
 image::m3-join-fleet-5.png[link=self, window=blank, width=100%]
 
-(You should now see the drone camera application load successfully - if you do not, please make sure that your browser URL is prefaced with `http:` and not `https:`)
+(You should now see the drone camera application load successfully)
 
 Great job!  You have successfully stood up a new SDS field location, and your virtual pizza delivery is on its way (somewhere in the Greek Islands, by the look of it).
 
@@ -849,7 +849,6 @@ cat weather.html
 +
 image::m3-drone-tracker-app-1.png[link=self, window=blank, width=100%]
 +
-NOTE: If the web application is still showing 'Application is not Available' please make sure that your browser URL is prefaced with `http:` and not `https:`
 +
 . Click *View Flight Conditions*
 +
